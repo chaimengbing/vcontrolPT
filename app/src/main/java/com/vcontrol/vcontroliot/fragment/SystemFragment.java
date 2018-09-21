@@ -47,8 +47,7 @@ import java.util.List;
  * Created by linxi on 2017/10/13.
  */
 
-public class SystemFragment extends Fragment implements View.OnClickListener
-{
+public class SystemFragment extends Fragment implements View.OnClickListener {
     public static final String TAG = SystemFragment.class.getSimpleName();
     private String url1 = "http://47.104.107.184/vcontrolCloud/UserMobileLoginOut?";//服务器接口地址
 
@@ -93,16 +92,14 @@ public class SystemFragment extends Fragment implements View.OnClickListener
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_system, container, false);
         initView(view);
 
         return view;
     }
 
-    private void initView(View view)
-    {
+    private void initView(View view) {
         spUser = getActivity().getSharedPreferences(spName, Context.MODE_PRIVATE);
         appVers = (TextView) view.findViewById(R.id.app_ver);
         version = (TextView) view.findViewById(R.id.version);
@@ -149,13 +146,10 @@ public class SystemFragment extends Fragment implements View.OnClickListener
         setLister9();
         setLister10();
 
-        if (LoginActivity.loginString != 0)
-        {
+        if (LoginActivity.loginString != 0) {
             dropLayout.setVisibility(View.VISIBLE);
             loginButton.setVisibility(View.GONE);
-        }
-        else
-        {
+        } else {
             dropLayout.setVisibility(View.GONE);
             loginButton.setVisibility(View.VISIBLE);
         }
@@ -169,25 +163,17 @@ public class SystemFragment extends Fragment implements View.OnClickListener
 //        }
     }
 
-    public static String setLister()
-    {
-        if (aSwitch != null)
-        {
+    public static String setLister() {
+        if (aSwitch != null) {
 
-            aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
+            aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    if (aSwitch.isPressed())
-                    {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (aSwitch.isPressed()) {
 
-                        if (!isChecked)
-                        {
+                        if (!isChecked) {
                             mainOne = "0";
-                        }
-                        else
-                        {
+                        } else {
                             mainOne = "1";
 
                         }
@@ -201,24 +187,16 @@ public class SystemFragment extends Fragment implements View.OnClickListener
         return mainOne;
     }
 
-    public static String setLister2()
-    {
-        if (aSwitch2 != null)
-        {
-            aSwitch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
+    public static String setLister2() {
+        if (aSwitch2 != null) {
+            aSwitch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    if (aSwitch2.isPressed())
-                    {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (aSwitch2.isPressed()) {
 
-                        if (!isChecked)
-                        {
+                        if (!isChecked) {
                             mainTwo = "0";
-                        }
-                        else
-                        {
+                        } else {
                             mainTwo = "1";
 
                         }
@@ -232,24 +210,16 @@ public class SystemFragment extends Fragment implements View.OnClickListener
 
     }
 
-    public static String setLister3()
-    {
-        if (aSwitch3 != null)
-        {
-            aSwitch3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
+    public static String setLister3() {
+        if (aSwitch3 != null) {
+            aSwitch3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    if (aSwitch3.isPressed())
-                    {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (aSwitch3.isPressed()) {
 
-                        if (!isChecked)
-                        {
+                        if (!isChecked) {
                             mainThree = "0";
-                        }
-                        else
-                        {
+                        } else {
                             mainThree = "1";
 
                         }
@@ -262,24 +232,16 @@ public class SystemFragment extends Fragment implements View.OnClickListener
         return mainThree;
     }
 
-    public static String setLister4()
-    {
-        if (aSwitch4 != null)
-        {
-            aSwitch4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
+    public static String setLister4() {
+        if (aSwitch4 != null) {
+            aSwitch4.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    if (aSwitch4.isPressed())
-                    {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (aSwitch4.isPressed()) {
 
-                        if (!isChecked)
-                        {
+                        if (!isChecked) {
                             mainFour = "0";
-                        }
-                        else
-                        {
+                        } else {
                             mainFour = "1";
 
                         }
@@ -292,24 +254,16 @@ public class SystemFragment extends Fragment implements View.OnClickListener
         return mainFour;
     }
 
-    public static String setLister5()
-    {
-        if (aSwitch5 != null)
-        {
-            aSwitch5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
+    public static String setLister5() {
+        if (aSwitch5 != null) {
+            aSwitch5.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    if (aSwitch5.isPressed())
-                    {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (aSwitch5.isPressed()) {
 
-                        if (!isChecked)
-                        {
+                        if (!isChecked) {
                             mainFive = "0";
-                        }
-                        else
-                        {
+                        } else {
                             mainFive = "1";
 
                         }
@@ -322,24 +276,16 @@ public class SystemFragment extends Fragment implements View.OnClickListener
         return mainFive;
     }
 
-    public static String setLister6()
-    {
-        if (aSwitch6 != null)
-        {
-            aSwitch6.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
+    public static String setLister6() {
+        if (aSwitch6 != null) {
+            aSwitch6.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    if (aSwitch6.isPressed())
-                    {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (aSwitch6.isPressed()) {
 
-                        if (!isChecked)
-                        {
+                        if (!isChecked) {
                             mainSix = "0";
-                        }
-                        else
-                        {
+                        } else {
                             mainSix = "1";
 
                         }
@@ -352,24 +298,16 @@ public class SystemFragment extends Fragment implements View.OnClickListener
         return mainSix;
     }
 
-    public static String setLister7()
-    {
-        if (aSwitch7 != null)
-        {
-            aSwitch7.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
+    public static String setLister7() {
+        if (aSwitch7 != null) {
+            aSwitch7.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    if (aSwitch7.isPressed())
-                    {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (aSwitch7.isPressed()) {
 
-                        if (!isChecked)
-                        {
+                        if (!isChecked) {
                             mainSeven = "0";
-                        }
-                        else
-                        {
+                        } else {
                             mainSeven = "1";
 
                         }
@@ -382,24 +320,16 @@ public class SystemFragment extends Fragment implements View.OnClickListener
         return mainSeven;
     }
 
-    public static String setLister8()
-    {
-        if (aSwitch8 != null)
-        {
-            aSwitch8.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
+    public static String setLister8() {
+        if (aSwitch8 != null) {
+            aSwitch8.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    if (aSwitch8.isPressed())
-                    {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (aSwitch8.isPressed()) {
 
-                        if (!isChecked)
-                        {
+                        if (!isChecked) {
                             mainEight = "0";
-                        }
-                        else
-                        {
+                        } else {
                             mainEight = "1";
 
                         }
@@ -412,24 +342,16 @@ public class SystemFragment extends Fragment implements View.OnClickListener
         return mainEight;
     }
 
-    public static String setLister9()
-    {
-        if (aSwitch9 != null)
-        {
-            aSwitch9.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
+    public static String setLister9() {
+        if (aSwitch9 != null) {
+            aSwitch9.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    if (aSwitch9.isPressed())
-                    {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (aSwitch9.isPressed()) {
 
-                        if (!isChecked)
-                        {
+                        if (!isChecked) {
                             mainNine = "0";
-                        }
-                        else
-                        {
+                        } else {
                             mainNine = "1";
 
                         }
@@ -442,24 +364,16 @@ public class SystemFragment extends Fragment implements View.OnClickListener
         return mainNine;
     }
 
-    public static String setLister10()
-    {
-        if (aSwitch10 != null)
-        {
-            aSwitch10.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
+    public static String setLister10() {
+        if (aSwitch10 != null) {
+            aSwitch10.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    if (aSwitch10.isPressed())
-                    {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (aSwitch10.isPressed()) {
 
-                        if (!isChecked)
-                        {
+                        if (!isChecked) {
                             mainTen = "0";
-                        }
-                        else
-                        {
+                        } else {
                             mainTen = "1";
 
                         }
@@ -471,70 +385,54 @@ public class SystemFragment extends Fragment implements View.OnClickListener
 
         return mainTen;
     }
-    private void setDropLayout()
-    {
+
+    private void setDropLayout() {
 
     }
 
 
-    private String getAppVersion()
-    {
+    private String getAppVersion() {
         String versionName = null;
 
-        try
-        {
+        try {
             versionName = getActivity().getPackageManager().getPackageInfo(
                     getActivity().getPackageName(), 0).versionName;
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
         return versionName;
     }
 
-    private String getAppVersion1()
-    {
+    private String getAppVersion1() {
         String versionName = null;
 
-        try
-        {
+        try {
 //            versionName = getActivity().getPackageManager().getPackageInfo(
 //                    getActivity().getPackageName(), 0).;
             versionName = upDataInfo.versionName;
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
         return versionName;
     }
 
-    private void commit() throws IOException, JSONException
-    {
+    private void commit() {
         final String phone = phoneString.getText().toString().trim();
-
-
-        Log.d(TAG, phone);
-
-        dropOut.setOnClickListener(new View.OnClickListener()
-        {
+        dropOut.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 /**
                  * 开辟一个子线程访问网络，否则会抛出异常
                  */
-                new Thread()
-                {
+                new Thread() {
                     @Override
-                    public void run()
-                    {
+                    public void run() {
                         NameValuePair pair1 = new BasicNameValuePair("mobileNum", phone);
                         Log.d(TAG, phone);
 
                         List<NameValuePair> pairList = new ArrayList<NameValuePair>();
                         pairList.add(pair1);
-                        try
-                        {
+                        try {
 
                             HttpEntity requestHttpEntity = new UrlEncodedFormEntity(pairList, HTTP.UTF_8);
                             // URl是接口地址
@@ -548,8 +446,7 @@ public class SystemFragment extends Fragment implements View.OnClickListener
                             HttpResponse response = httpClient.execute(httpPost);
                             // 显示响应
                             showResponseResult(response);
-                        } catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -568,23 +465,19 @@ public class SystemFragment extends Fragment implements View.OnClickListener
      *
      * @param response
      */
-    private void showResponseResult(HttpResponse response)
-    {
-        if (null == response)
-        {
+    private void showResponseResult(HttpResponse response) {
+        if (null == response) {
             return;
         }
 
         HttpEntity httpEntity = response.getEntity();
-        try
-        {
+        try {
             InputStream inputStream = httpEntity.getContent();
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     inputStream));
             String result1 = "";
             String line = "";
-            while (null != (line = reader.readLine()))
-            {
+            while (null != (line = reader.readLine())) {
                 result1 += line;
 
             }
@@ -595,33 +488,26 @@ public class SystemFragment extends Fragment implements View.OnClickListener
              */
             hanlder.obtainMessage(0, result1).sendToTarget();
 
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    private Handler hanlder = new Handler()
-    {
-        public void handleMessage(Message msg)
-        {
+    private Handler hanlder = new Handler() {
+        public void handleMessage(Message msg) {
 
             com.vcontrol.vcontroliot.log.Log.info(TAG, phoneString.getText().toString());
-            switch (msg.what)
-            {
+            switch (msg.what) {
                 case 0:
                     String qq = (String) msg.obj;
                     Log.d(TAG, qq);
-                    if (qq.equals("注销成功"))
-                    {
+                    if (qq.equals("注销成功")) {
                         SystemFragment.loginButton.setVisibility(View.VISIBLE);
                         dropLayout.setVisibility(View.GONE);
                         ToastUtil.showToastLong(getString(R.string.Exited));
                         LoginActivity.loginString = 0;
-                    }
-                    else
-                    {
+                    } else {
                         ToastUtil.showToastLong(getString(R.string.Failed_exit));
                     }
                     break;
@@ -631,32 +517,27 @@ public class SystemFragment extends Fragment implements View.OnClickListener
     };
 
     @Override
-    public void onResume()
-    {
+    public void onResume() {
         phoneString.setText(SharedPreferencesUtil.getStringData(getActivity(), SharedPreferencesUtil.USERNAME, ""));
         super.onResume();
     }
 
 
     @Override
-    public void onClick(View v)
-    {
+    public void onClick(View v) {
         String userid = phoneString.getText().toString().trim();
         SharedPreferences.Editor editor = spUser.edit();
         editor.putString(spKeyUser, userid);
         editor.commit();
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.login_button:
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
                 break;
             case R.id.drop_out:
-                try
-                {
+                try {
                     commit();
-                } catch (IOException | JSONException e)
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 break;
@@ -664,13 +545,10 @@ public class SystemFragment extends Fragment implements View.OnClickListener
 
     }
 
-    private View.OnClickListener listener = new View.OnClickListener()
-    {
+    private View.OnClickListener listener = new View.OnClickListener() {
         @Override
-        public void onClick(View v)
-        {
-            switch (v.getId())
-            {
+        public void onClick(View v) {
+            switch (v.getId()) {
                 case R.id.app_ver1:
                     //在这里做检查业务逻辑
                     CheckVersion checkVersion = new CheckVersion();

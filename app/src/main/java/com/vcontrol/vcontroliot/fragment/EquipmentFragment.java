@@ -10,9 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.vcontrol.vcontroliot.R;
 import com.vcontrol.vcontroliot.VcontrolApplication;
+import com.vcontrol.vcontroliot.act.BleDeviceListActivity;
 import com.vcontrol.vcontroliot.act.HomeActivity;
 import com.vcontrol.vcontroliot.act.RTUInfoActivity;
 import com.vcontrol.vcontroliot.adapter.GridMainAdapter;
@@ -27,28 +30,34 @@ import com.vcontrol.vcontroliot.util.UiEventEntry;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Created by linxi on 2017/10/13.
  */
 
-public class EquipmentFragment extends Fragment implements View.OnClickListener,AdapterView.OnItemClickListener
-{
+public class EquipmentFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
     private GridView mainGrid;
     private List<MainInfo> data = new ArrayList<>();
 
-    private SystemFragment systemFragment;
-
+    @BindView(R.id.lru_3300)
+    TextView lru3300;
+    @BindView(R.id.layout_button2)
+    LinearLayout layout2;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_equipment,container,false);
+        View view = inflater.inflate(R.layout.fragment_equipment, container, false);
+        ButterKnife.bind(this, view);
         initView(view);
 
         return view;
     }
-    private void initView(View view)
-    {
+
+    private void initView(View view) {
 
         mainGrid = (GridView) view.findViewById(R.id.grid_main);
 
@@ -58,8 +67,7 @@ public class EquipmentFragment extends Fragment implements View.OnClickListener,
 
         ToastUtil.setCurrentContext(getActivity());
 
-        if (data != null)
-        {
+        if (data != null) {
             data = new ArrayList<>();
         }
 //
@@ -78,46 +86,34 @@ public class EquipmentFragment extends Fragment implements View.OnClickListener,
         MainInfo main10 = new MainInfo(UiEventEntry.LRU_6000, R.mipmap.lru_9000, "LRU-6000");
 
 
-
-
-        if (!SystemFragment.setLister().equals("0"))
-        {
+        if (!SystemFragment.setLister().equals("0")) {
             data.add(main1);
         }
-        if (!SystemFragment.setLister2().equals("0"))
-        {
+        if (!SystemFragment.setLister2().equals("0")) {
             data.add(main2);
         }
-        if (!SystemFragment.setLister3().equals("0"))
-        {
+        if (!SystemFragment.setLister3().equals("0")) {
             data.add(main3);
         }
-        if (!SystemFragment.setLister4().equals("0"))
-        {
+        if (!SystemFragment.setLister4().equals("0")) {
             data.add(main4);
         }
-        if (!SystemFragment.setLister5().equals("0"))
-        {
+        if (!SystemFragment.setLister5().equals("0")) {
             data.add(main5);
         }
-        if (!SystemFragment.setLister6().equals("0"))
-        {
+        if (!SystemFragment.setLister6().equals("0")) {
             data.add(main6);
         }
-        if (!SystemFragment.setLister7().equals("0"))
-        {
+        if (!SystemFragment.setLister7().equals("0")) {
             data.add(main7);
         }
-        if (!SystemFragment.setLister8().equals("0"))
-        {
+        if (!SystemFragment.setLister8().equals("0")) {
             data.add(main8);
         }
-        if (!SystemFragment.setLister9().equals("0"))
-        {
+        if (!SystemFragment.setLister9().equals("0")) {
             data.add(main9);
         }
-        if (!SystemFragment.setLister10().equals("0"))
-        {
+        if (!SystemFragment.setLister10().equals("0")) {
             data.add(main10);
         }
 //
@@ -140,22 +136,26 @@ public class EquipmentFragment extends Fragment implements View.OnClickListener,
 
     }
 
+
+    @OnClick(R.id.lru_3300)
+    void bleConnect(View view) {
+        Intent intent = new Intent(getActivity(), BleDeviceListActivity.class);
+        startActivity(intent);
+    }
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
+        if (id == R.id.action_settings) {
             return true;
         }
 
-        switch (id)
-        {
+        switch (id) {
             case R.id.chinese:
                 if (LocaleUtils.needUpdateLocale(getActivity(), LocaleUtils.LOCALE_CHINESE)) {
                     LocaleUtils.updateLocale(getActivity(), LocaleUtils.LOCALE_CHINESE);
@@ -173,24 +173,20 @@ public class EquipmentFragment extends Fragment implements View.OnClickListener,
     }
 
 
-
     @Override
-    public void onClick(View v)
-    {
+    public void onClick(View v) {
 
     }
 
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.CONNCT_FAIL);
         EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.CONNCT_OK);
     }
 
-    private void setListener()
-    {
+    private void setListener() {
 
         mainGrid.setOnItemClickListener(this);
 
@@ -198,25 +194,18 @@ public class EquipmentFragment extends Fragment implements View.OnClickListener,
 
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-    {
-        if (position == 0)
-        {
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (position == 0) {
             SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.GROUND_PORT);
-        }
-        else
-        {
+        } else {
             SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
         }
 
 
-        if (position == 10)
-        {
+        if (position == 10) {
             Intent intent = new Intent(getActivity(), RTUInfoActivity.class);
             startActivity(intent);
-        }
-        else
-        {
+        } else {
             Intent intent = new Intent(getActivity(), HomeActivity.class);
             intent.putExtra(UiEventEntry.NOTIFY_BASIC_NAME, data.get(position).getName());
             intent.putExtra(UiEventEntry.NOTIFY_BASIC_TYPE, data.get(position).getId());
