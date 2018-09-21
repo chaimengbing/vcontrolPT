@@ -107,7 +107,7 @@ dependencies {
     compile files('libs/commons-net-3.6.jar')
     compile files('libs/universal-image-loader-1.9.5.jar')
     compile files('libs/volley.jar')
-
+    compile project(':blelibrary')
     compile 'com.github.vilyever:AndroidSocketClient:2.0.1'
 
     compile 'com.google.code.gson:gson:2.2.4'
