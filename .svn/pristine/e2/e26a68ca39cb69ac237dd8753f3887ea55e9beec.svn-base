@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:orientation="vertical">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/beidou_company"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:paddingTop="5dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="北斗厂家"
+                android:textColor="@color/black"/>
+
+            <RadioGroup
+                android:id="@+id/beidou_radiogroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="left|center_vertical"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/beidou_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/radio_bg"
+                    android:text="神州天鸿"
+                    android:textColor="@color/black"/>
+
+                <RadioButton
+                    android:id="@+id/beidou_button_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:button="@drawable/radio_bg"
+                    android:checked="false"
+                    android:text="成都国星/北斗星通"
+                    android:textColor="@color/black"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/channel_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x20"
+            android:text="中心站1 短信信道"
+            android:textColor="@color/black"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="@dimen/x80"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="号码:"
+                    android:textColor="@color/black"/>
+
+                <EditText
+                    android:id="@+id/num_1_edittext"
+                    android:layout_width="@dimen/x400"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_edittext"
+                    android:inputType="number"
+                    android:maxLines="2"
+                    android:padding="5dp"
+                    android:textColor="@color/black"/>
+
+                <Button
+                    android:id="@+id/gms_1_button"
+                    android:layout_width="@dimen/x80"
+                    android:layout_height="@dimen/x60"
+                    android:layout_marginLeft="@dimen/x40"
+                    android:background="@drawable/bg_button"
+                    android:text="@string/setting"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/channel_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x20"
+            android:text="中心站2 短信信道"
+            android:textColor="@color/black"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="@dimen/x80"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="号码:"
+                    android:textColor="@color/black"/>
+
+                <EditText
+                    android:id="@+id/num_2_edittext"
+                    android:layout_width="@dimen/x400"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_edittext"
+                    android:inputType="number"
+                    android:maxLines="2"
+                    android:padding="5dp"
+                    android:textColor="@color/black"/>
+
+                <Button
+                    android:id="@+id/gms_2_button"
+                    android:layout_width="@dimen/x80"
+                    android:layout_height="@dimen/x60"
+                    android:layout_marginLeft="@dimen/x40"
+                    android:background="@drawable/bg_button"
+                    android:text="@string/setting"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/channel_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x20"
+            android:text="中心站3 短信信道"
+            android:textColor="@color/black"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="@dimen/x80"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="号码:"
+                    android:textColor="@color/black"/>
+
+                <EditText
+                    android:id="@+id/num_3_edittext"
+                    android:layout_width="@dimen/x400"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_edittext"
+                    android:inputType="number"
+                    android:maxLines="2"
+                    android:padding="5dp"
+                    android:textColor="@color/black"/>
+
+                <Button
+                    android:id="@+id/gms_3_button"
+                    android:layout_width="@dimen/x80"
+                    android:layout_height="@dimen/x60"
+                    android:layout_marginLeft="@dimen/x40"
+                    android:background="@drawable/bg_button"
+                    android:text="@string/setting"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/channel_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/x20"
+            android:text="中心站4 短信信道"
+            android:textColor="@color/black"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="@dimen/x80"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:text="号码:"
+                    android:textColor="@color/black"/>
+
+                <EditText
+                    android:id="@+id/num_4_edittext"
+                    android:layout_width="@dimen/x400"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_edittext"
+                    android:inputType="number"
+                    android:maxLines="2"
+                    android:padding="5dp"
+                    android:textColor="@color/black"/>
+
+                <Button
+                    android:id="@+id/gms_4_button"
+                    android:layout_width="@dimen/x80"
+                    android:layout_height="@dimen/x60"
+                    android:layout_marginLeft="@dimen/x40"
+                    android:background="@drawable/bg_button"
+                    android:text="@string/setting"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

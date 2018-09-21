@@ -1,0 +1,898 @@
+package com.vcontrol.vcontroliot.fragment;
+
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.VcontrolApplication;
+import com.vcontrol.vcontroliot.util.ConfigParams;
+import com.vcontrol.vcontroliot.util.EventNotifyHelper;
+import com.vcontrol.vcontroliot.util.ImageTools;
+import com.vcontrol.vcontroliot.util.ProgressBarUtil;
+import com.vcontrol.vcontroliot.util.ServiceUtils;
+import com.vcontrol.vcontroliot.util.SocketUtil;
+import com.vcontrol.vcontroliot.util.ToastUtil;
+import com.vcontrol.vcontroliot.util.UiEventEntry;
+import com.vcontrol.vcontroliot.view.ZoomImageView;
+
+import java.io.File;
+import java.io.FileInputStream;
+
+/**
+ * Created by Vcontrol on 2016/11/23.
+ */
+
+public class SearchFragment extends BaseFragment implements EventNotifyHelper.NotificationCenterDelegate, View.OnClickListener
+{
+    private static final String TAG = SearchFragment.class.getSimpleName();
+    private TextView resultTextView;
+    private int search = 113;
+
+
+
+
+    private String TotalRainVal = "累计雨量值：";
+    private String PrecentRainVal = "当前雨量值：";
+    private String WaterLevel_R = "库上相对水位：";
+    private String WaterLevel_A = "库上绝对水位：";
+    private String Temperature_G = "地温：";
+    private String Temperature = "RTU温度：";
+    private String BatteryVolts = "电池电压：";
+    private String SHIDIANBatteryVolts = "市电电压：";
+    /**
+     * 河道瞬时流量：Water_Flow
+     * 河道累积流量：Cumulative_Flow
+     * 正累积流量（2）：Cumulative_Flow1
+     * 负累积流量（3）：Cumulative_Flow2
+     * 河道流速：Flow_Speed
+     * 累计流量(21): Cumulative_Flow6
+     */
+
+    private String Water_Flow = "河道瞬时流量：";
+    private String Cumulative_Flow = "河道累积流量：";
+    private String Cumulative_Flow1 = "正累积流量(2)：";
+    private String Cumulative_Flow2 = "负累积流量(3)：";
+    private String Flow_Speed = "河道流速：";
+    private String Cumulative_Flow6 = "累计流量(21)：";
+    private String TRB = "浊度：";
+    private String WindSpeed = "风速：";
+    private String WindDirection = "风向：";
+    private String Temperature_A = "气温：";
+    private String humidity = "湿度：";
+    private String Press = "压力：";
+
+    //    风速：WindSpeed 风向：WindDirection 气温：Temperature_A 湿度：humidity
+
+    private String MM = " mm";
+    private String M = " m";
+    private String MS = " m/s";
+    private String M3 = " m³";
+    private String M3S = " m³/s";
+    private String C = " ℃";
+    private String V = " V";
+
+    private String PIC_Sta = "图片读取状态：";
+    private String PIC_Send_Sta1 = "信道1图片发送状态：";
+    private String PIC_Send_Sta2 = "信道2图片发送状态：";
+    private String PIC_Send_Sta3 = "信道3图片发送状态：";
+    private String PIC_Send_Sta4 = "信道4图片发送状态：";
+    private String PIC_Co1 = "信道1总帧数：";
+    private String PIC_Co2 = "信道2总帧数：";
+    private String PIC_Co3 = "信道3总帧数：";
+    private String PIC_Co4 = "信道4总帧数：";
+    private String PIC_Fr1 = "信道1当前帧：";
+    private String PIC_Fr2 = "信道2当前帧：";
+    private String PIC_Fr3 = "信道3当前帧：";
+    private String PIC_Fr4 = "信道4当前帧：";
+
+
+
+    private String GPRS_CSQ = "信号强度：";
+    private String GPRS_Status = "GPRS状态：";
+    private String GPRS_SMS_Handle_Status_display = "GSM状态：";
+    private String SOCKET_STATUS_1 = "Socket1状态：";
+    private String SOCKET_STATUS_2 = "Socket2状态：";
+    private String SOCKET_STATUS_3 = "Socket3状态：";
+    private String SOCKET_STATUS_4 = "Socket4状态：";
+    private String BEIDOU_CSQ = "北斗信号强度：";
+
+
+    private String Send_informa_time_tm1 = "发送定时报1时间：";
+    private String Send_informa_time_tm2 = "发送定时报2时间：";
+    private String Send_informa_time_tm3 = "发送定时报3时间：";
+    private String Send_informa_time_tm4 = "发送定时报4时间：";
+    private String Send_inf_chanel1 = "定时报1发送的方式：";
+    private String Send_inf_chanel2 = "定时报2发送的方式：";
+    private String Send_inf_chanel3 = "定时报3发送的方式：";
+    private String Send_inf_chanel4 = "定时报4发送的方式：";
+
+
+
+
+    private String Equipment_Status = "设备状态：";
+    // bit0--交流电充电状态，0--正常，1--停电
+    public final static String STATUS1 = "交流电充电状态：";
+    // bit1--蓄电池电压状态，0--正常，1--报警
+    public final static String STATUS2 = "蓄电池电压状态：";
+    // bit2--水位超限报警状态，0--正常，1--报警
+    public final static String STATUS3 = "水位超限报警状态：";
+    // bit3--流量超限报警状态，0--正常，1--报警
+    public final static String STATUS4 = "流量超限报警状态：";
+    // bit4--水质超限报警状态，0--正常，1--报警
+    public final static String STATUS5 = "水质超限报警状态：";
+    // bit5--流量仪表状态状态，0--正常，1--故障
+    public final static String STATUS6 = "流量仪表状态：";
+    // bit6--水位仪表状态状态，0--正常，1--故障
+    public final static String STATUS7 = "水位仪表状态：";
+    // bit7--终端箱门状态，0--开启，1--关闭
+    public final static String STATUS8 = "终端箱门状态：";
+    // bit8--存储器状态，0--正常，1--异常
+    public final static String STATUS9 = "存储器状态：";
+    // bit9--IC卡功能有效状态，0--关闭，1--IC卡有效
+    public final static String STATUS10 = "IC卡功能有效状态：";
+    // bit10--水泵工作状态，0--水泵工作，1--水泵停机
+    public final static String STATUS11 = "水泵工作状态：";
+    // bit11--余水量报警，0--未超限，1--水量超限
+    public final static String STATUS12 = "余水量报警：";
+    // bit12--闸位仪表状态，0--正常，1--故障
+    public final static String STATUS13 = "闸位仪表状态：";
+    // bit13--墒情仪表状态，0--正常，1--故障
+    public final static String STATUS14 = "墒情仪表状态：";
+    // bit14--摄像头状态，0--正常，1--故障
+    public final static String STATUS15 = "摄像头状态：";
+    private String EQUIP_Reicv_count = "485传感器接收数据个数：";
+    private String EQUIP_Reicv = "485传感器接收数据：";
+
+    private ScrollView resultScroll;
+    private ZoomImageView receImageView;
+    private RelativeLayout receLayout;
+    private StringBuffer currentSB = new StringBuffer();
+
+    private LinearLayout control;
+    private LinearLayout rainValue;
+    private Button rainValueButton;
+    private EditText rainValueEdittext;
+    private Button update;
+    private Button stop;
+
+    private Runnable timeRunnable = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            setData();
+            VcontrolApplication.applicationHandler.postDelayed(timeRunnable, UiEventEntry.TIME);
+        }
+    };
+
+    @Override
+    public int getLayoutView()
+    {
+        return R.layout.fragment_search;
+    }
+
+    @Override
+    public void initComponentViews(View view)
+    {
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_IMAGE_SUCCESS);
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_DATA);
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.NOTIFY_BUNDLE);
+
+
+
+        resultTextView = (TextView) view.findViewById(R.id.result_data_textview);
+        resultScroll = (ScrollView) view.findViewById(R.id.result_scroll);
+        receImageView = (ZoomImageView) view.findViewById(R.id.rece_imageview);
+        receLayout = (RelativeLayout) view.findViewById(R.id.img_layout);
+
+        control = (LinearLayout) view.findViewById(R.id.control);
+        rainValue = (LinearLayout) view.findViewById(R.id.rain_value_max);
+        update = (Button) view.findViewById(R.id.update_button);
+        rainValueButton = (Button) view.findViewById(R.id.rainvalue_button);
+        rainValueEdittext = (EditText) view.findViewById(R.id.rainvalue_edittext);
+        stop = (Button) view.findViewById(R.id.stop_button);
+
+        if (getArguments() != null)
+        {
+            search = getArguments().getInt(UiEventEntry.CURRENT_SEARCH);
+        }
+        else
+        {
+            search = UiEventEntry.TAB_SEARCH_BASIC;
+        }
+        setData();
+
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.NOTIFY_BUNDLE);
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.READ_IMAGE_SUCCESS);
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.READ_DATA);
+        VcontrolApplication.applicationHandler.removeCallbacks(timeRunnable);
+    }
+
+    @Override
+    public void initData()
+    {
+
+    }
+
+    public void updateData()
+    {
+        stopUpdate();
+        VcontrolApplication.applicationHandler.post(timeRunnable);
+    }
+
+    public void stopUpdate()
+    {
+        VcontrolApplication.applicationHandler.removeCallbacks(timeRunnable);
+    }
+
+    @Override
+    public void setListener()
+    {
+        update.setOnClickListener(this);
+        stop.setOnClickListener(this);
+        rainValueButton.setOnClickListener(this);
+    }
+
+    @Override
+    public void didReceivedNotification(int id, Object... args)
+    {
+        if (id == UiEventEntry.NOTIFY_BUNDLE)
+        {
+            Bundle bundle = (Bundle) args[0];
+            if (bundle != null)
+            {
+                search = bundle.getInt(UiEventEntry.CURRENT_SEARCH);
+            }
+            setData();
+        }
+        else if (id == UiEventEntry.READ_DATA)
+        {
+            String result = (String) args[0];
+            String content = (String) args[1];
+            if (TextUtils.isEmpty(result) || TextUtils.isEmpty(content))
+            {
+                return;
+            }
+            readData(result, content);
+        }
+        else if (id == UiEventEntry.READ_IMAGE_SUCCESS)
+        {
+            readData("", ConfigParams.ReadImage);
+        }
+    }
+
+    private void readData(String result, String content)
+    {
+        String timeR = "";
+        String res = "";
+        if (content.equals(ConfigParams.Readdata))
+        {//基本查询
+            if (result.contains(ConfigParams.TotalRainVal))
+            {
+                String rain = result.replaceAll(ConfigParams.TotalRainVal, "").trim();
+                rainValueEdittext.setText(rain);
+//                currentSB.insert(currentSB.indexOf(TotalRainVal) + TotalRainVal.length(), result.replaceAll(ConfigParams.TotalRainVal, "").trim());
+            }
+            else if (result.contains(ConfigParams.PrecentRainVal))
+            {
+                currentSB.insert(currentSB.indexOf(PrecentRainVal) + PrecentRainVal.length(), result.replaceAll(ConfigParams.PrecentRainVal, "").trim());
+            }
+            else if (result.contains(ConfigParams.WaterLevel_R))
+            {
+                currentSB.insert(currentSB.indexOf(WaterLevel_R) + WaterLevel_R.length(), result.replaceAll(ConfigParams.WaterLevel_R, "").trim());
+            }
+            else if (result.contains(ConfigParams.WaterLevel_A))
+            {
+                currentSB.insert(currentSB.indexOf(WaterLevel_A) + WaterLevel_A.length(), result.replaceAll(ConfigParams.WaterLevel_A, "").trim());
+            }
+            else if (result.contains(ConfigParams.Temperature_G))
+            {
+                currentSB.insert(currentSB.indexOf(Temperature_G) + Temperature_G.length(), result.replaceAll(ConfigParams.Temperature_G, "").trim());
+            }
+            else if (result.contains(ConfigParams.Temperature))
+            {
+                currentSB.insert(currentSB.indexOf(Temperature) + Temperature.length(), result.replaceAll(ConfigParams.Temperature, "").trim());
+            }
+            else if (result.contains(ConfigParams.BatteryVolts))
+            {
+                currentSB.insert(currentSB.indexOf(BatteryVolts) + BatteryVolts.length(), result.replaceAll(ConfigParams.BatteryVolts, "").trim());
+            }
+            else if (result.contains(ConfigParams.SHIDIANBatteryVolts))
+            {
+                currentSB.insert(currentSB.indexOf(SHIDIANBatteryVolts) + SHIDIANBatteryVolts.length(), result.replaceAll(ConfigParams.SHIDIANBatteryVolts, "").trim());
+            }
+            /**
+             * 河道瞬时流量：Water_Flow
+             河道累积流量：
+             正累积流量（2）：
+             负累积流量（3）：
+             河道流速：
+             累计流量(21):
+             *
+             *
+             */
+
+            else if (result.contains(ConfigParams.Water_Flow))
+            {
+                currentSB.insert(currentSB.indexOf(Water_Flow) + Water_Flow.length(), result.replaceAll(ConfigParams.Water_Flow, "").trim());
+            }
+            else if (result.contains(ConfigParams.Cumulative_Flowa))
+            {
+                currentSB.insert(currentSB.indexOf(Cumulative_Flow) + Cumulative_Flow.length(), result.replaceAll(ConfigParams.Cumulative_Flowa, "").trim());
+            }
+            else if (result.contains(ConfigParams.Cumulative_Flowb))
+            {
+                currentSB.insert(currentSB.indexOf(Cumulative_Flow1) + Cumulative_Flow1.length(), result.replaceAll(ConfigParams.Cumulative_Flowb, "").trim());
+            }
+            else if (result.contains(ConfigParams.Cumulative_Flowc))
+            {
+                currentSB.insert(currentSB.indexOf(Cumulative_Flow2) + Cumulative_Flow2.length(), result.replaceAll(ConfigParams.Cumulative_Flowc, "").trim());
+            }
+            else if (result.contains(ConfigParams.Flow_Speed))
+            {
+                currentSB.insert(currentSB.indexOf(Flow_Speed) + Flow_Speed.length(), result.replaceAll(ConfigParams.Flow_Speed, "").trim());
+            }
+            else if (result.contains(ConfigParams.Cumulative_Flowg))
+            {
+                currentSB.insert(currentSB.indexOf(Cumulative_Flow6) + Cumulative_Flow6.length(), result.replaceAll(ConfigParams.Cumulative_Flowg, "").trim());
+            }
+            else if (result.contains(ConfigParams.TRB))
+            {
+                currentSB.insert(currentSB.indexOf(TRB) + TRB.length(), result.replaceAll(ConfigParams.TRB, "").trim());
+            }
+//            风速：WindSpeed 风向：WindDirection 气温：Temperature_A 湿度：humidity
+            else if (result.contains(ConfigParams.WindSpeed))
+            {
+                currentSB.insert(currentSB.indexOf(WindSpeed) + WindSpeed.length(), result.replaceAll(ConfigParams.WindSpeed, "").trim());
+            }
+            else if (result.contains(ConfigParams.WindDirection))
+            {
+                currentSB.insert(currentSB.indexOf(WindDirection) + WindDirection.length(), result.replaceAll(ConfigParams.WindDirection, "").trim());
+            }
+            else if (result.contains(ConfigParams.Temperature_A))
+            {
+                currentSB.insert(currentSB.indexOf(Temperature_A) + Temperature_A.length(), result.replaceAll(ConfigParams.Temperature_A, "").trim());
+            }
+            else if (result.contains(ConfigParams.humidity))
+            {
+                currentSB.insert(currentSB.indexOf(humidity) + humidity.length(), result.replaceAll(ConfigParams.humidity, "").trim());
+            }
+            else if (result.contains(ConfigParams.Press))
+            {
+                currentSB.insert(currentSB.indexOf(Press) + Press.length(), result.replaceAll(ConfigParams.Press, "").trim());
+            }
+
+            resultTextView.setText(currentSB.toString());
+        }
+        else if (content.equals(ConfigParams.ReadRunStatus1))
+        {//通信状态查询
+            if (result.contains(ConfigParams.GPRS_CSQ))
+            {
+                currentSB.insert(currentSB.indexOf(GPRS_CSQ) + GPRS_CSQ.length(), result.replaceAll(ConfigParams.GPRS_CSQ, "").trim());
+            }
+            else if (result.contains(ConfigParams.GPRS_Status))
+            {
+                currentSB.insert(currentSB.indexOf(GPRS_Status) + GPRS_Status.length(), ServiceUtils.getGPRSStatus(result.replaceAll(ConfigParams.GPRS_Status, "").trim()));
+            }
+            else if (result.contains(ConfigParams.GPRS_SMS_Handle_Status_display))
+            {
+                currentSB.insert(currentSB.indexOf(GPRS_SMS_Handle_Status_display) + GPRS_SMS_Handle_Status_display.length(), ServiceUtils.getGSMStatus(result.replaceAll(ConfigParams.GPRS_SMS_Handle_Status_display, "").trim()));
+            }
+            else if (result.contains(ConfigParams.SOCKET_STATUS_1))
+            {
+                currentSB.insert(currentSB.indexOf(SOCKET_STATUS_1) + SOCKET_STATUS_1.length(), ServiceUtils.getSocketStatus(result.replaceAll(ConfigParams.SOCKET_STATUS_1, "").trim()));
+            }
+            else if (result.contains(ConfigParams.SOCKET_STATUS_2))
+            {
+                currentSB.insert(currentSB.indexOf(SOCKET_STATUS_2) + SOCKET_STATUS_2.length(), ServiceUtils.getSocketStatus(result.replaceAll(ConfigParams.SOCKET_STATUS_2, "").trim()));
+            }
+            else if (result.contains(ConfigParams.SOCKET_STATUS_3))
+            {
+                currentSB.insert(currentSB.indexOf(SOCKET_STATUS_3) + SOCKET_STATUS_3.length(), ServiceUtils.getSocketStatus(result.replaceAll(ConfigParams.SOCKET_STATUS_3, "").trim()));
+            }
+            else if (result.contains(ConfigParams.SOCKET_STATUS_4))
+            {
+                currentSB.insert(currentSB.indexOf(SOCKET_STATUS_4) + SOCKET_STATUS_4.length(), ServiceUtils.getSocketStatus(result.replaceAll(ConfigParams.SOCKET_STATUS_4, "").trim()));
+            }
+            else if (result.contains(ConfigParams.BEIDOU_CSQ))
+            {
+                currentSB.insert(currentSB.indexOf(BEIDOU_CSQ) + BEIDOU_CSQ.length(), result.replaceAll(ConfigParams.BEIDOU_CSQ, "").trim());
+            }
+            else if (result.contains(ConfigParams.Send_informa_time_tm1))
+            {
+                currentSB.insert(currentSB.indexOf(Send_informa_time_tm1) + Send_informa_time_tm1.length(), result.replaceAll(ConfigParams.Send_informa_time_tm1, "").trim());
+            }
+            else if (result.contains(ConfigParams.Send_inf_chanel1))
+            {
+                res = result.replaceAll(ConfigParams.Send_inf_chanel1, "").trim();
+                if ("3".equals(res))
+                {
+                    timeR = "北斗";
+                }
+                else if ("2".equals(res))
+                {
+                    timeR = "短信";
+                }
+                else if ("1".equals(res))
+                {
+                    timeR = "GPRS";
+                }
+                else
+                {
+                    timeR = "无";
+                }
+                currentSB.insert(currentSB.indexOf(Send_inf_chanel1) + Send_inf_chanel1.length(), timeR);
+            }
+            else if (result.contains(ConfigParams.Send_informa_time_tm2))
+            {
+                currentSB.insert(currentSB.indexOf(Send_informa_time_tm2) + Send_informa_time_tm2.length(), result.replaceAll(ConfigParams.Send_informa_time_tm2, "").trim());
+            }
+            else if (result.contains(ConfigParams.Send_inf_chanel2))
+            {
+                res = result.replaceAll(ConfigParams.Send_inf_chanel2, "").trim();
+                if ("3".equals(res))
+                {
+                    timeR = "北斗";
+                }
+                else if ("2".equals(res))
+                {
+                    timeR = "短信";
+                }
+                else if ("1".equals(res))
+                {
+                    timeR = "GPRS";
+                }
+                else
+                {
+                    timeR = "无";
+                }
+                currentSB.insert(currentSB.indexOf(Send_inf_chanel2) + Send_inf_chanel2.length(), timeR);
+            }
+            else if (result.contains(ConfigParams.Send_informa_time_tm3))
+            {
+                currentSB.insert(currentSB.indexOf(Send_informa_time_tm3) + Send_informa_time_tm3.length(), result.replaceAll(ConfigParams.Send_informa_time_tm3, "").trim());
+            }
+            else if (result.contains(ConfigParams.Send_inf_chanel3))
+            {
+                res = result.replaceAll(ConfigParams.Send_inf_chanel3, "").trim();
+                if ("3".equals(res))
+                {
+                    timeR = "北斗";
+                }
+                else if ("2".equals(res))
+                {
+                    timeR = "短信";
+                }
+                else if ("1".equals(res))
+                {
+                    timeR = "GPRS";
+                }
+                else
+                {
+                    timeR = "无";
+                }
+                currentSB.insert(currentSB.indexOf(Send_inf_chanel3) + Send_inf_chanel3.length(), timeR);
+            }
+            else if (result.contains(ConfigParams.Send_informa_time_tm4))
+            {
+                currentSB.insert(currentSB.indexOf(Send_informa_time_tm4) + Send_informa_time_tm4.length(), result.replaceAll(ConfigParams.Send_informa_time_tm4, "").trim());
+            }
+            else if (result.contains(ConfigParams.Send_inf_chanel4))
+            {
+                res = result.replaceAll(ConfigParams.Send_inf_chanel4, "").trim();
+                if ("3".equals(res))
+                {
+                    timeR = "北斗";
+                }
+                else if ("2".equals(res))
+                {
+                    timeR = "短信";
+                }
+                else if ("1".equals(res))
+                {
+                    timeR = "GPRS";
+                }
+                else
+                {
+                    timeR = "无";
+                }
+                currentSB.insert(currentSB.indexOf(Send_inf_chanel4) + Send_inf_chanel4.length(), timeR);
+            }
+
+            resultTextView.setText(currentSB.toString());
+        }
+        else if (content.equals(ConfigParams.ReadRunStatus2))
+        {//摄像头状态查询
+            if (result.contains(ConfigParams.PIC_Sta))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Sta) + PIC_Sta.length(), ServiceUtils.getCameraReadStatus(result.replaceAll(ConfigParams.PIC_Sta, "").trim()));
+            }
+            else if (result.contains(ConfigParams.PIC_Send_Sta1))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Send_Sta1) + PIC_Send_Sta1.length(), ServiceUtils.getImgSendStatus(result.replaceAll(ConfigParams.PIC_Send_Sta1, "").trim()));
+            }
+            else if (result.contains(ConfigParams.PIC_Send_Sta2))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Send_Sta2) + PIC_Send_Sta2.length(), ServiceUtils.getImgSendStatus(result.replaceAll(ConfigParams.PIC_Send_Sta2, "").trim()));
+            }
+            else if (result.contains(ConfigParams.PIC_Send_Sta3))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Send_Sta3) + PIC_Send_Sta3.length(), ServiceUtils.getImgSendStatus(result.replaceAll(ConfigParams.PIC_Send_Sta3, "").trim()));
+            }
+            else if (result.contains(ConfigParams.PIC_Send_Sta4))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Send_Sta4) + PIC_Send_Sta4.length(), ServiceUtils.getImgSendStatus(result.replaceAll(ConfigParams.PIC_Send_Sta4, "").trim()));
+            }
+            else if (result.contains(ConfigParams.PIC_Co1))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Co1) + PIC_Co1.length(), result.replaceAll(ConfigParams.PIC_Co1, "").trim());
+            }
+            else if (result.contains(ConfigParams.PIC_Co2))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Co2) + PIC_Co2.length(), result.replaceAll(ConfigParams.PIC_Co2, "").trim());
+            }
+            else if (result.contains(ConfigParams.PIC_Co3))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Co3) + PIC_Co3.length(), result.replaceAll(ConfigParams.PIC_Co3, "").trim());
+            }
+            else if (result.contains(ConfigParams.PIC_Co4))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Co4) + PIC_Co4.length(), result.replaceAll(ConfigParams.PIC_Co4, "").trim());
+            }
+            else if (result.contains(ConfigParams.PIC_Fr1))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Fr1) + PIC_Fr1.length(), result.replaceAll(ConfigParams.PIC_Fr1, "").trim());
+            }
+            else if (result.contains(ConfigParams.PIC_Fr2))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Fr2) + PIC_Fr2.length(), result.replaceAll(ConfigParams.PIC_Fr2, "").trim());
+            }
+            else if (result.contains(ConfigParams.PIC_Fr3))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Fr3) + PIC_Fr3.length(), result.replaceAll(ConfigParams.PIC_Fr3, "").trim());
+            }
+            else if (result.contains(ConfigParams.PIC_Fr4))
+            {
+                currentSB.insert(currentSB.indexOf(PIC_Fr4) + PIC_Fr4.length(), result.replaceAll(ConfigParams.PIC_Fr4, "").trim());
+            }
+
+            resultTextView.setText(currentSB.toString());
+        }
+        else if (content.equals(ConfigParams.ReadRunStatus3))
+        {//传感器状态查询
+            if (result.contains(ConfigParams.Equipment_Status))
+            {
+                String statusValues = ServiceUtils.getStr(ServiceUtils.hexString2binaryString(result.replaceAll(ConfigParams.Equipment_Status, "").trim()), 32);
+                if (TextUtils.isEmpty(statusValues))
+                {
+                    return;
+                }
+
+                for (int i = statusValues.length() - 1; i > 16; i--)
+                {
+                    ServiceUtils.getSingleStatus(currentSB, i, statusValues.charAt(i));
+                }
+            }
+            else if (result.contains(ConfigParams.EQUIP_Reicv_count))
+            {
+                currentSB.insert(currentSB.indexOf(EQUIP_Reicv_count) + EQUIP_Reicv_count.length(), result.replaceAll(ConfigParams.EQUIP_Reicv_count, "").trim());
+            }
+            else if (result.contains(ConfigParams.EQUIP_Reicv))
+            {
+                currentSB.insert(currentSB.indexOf(EQUIP_Reicv) + EQUIP_Reicv.length(), "\n" + ServiceUtils.get485Data(result.replaceAll(ConfigParams.EQUIP_Reicv, "")));
+            }
+
+            resultTextView.setText(currentSB.toString());
+        }
+        else if (content.equals(ConfigParams.ReadImage))
+        {//图片回放
+            ToastUtil.showToastLong("获取图片成功！");
+            SocketUtil.stopReadRunTimeData();
+            showImageView();
+        }
+    }
+
+    private void showImageView()
+    {
+        if (!(new File(ConfigParams.ImagePath, ConfigParams.ImageName).exists()))
+        {
+            Log.i(TAG, "image is empty!!!");
+            return;
+        }
+
+        if (receImageView != null)
+        {
+            if (readImage())
+            {
+                Bitmap bm = ImageTools.getPhotoFromSDCard(ConfigParams.ImagePath, ConfigParams.ImageName);
+                if (bm != null)
+                {
+                    receImageView.setImageBitmap(bm);
+                    receImageView.invalidate();
+                }
+            }
+            else
+            {
+                ToastUtil.showToastLong("图片不存在！");
+            }
+        }
+
+        ProgressBarUtil.dismissProgressDialog();
+    }
+
+    private boolean readImage()
+    {
+        try
+        {
+            Log.i(TAG, "readImage::");
+            FileInputStream fis = new FileInputStream(new File(ConfigParams.ImagePath + ConfigParams.ImageName));
+            // FileOutputStream fos = new FileOutputStream(new
+            // File(ConfigParams.ImagePath + "/rtu1.jpg"));
+
+            byte[] bytes = new byte[1024];
+            if (fis.read(bytes) < 0)
+            {
+                return false;
+            }
+            // while ((next = fis.read(bytes)) > 0)
+            // {
+            // // fos.write(bytes, 0, next);
+            // // Log.i(TAG, "fis.read(bytes)" + fis.read(bytes));
+            // Log.i(TAG, "bytes" + Arrays.toString(bytes));
+            //
+            // }
+
+            // fos.flush();
+            fis.close();
+            // fos.close();
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public void setData()
+    {
+
+        currentSB.delete(0, currentSB.length());
+        receLayout.setVisibility(View.GONE);
+        control.setVisibility(View.GONE);
+        rainValue.setVisibility(View.GONE);
+        resultScroll.setVisibility(View.VISIBLE);
+        if (search == UiEventEntry.TAB_SEARCH_BASIC)
+        {
+            rainValue.setVisibility(View.VISIBLE);
+            SocketUtil.sendData(ConfigParams.Readdata);
+//            currentSB.append(TotalRainVal);
+//            currentSB.append(MM);
+//            currentSB.append("\n");
+            currentSB.append(PrecentRainVal);
+            currentSB.append(MM);
+            currentSB.append("\n");
+            currentSB.append(WaterLevel_R);
+            currentSB.append(M);
+            currentSB.append("\n");
+            currentSB.append(WaterLevel_A);
+            currentSB.append(M);
+            currentSB.append("\n");
+            currentSB.append(Temperature_G);
+            currentSB.append(C);
+            currentSB.append("\n");
+            currentSB.append(Temperature);
+            currentSB.append(C);
+            currentSB.append("\n");
+            currentSB.append(BatteryVolts);
+            currentSB.append(V);
+            currentSB.append("\n");
+            currentSB.append(SHIDIANBatteryVolts);
+            currentSB.append(V);
+            currentSB.append("\n");
+
+            currentSB.append(Water_Flow);
+            currentSB.append(M3S);
+            currentSB.append("\n");
+            currentSB.append(Cumulative_Flow);
+            currentSB.append(M3);
+            currentSB.append("\n");
+            currentSB.append(Cumulative_Flow1);
+            currentSB.append(M3);
+            currentSB.append("\n");
+            currentSB.append(Cumulative_Flow2);
+            currentSB.append(M3);
+            currentSB.append("\n");
+            currentSB.append(Flow_Speed);
+            currentSB.append(MS);
+            currentSB.append("\n");
+            currentSB.append(Cumulative_Flow6);
+            currentSB.append(M3);
+            currentSB.append("\n");
+            currentSB.append(TRB);
+            currentSB.append("NTU");
+            currentSB.append("\n");
+//
+            currentSB.append(WindSpeed);
+            currentSB.append(MS);
+            currentSB.append("\n");
+            currentSB.append(WindDirection);
+            currentSB.append("°");
+            currentSB.append("\n");
+            currentSB.append(Temperature_A);
+            currentSB.append(C);
+            currentSB.append("\n");
+            currentSB.append(humidity);
+            currentSB.append("%RH");
+            currentSB.append("\n");
+            currentSB.append(Press);
+            currentSB.append("KPa");
+            currentSB.append("\n");
+        }
+        else if (search == UiEventEntry.TAB_SEARCH_GPRS)
+        {
+            control.setVisibility(View.VISIBLE);
+            SocketUtil.sendData(ConfigParams.ReadRunStatus1);
+            currentSB.append(GPRS_CSQ);
+            currentSB.append("\n");
+            currentSB.append(GPRS_Status);
+            currentSB.append("\n");
+            currentSB.append(GPRS_SMS_Handle_Status_display);
+            currentSB.append("\n");
+            currentSB.append(SOCKET_STATUS_1);
+            currentSB.append("\n");
+            currentSB.append(SOCKET_STATUS_2);
+            currentSB.append("\n");
+            currentSB.append(SOCKET_STATUS_3);
+            currentSB.append("\n");
+            currentSB.append(SOCKET_STATUS_4);
+            currentSB.append("\n");
+            currentSB.append(BEIDOU_CSQ);
+            currentSB.append("\n");
+            currentSB.append("\n");
+            currentSB.append("\n");
+            currentSB.append("\n");
+            currentSB.append(Send_informa_time_tm1);
+            currentSB.append("\n");
+            currentSB.append(Send_inf_chanel1);
+            currentSB.append("\n");
+            currentSB.append(Send_informa_time_tm2);
+            currentSB.append("\n");
+            currentSB.append(Send_inf_chanel2);
+            currentSB.append("\n");
+            currentSB.append(Send_informa_time_tm3);
+            currentSB.append("\n");
+            currentSB.append(Send_inf_chanel3);
+            currentSB.append("\n");
+            currentSB.append(Send_informa_time_tm4);
+            currentSB.append("\n");
+            currentSB.append(Send_inf_chanel4);
+            currentSB.append("\n");
+        }
+        else if (search == UiEventEntry.TAB_SEARCH_CAMERA)
+        {
+            control.setVisibility(View.VISIBLE);
+            SocketUtil.sendData(ConfigParams.ReadRunStatus2);
+            currentSB.append(PIC_Sta);
+            currentSB.append("\n");
+            currentSB.append(PIC_Send_Sta1);
+            currentSB.append("\n");
+            currentSB.append(PIC_Send_Sta2);
+            currentSB.append("\n");
+            currentSB.append(PIC_Send_Sta3);
+            currentSB.append("\n");
+            currentSB.append(PIC_Send_Sta4);
+            currentSB.append("\n");
+            currentSB.append(PIC_Co1);
+            currentSB.append("\n");
+            currentSB.append(PIC_Co2);
+            currentSB.append("\n");
+            currentSB.append(PIC_Co3);
+            currentSB.append("\n");
+            currentSB.append(PIC_Co4);
+            currentSB.append("\n");
+            currentSB.append(PIC_Fr1);
+            currentSB.append("\n");
+            currentSB.append(PIC_Fr2);
+            currentSB.append("\n");
+            currentSB.append(PIC_Fr3);
+            currentSB.append("\n");
+            currentSB.append(PIC_Fr4);
+            currentSB.append("\n");
+        }
+        else if (search == UiEventEntry.TAB_SEARCH_SENSOR)
+        {
+            SocketUtil.sendData(ConfigParams.ReadRunStatus3);
+            currentSB.append(Equipment_Status);
+            currentSB.append("\n");
+            currentSB.append(STATUS1);
+            currentSB.append("\n");
+            currentSB.append(STATUS2);
+            currentSB.append("\n");
+            currentSB.append(STATUS3);
+            currentSB.append("\n");
+            currentSB.append(STATUS4);
+            currentSB.append("\n");
+            currentSB.append(STATUS5);
+            currentSB.append("\n");
+            currentSB.append(STATUS6);
+            currentSB.append("\n");
+            currentSB.append(STATUS7);
+            currentSB.append("\n");
+            currentSB.append(STATUS8);
+            currentSB.append("\n");
+            currentSB.append(STATUS9);
+            currentSB.append("\n");
+            currentSB.append(STATUS10);
+            currentSB.append("\n");
+            currentSB.append(STATUS11);
+            currentSB.append("\n");
+            currentSB.append(STATUS12);
+            currentSB.append("\n");
+            currentSB.append(STATUS13);
+            currentSB.append("\n");
+            currentSB.append(STATUS14);
+            currentSB.append("\n");
+            currentSB.append(STATUS15);
+            currentSB.append("\n");
+            currentSB.append(EQUIP_Reicv_count);
+            currentSB.append("\n");
+            currentSB.append(EQUIP_Reicv);
+            currentSB.append("\n");
+        }
+        else if (search == UiEventEntry.TAB_SEARCH_READ_IMAGE)
+        {//图片回放
+            receLayout.setVisibility(View.VISIBLE);
+            resultScroll.setVisibility(View.GONE);
+
+//            Drawable d = getResources().getDrawable(R.mipmap.small_rtu1);
+//            receImageView.setImageBitmap(ImageTools.drawableToBitmap(d));
+        }
+        if (resultTextView != null && currentSB.length() > 0)
+        {
+            resultTextView.setText(currentSB.toString());
+        }
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        switch (v.getId())
+        {
+            case R.id.update_button:
+                updateData();
+                break;
+            case R.id.stop_button:
+                stopUpdate();
+                break;
+            case R.id.rainvalue_button:
+                String rain = rainValueEdittext.getText().toString().trim();
+                if (TextUtils.isEmpty(rain))
+                {
+                    ToastUtil.showToastLong("累计雨量值不能为空！");
+                    return;
+                }
+                SocketUtil.sendData(ConfigParams.TotalRainVal + rain);
+                break;
+
+            default:
+                break;
+
+        }
+    }
+}

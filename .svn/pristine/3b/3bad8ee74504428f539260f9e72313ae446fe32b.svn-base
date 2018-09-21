@@ -1,0 +1,155 @@
+package com.vcontrol.vcontroliot.fragment;
+
+import android.graphics.drawable.PaintDrawable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+
+import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.adapter.CustomAdapter;
+import com.vcontrol.vcontroliot.log.Log;
+import com.vcontrol.vcontroliot.util.DensityUtil;
+import com.vcontrol.vcontroliot.util.EventNotifyHelper;
+import com.vcontrol.vcontroliot.util.ToastUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by Vcontrol on 2016/11/22.
+ */
+
+public class RTUSearchFragment extends BaseFragment implements EventNotifyHelper.NotificationCenterDelegate, View.OnClickListener, PopupWindow.OnDismissListener
+{
+
+    private static final String TAG = RTUSearchFragment.class.getSimpleName();
+    private LinearLayout searchLayout;
+    private ImageView iconImageView;
+
+    private ListView searchListView;
+    private TextView searchTextView;
+
+    private CustomAdapter searchAdapter;
+    private String search = "";
+
+    @Override
+    public int getLayoutView()
+    {
+        return R.layout.fragment_rtu_detail;
+    }
+
+    @Override
+    public void initComponentViews(View view)
+    {
+
+        searchLayout = (LinearLayout) view.findViewById(R.id.ll_setting);
+        iconImageView = (ImageView) view.findViewById(R.id.icon_default);
+        searchTextView = (TextView) view.findViewById(R.id.set_textview);
+        searchTextView.setText(getString(R.string.basic_search));
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        Log.debug(TAG, "onResume::");
+
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+    }
+
+    @Override
+    public void initData()
+    {
+
+    }
+
+    @Override
+    public void setListener()
+    {
+        searchLayout.setOnClickListener(this);
+
+    }
+
+
+    public void showPopupWindow(View anchor)
+    {
+        final PopupWindow popupWindow = new PopupWindow(getActivity());
+        View contentView = LayoutInflater.from(getActivity()).inflate(
+                R.layout.windows_popupwindow, null);
+        searchListView = (ListView) contentView.findViewById(R.id.set_listview);
+        final List<String> searchList = initSearchData();
+        searchAdapter = new CustomAdapter(getActivity(), searchList);
+        searchListView.setAdapter(searchAdapter);
+        searchListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id)
+            {
+                search = searchList.get(position);
+                if (parent.getAdapter() instanceof CustomAdapter)
+                {
+                    popupWindow.dismiss();
+                    ToastUtil.showToastLong(searchList.get(position));
+                }
+                searchTextView.setText(search);
+            }
+        });
+        popupWindow.setOnDismissListener(this);
+        popupWindow.setWidth(DensityUtil.getDisplayWidthPixels(getActivity()));
+        popupWindow.setHeight(DensityUtil.getDisplayHeightPixels(getActivity()));
+        popupWindow.setContentView(contentView);
+        popupWindow.setFocusable(true);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setBackgroundDrawable(new PaintDrawable());
+        popupWindow.showAsDropDown(anchor);
+
+    }
+
+
+    private List<String> initSearchData()
+    {
+        List<String> l = new ArrayList<String>();
+        l.add(getString(R.string.basic_search));
+        l.add(getString(R.string.comm_status_search));
+        l.add(getString(R.string.camera_search));
+        l.add(getString(R.string.sensor_status_search));
+        l.add(getString(R.string.read_image));
+        return l;
+    }
+
+
+    @Override
+    public void didReceivedNotification(int id, Object... args)
+    {
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id.ll_setting:
+                iconImageView.setImageResource(R.mipmap.icon_sel);
+                showPopupWindow(searchLayout);
+                break;
+        }
+    }
+
+    @Override
+    public void onDismiss()
+    {
+        iconImageView.setImageResource(R.mipmap.icon_default);
+    }
+}

@@ -1,0 +1,396 @@
+package com.vcontrol.vcontroliot.act;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Path;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.VcontrolApplication;
+import com.vcontrol.vcontroliot.adapter.BaseRecyclerAdapter;
+import com.vcontrol.vcontroliot.log.Log;
+import com.vcontrol.vcontroliot.util.ConfigParams;
+import com.vcontrol.vcontroliot.util.EventNotifyHelper;
+import com.vcontrol.vcontroliot.util.FTPManager;
+import com.vcontrol.vcontroliot.util.ImageLoader;
+import com.vcontrol.vcontroliot.util.Images;
+import com.vcontrol.vcontroliot.util.PhotoView;
+import com.vcontrol.vcontroliot.util.ServiceUtils;
+import com.vcontrol.vcontroliot.util.ToastUtil;
+import com.vcontrol.vcontroliot.util.UiEventEntry;
+
+import org.apache.commons.net.ftp.FTPFile;
+
+import java.io.File;
+import java.util.ArrayList;
+
+/**
+ * Created by linxi on 2017/4/18.
+ */
+
+public class FTPImageActivity extends BaseActivity implements EventNotifyHelper.NotificationCenterDelegate
+{
+
+    private static final String TAG = FTPImageActivity.class.getSimpleName();
+    private RecyclerView ftpImageRecyclerView;
+    private ArrayList<FtpImageModel> items;
+    private FtpImageAdapter ftpImageAdapter;
+    private ImageLoader ftpImageLoader;
+    private GridView ftpGridView;
+    private FTPFile[] files;
+    private ListImgItemAdaper adapter;
+    private com.nostra13.universalimageloader.core.ImageLoader imageLoader;
+
+
+    @Override
+    public int getLayoutView()
+    {
+        return R.layout.activity_ftp_image;
+    }
+
+    @Override
+    public void initViewData()
+    {
+        showToolbar();
+        setTitleName("图片查询");
+        setTitleMain("返回");
+    }
+
+    @Override
+    public void initComponentViews()
+    {
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_IMAGE_LIST);
+        VcontrolApplication.getInstance().addActivity(this);
+        VcontrolApplication.setCurrentContext(getApplicationContext());
+        ToastUtil.setCurrentContext(getApplication());
+        ftpImageRecyclerView = (RecyclerView) findViewById(R.id.ftp_imget_recylerview);
+        ftpGridView = (GridView) findViewById(R.id.ftp_image_gridview);
+
+        ftpImageLoader = ImageLoader.getInstance(3, ImageLoader.Type.LIFO);
+        imageLoader = com.nostra13.universalimageloader.core.ImageLoader.getInstance();
+        imageLoader.init(ImageLoaderConfiguration.createDefault(FTPImageActivity.this));
+        initData();
+
+        ftpImageRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ftpImageRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        ftpImageRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        ftpImageRecyclerView.setAdapter(ftpImageAdapter);
+
+//        String[] mUrlStrs = Images.imageThumbUrls;
+//        if (files != null)
+//        {
+//            adapter = new ListImgItemAdaper(getApplicationContext(), 0,
+//                    files);
+//            ftpGridView.setAdapter(adapter);
+//        }
+
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.READ_IMAGE_LIST);
+    }
+
+    private void initData()
+    {
+
+        File image = new File(ConfigParams.FtpImagePath);
+        if (!image.exists())
+        {
+            image.mkdir();
+        }
+
+
+        items = new ArrayList<>();
+        ftpImageAdapter = new FtpImageAdapter(getApplicationContext());
+
+        ServiceUtils.getSocketThreads().execute(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+
+                    Log.info(TAG,"initData::");
+                    FTPManager.getFtpManager().connect();
+
+//                            Thread.sleep(1000);
+                    FTPFile[] fileList = FTPManager.getFtpManager().getFtpFileList("/");
+                    Log.info(TAG, fileList.length + "");
+                    if (fileList.length > 0)
+                    {
+                        Log.info(TAG, fileList[0].getName());
+                        FTPManager.getFtpManager().downloadFile(ConfigParams.ImagePath, "/" + fileList[0].getName());
+                    }
+                    files = fileList;
+//                    for (FTPFile file : fileList)
+//                    {
+//
+//
+////                        FtpImageModel ftpImageModel = new FtpImageModel();
+////                        ftpImageModel.name = file.getName();
+////                        items.add(ftpImageModel);
+//                        Log.info(TAG, file.getName());
+//                    }
+                    EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_IMAGE_LIST);
+                } catch (Exception e)
+                {
+                    Log.exception(TAG, e);
+                }
+            }
+        });
+
+
+        ftpGridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id)
+            {
+
+
+                ServiceUtils.getSocketThreads().execute(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        try
+                        {
+                            String imagePath = ConfigParams.FtpImagePath + files[position].getName();
+                            File imageFile = new File(imagePath);
+                            if (imageFile.exists())
+                            {
+                                ToastUtil.showToastLong("图片已存在！");
+                                return;
+                            }
+
+                            Log.info(TAG, "position:" + position + ",imagePath:" + imagePath);
+                            FTPManager.getFtpManager().downloadFile(ConfigParams.FtpImagePath, "/" + files[position].getName());
+                            EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_IMAGE_LIST, position, imagePath);
+                        } catch (Exception e)
+                        {
+                            Log.exception(TAG, e);
+                        }
+                    }
+                });
+
+
+            }
+        });
+    }
+
+
+    private class ListImgItemAdaper extends ArrayAdapter<FTPFile>
+    {
+
+        public ListImgItemAdaper(Context context, int resource, FTPFile[] datas)
+        {
+            super(context, 0, datas);
+            android.util.Log.e("TAG", "ListImgItemAdaper");
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
+            ViewHolderGri holder = null;
+            if (convertView == null)
+            {
+                convertView = getLayoutInflater().inflate(
+                        R.layout.item_ftp_image, parent, false);
+                holder = new ViewHolderGri(convertView);
+                convertView.setTag(holder);
+            }
+            else
+            {
+                holder = ((ViewHolderGri) convertView.getTag());
+            }
+
+
+            String name = getItem(position).getName();
+            holder.item_tv.setText(name);
+            File imageFile = new File(ConfigParams.FtpImagePath + name);
+            if (imageFile.exists())
+            {
+                imageLoader.displayImage("file:///" + ConfigParams.FtpImagePath + name,holder.item_iv);
+//                Bitmap bm = BitmapFactory.decodeFile(ConfigParams.FtpImagePath + name);
+//                holder.item_iv.setImageBitmap(bm);
+            }
+            else
+            {
+                holder.item_iv.setImageResource(R.mipmap.pictures_no);
+            }
+//            ftpImageLoader.loadImage("/" + name,getItem(position), imageview, true);
+            return convertView;
+        }
+
+        //关键方法，更新指定Item
+        public void updateItem(int refreshItemPostion, final View view, String imagePath)
+        {
+            if (refreshItemPostion > files.length)
+            {
+                ToastUtil.showToastLong("超出列表范围");
+                return;
+            }
+
+            if (TextUtils.isEmpty(imagePath))
+            {
+                return;
+            }
+
+            ImageView imageView = (ImageView) view.findViewById(R.id.ftp_imageview);
+
+            File file = new File(imagePath);
+            if (file.exists())
+            {
+                imageLoader.displayImage("file:///" + imagePath,imageView);
+//                Bitmap bm = BitmapFactory.decodeFile(imagePath);
+//                imageView.setImageBitmap(bm);
+            }
+            else
+            {
+                imageView.setImageResource(R.mipmap.pictures_no);
+            }
+        }
+
+
+    }
+
+    public class ViewHolderGri
+    {
+        private PhotoView item_iv;
+        private TextView item_tv;
+
+        public ViewHolderGri(View v)
+        {
+            item_iv = ((PhotoView) v.findViewById(R.id.ftp_imageview));
+            item_tv = ((TextView) v.findViewById(R.id.image_name));
+        }
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item)
+    {
+        return false;
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        switch (v.getId())
+        {
+            case R.id.title_main:
+                onBackPressed();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void didReceivedNotification(int id, Object... args)
+    {
+        if (id == UiEventEntry.READ_IMAGE_LIST)
+        {
+            if (adapter != null && files != null && ftpGridView != null)
+            {
+                int position = (int) args[0];
+                String imagePath = (String) args[1];
+                Log.info(TAG, "position:" + position + ",imagePath:" + imagePath);
+                View childAt = ftpGridView.getChildAt(position
+                        - ftpGridView.getFirstVisiblePosition());
+                adapter.updateItem(position, childAt, imagePath);
+
+            }
+            else
+            {
+                adapter = new ListImgItemAdaper(getApplicationContext(), 0,
+                        files);
+                ftpGridView.setAdapter(adapter);
+            }
+
+            if (ftpImageAdapter != null)
+            {
+//                ftpImageAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+
+    private class FtpImageAdapter extends BaseRecyclerAdapter<FtpImageModel, ViewHolder>
+    {
+        public FtpImageAdapter(Context context)
+        {
+            super(context, items);
+        }
+
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        {
+            View view = inflater.inflate(R.layout.item_ftp_image_name, parent, false);
+
+            return new ViewHolder(view);
+        }
+
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position)
+        {
+            holder.bind(position, items.get(position));
+        }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    {
+
+        TextView imageName;
+        private int position;
+
+        public ViewHolder(View itemView)
+        {
+            super(itemView);
+            imageName = (TextView) itemView.findViewById(R.id.image_name);
+        }
+
+        public void bind(int position, FtpImageModel model)
+        {
+            this.position = position;
+            imageName.setText(model.name);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v)
+        {
+//            if (position == 1) startActivity(new Intent(MainActivity.this, RxActivity.class));
+//            if (position == 3) startActivity(new Intent(MainActivity.this, OkHttpActivity.class));
+//            if (position == 4) startActivity(new Intent(MainActivity.this, JsonRequestActivity.class));
+//            if (position == 5) startActivity(new Intent(MainActivity.this, FileDownloadActivity.class));
+//            if (position == 6) startActivity(new Intent(MainActivity.this, FormUploadActivity.class));
+//            if (position == 7) startActivity(new Intent(MainActivity.this, CacheDemoActivity.class));
+//            if (position == 9) startActivity(new Intent(MainActivity.this, DownloadActivity.class));
+//            if (position == 10) startActivity(new Intent(MainActivity.this, UploadActivity.class));
+        }
+    }
+
+    private class FtpImageModel
+    {
+        public String name;
+    }
+}

@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f4f4f4"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@mipmap/top_shoda1" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:id="@+id/layout_image"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1.25"
+                android:background="@mipmap/banner_image2"
+                android:elevation="5dp"
+                android:orientation="horizontal"></LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_button1"
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/layout_image"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@mipmap/client_down"
+                android:elevation="5dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/layout_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@mipmap/rectangle" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="9dp"
+                        android:text="@string/Demonstration_platform"
+                        android:textColor="#323232"
+                        android:textSize="14dp" />
+
+                    <ImageButton
+                        android:id="@+id/image_down"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/x480"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginTop="3dp"
+                        android:background="@null"
+                        android:clickable="true"
+                        android:contentDescription="@null"
+                        android:padding="10dp"
+                        android:src="@mipmap/arrow_down" />
+
+                </LinearLayout>
+
+                <RadioGroup
+                    android:id="@+id/radio_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/layout_one"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <RadioButton
+                        android:id="@+id/valve_control"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@android:color/transparent"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@drawable/valve_control"
+                        android:gravity="center"
+                        android:text="@string/Valve_Platform"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/camera"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/camera"
+                        android:gravity="center"
+                        android:text="@string/Camera_platform"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/gate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/gate"
+                        android:gravity="center"
+                        android:text="@string/Gate_demo_platform"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+                </RadioGroup>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_button2"
+                android:layout_width="match_parent"
+                android:layout_height="275dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/layout_image"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@mipmap/client_small_down"
+                android:elevation="5dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/layout_tow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@mipmap/rectangle" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="9dp"
+                        android:text="@string/Demonstration_platform"
+                        android:textColor="#323232"
+                        android:textSize="14dp" />
+
+                    <ImageButton
+                        android:id="@+id/image_up"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/x480"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginTop="3dp"
+                        android:background="@null"
+                        android:contentDescription="@null"
+                        android:padding="10dp"
+                        android:src="@mipmap/arrow" />
+
+                </LinearLayout>
+
+                <RadioGroup
+                    android:id="@+id/radio_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/layout_tow"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <RadioButton
+                        android:id="@+id/valve_control2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/valve_control"
+                        android:gravity="center"
+                        android:text="@string/Valve_Platform"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/camera2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/camera"
+                        android:gravity="center"
+                        android:text="@string/Camera_platform"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/gate2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/gate"
+                        android:gravity="center"
+                        android:text="@string/Gate_demo_platform"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+                </RadioGroup>
+
+                <RadioGroup
+                    android:id="@+id/radio_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/radio_2"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <RadioButton
+                        android:id="@+id/Other_platforms"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.28"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/other"
+                        android:gravity="center"
+                        android:text="@string/Other_platforms"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="0.36"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/qtkb"
+                        android:enabled="false"
+                        android:gravity="center"
+                        android:text="       "
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/qtkb"
+                        android:enabled="false"
+                        android:gravity="center"
+                        android:text="      "
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_button3"
+                android:layout_width="match_parent"
+                android:layout_height="155dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/layout_button1"
+                android:layout_marginBottom="12dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@mipmap/client_other_down"
+                android:elevation="5dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/layout_three"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@mipmap/rectangle" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="9dp"
+                        android:text="@string/other_service"
+                        android:textColor="#323232"
+                        android:textSize="14dp" />
+
+                    <ImageButton
+                        android:id="@+id/image_down2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/x480"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginTop="3dp"
+                        android:background="@null"
+                        android:clickable="true"
+                        android:contentDescription="@null"
+                        android:padding="10dp"
+                        android:src="@mipmap/arrow_down" />
+
+                </LinearLayout>
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/layout_one"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <RadioButton
+                        android:id="@+id/yun"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/yun"
+                        android:gravity="center"
+                        android:text="@string/cloud_platform"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <com.vcontrol.vcontroliot.model.TipButton
+                        android:id="@+id/message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/message"
+                        android:gravity="center"
+                        android:text="@string/Notification_message"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/guanwang"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/guanwang"
+                        android:gravity="center"
+                        android:text="@string/Official_website"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/weixin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/weixin"
+                        android:gravity="center"
+                        android:text="@string/public_platform"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_button4"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/layout_image"
+                android:layout_marginBottom="12dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@mipmap/client_big_down"
+                android:elevation="5dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/layout_four"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@mipmap/rectangle" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="9dp"
+                        android:text="@string/other_service"
+                        android:textColor="#323232"
+                        android:textSize="14dp" />
+
+                    <ImageButton
+                        android:id="@+id/image_up2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/x480"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginTop="3dp"
+                        android:background="@null"
+                        android:clickable="true"
+                        android:contentDescription="@null"
+                        android:padding="10dp"
+                        android:src="@mipmap/arrow" />
+
+                </LinearLayout>
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/layout_one"
+                    android:layout_marginTop="15dp"
+                    android:descendantFocusability="afterDescendants"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <RadioButton
+                        android:id="@+id/yun2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/yun"
+                        android:gravity="center"
+                        android:text="@string/cloud_platform"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <com.vcontrol.vcontroliot.model.TipButton
+                        android:id="@+id/message2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/message"
+                        android:gravity="center"
+                        android:text="@string/Notification_message"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/guanwang2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/guanwang"
+                        android:gravity="center"
+                        android:text="@string/Official_website"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/weixin2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/weixin"
+                        android:gravity="center"
+                        android:text="@string/public_platform"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+                </RadioGroup>
+
+                <RadioGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/layout_one"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <RadioButton
+                        android:id="@+id/other"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.78"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/others"
+                        android:gravity="center"
+                        android:text="@string/other"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/shouhou"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="0.78"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/shouhouzhichi"
+                        android:gravity="center"
+                        android:text="@string/after_sales_support"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:id="@+id/project_list"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="0.78"
+                        android:button="@null"
+                        android:checked="false"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/project_list"
+                        android:gravity="center"
+                        android:text="@string/Project_list"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_weight="1"
+                        android:button="@null"
+                        android:drawablePadding="16dp"
+                        android:drawableTop="@mipmap/qtkb"
+                        android:enabled="false"
+                        android:gravity="center"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+                </RadioGroup>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</LinearLayout>

@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@mipmap/top_shoda1" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imageView">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/layout_image"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x280"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_marginTop="8dp"
+                android:background="@mipmap/sys_user"
+                android:elevation="5dp"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:background="@mipmap/avatar" />
+
+                <Button
+                    android:id="@+id/login_button"
+                    android:layout_width="@dimen/x400"
+                    android:layout_height="@dimen/x70"
+                    android:layout_below="@id/imageView2"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="13dp"
+                    android:background="@mipmap/login_button" />
+
+                <TextView
+                    android:id="@+id/phone_string"
+                    android:layout_width="@dimen/x320"
+                    android:layout_height="@dimen/x70"
+                    android:layout_below="@id/imageView2"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="13dp"
+                    android:freezesText="true"
+                    android:gravity="center"
+                    android:textColor="#323232"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_image1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/layout_image"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_marginTop="9dp"
+                android:background="@mipmap/sys_rtu"
+                android:elevation="5dp"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:id="@+id/switch_layout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="WRU-1901"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_button1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
+                        android:checked="true"
+                        android:thumb="@drawable/thumb"
+                        android:track="@drawable/track" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="WRU-2100"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_button2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
+                        android:checked="true"
+                        android:thumb="@drawable/thumb"
+                        android:track="@drawable/track" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="WRU-2800"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_button3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
+                        android:checked="true"
+                        android:thumb="@drawable/thumb"
+                        android:track="@drawable/track" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="WRU-2801"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_button4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
+                        android:checked="true"
+                        android:thumb="@drawable/thumb"
+                        android:track="@drawable/track" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="RTU-2800"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_button5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
+                        android:checked="true"
+                        android:thumb="@drawable/thumb"
+                        android:track="@drawable/track" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="RTU-2801"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_button6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
+                        android:checked="true"
+                        android:thumb="@drawable/thumb"
+                        android:track="@drawable/track" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="VCM-2000"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_button7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
+                        android:checked="true"
+                        android:thumb="@drawable/thumb"
+                        android:track="@drawable/track" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="LRU-3000"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_button8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
+                        android:checked="true"
+                        android:thumb="@drawable/thumb"
+                        android:track="@drawable/track" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="LRU-9000"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_button9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
+                        android:checked="true"
+                        android:thumb="@drawable/thumb"
+                        android:track="@drawable/track" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="LRU-6000"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <Switch
+                        android:id="@+id/switch_button10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="12dp"
+                        android:checked="true"
+                        android:thumb="@drawable/thumb"
+                        android:track="@drawable/track" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_image2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/layout_image1"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_marginTop="9dp"
+                android:background="@mipmap/sys_down_version"
+                android:elevation="5dp"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x120"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/app_ver"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="13dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="@string/Version_Information"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/version"
+                        android:layout_width="@dimen/x210"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="6dp"
+                        android:gravity="center"
+                        android:textColor="#919191"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x120"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/app_ver1"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="left"
+                        android:layout_marginLeft="2dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="@string/Check_updates"
+                        android:textColor="#323232"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/version1"
+                        android:layout_width="@dimen/x210"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="7.5dp"
+                        android:gravity="center"
+                        android:textColor="#919191"
+                        android:textSize="10sp" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_image3"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x100"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@id/layout_image3"
+                android:layout_marginBottom="9dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_marginTop="9dp"
+                android:background="@mipmap/drop_back"
+                android:elevation="5dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <Button
+                    android:id="@+id/drop_out"
+                    android:layout_width="@dimen/x330"
+                    android:layout_height="@dimen/x64"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/x18"
+                    android:background="@mipmap/drop_button" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

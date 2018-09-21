@@ -1,0 +1,73 @@
+package com.vcontrol.vcontroliot.util;
+
+import android.content.Context;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.VcontrolApplication;
+
+public class ToastUtil
+{
+    private static Toast mToast;
+    private static Context context;
+
+    public static void setCurrentContext(Context contex)
+    {
+        context = contex;
+    }
+
+    public static void showToastLong(final String content)
+    {
+        if (TextUtils.isEmpty(content))
+        {
+            return;
+        }
+        if (UiUtils.height == 0 || UiUtils.width == 0)
+        {
+            return;
+        }
+        VcontrolApplication.applicationHandler.post(new Runnable()
+        {
+
+            @Override
+            public void run()
+            {
+                cancelToast();
+                LayoutInflater inflater = LayoutInflater.from(context);
+                View layout = inflater.inflate(R.layout.toast, null);
+                ((TextView) layout.findViewById(R.id.toast_textview)).setText(content);
+                mToast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
+                //Toast的Y坐标是屏幕高度的1/3，不会出现不适配的问题
+                mToast.setGravity(Gravity.TOP, 0, UiUtils.height / 2);
+                mToast.setView(layout);
+                mToast.show();
+            }
+        });
+
+    }
+
+    public static void showToastShort(String content)
+    {
+        if (TextUtils.isEmpty(content))
+        {
+            return;
+        }
+        cancelToast();
+        mToast = Toast.makeText(context, content, Toast.LENGTH_SHORT);
+        mToast.show();
+    }
+
+    public static void cancelToast()
+    {
+        if (mToast != null)
+        {
+            mToast.cancel();
+        }
+    }
+
+}

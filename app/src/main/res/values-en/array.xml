@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 0-降水站 1-河道站 2-水库站 3-闸坝站 4-泵站 5-墒情站 6-地下 -->
+    <string-array name="site_type">
+        <item>Precipitation station</item>
+        <item>River Station </item>
+        <item>Reservoir station</item>
+        <item>Sluice dam station</item>
+        <item>Pumping station</item>
+        <item>Soil moisture station</item>
+        <item>Groundwater station</item>
+        <item>Water intake station</item>
+        <item>Drain station</item>
+        <item>500 tons/day or more</item>
+        <item>100~500 tons/day</item>
+        <item>100 tons/day or less</item>
+    </string-array>
+    <string-array name="sensor_type">
+        <item>MPM4780</item>
+        <item>WRU1902 </item>
+        <item>WYS-III</item>
+        <item>DS1300</item>
+        <item>MPM4700</item>
+        <item>MK18+AP701</item>
+        <item>HSWH</item>
+        <item>BRYL Pressure water gauge</item>
+        <item>BR700 Electronic gauge</item>
+    </string-array>
+    <string-array name="lru_num">
+        <item>Valve 1</item>
+        <item>Valve 2</item>
+        <item>Valve 3</item>
+        <item>Valve 4</item>
+        <item>Valve 5</item>
+        <item>Valve 6</item>
+        <item>Valve 7</item>
+    </string-array>
+
+    <string-array name="ground_collect_time">
+        <item>10 minutes</item>
+        <item>1 hours</item>
+        <item>2 hours</item>
+        <item>4 hours</item>
+    </string-array>
+
+    <string-array name="comm_rtu_time">
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hours</item>
+        <item>2 hours</item>
+        <item>4 hours</item>
+    </string-array>
+    <!-- 0-低功耗  1-永在线 -->
+    <string-array name="operation_status">
+        <item>Low power consumption</item>
+        <item>Forever online </item>
+    </string-array>
+
+    <string-array name="customer_select">
+        <item>VControl Technology</item>
+    </string-array>
+
+    <string-array name="tf_time">
+        <item>5s</item>
+        <item>10s</item>
+    </string-array>
+
+    <string-array name="ip_config">
+        <item>DHCP</item>
+        <item>Static state IP</item>
+    </string-array>
+    <string-array name="time_interval">
+        <item>1 minutes</item>
+        <item>2 minutes</item>
+        <item>5 minutes</item>
+        <item>10 minutes </item>
+        <item>15 minutes </item>
+        <item>30 minutes </item>
+        <item>1 hours </item>
+        <item>2 hours </item>
+        <item>3 hours </item>
+        <item>4 hours </item>
+        <item>6 hours </item>
+        <item>8 hours </item>
+        <item>12 hours </item>
+        <item>24 hours </item>
+    </string-array>
+
+    <string-array name="pictime_interval">
+        <item>5 minutes</item>
+        <item>10 minutes </item>
+        <item>15 minutes </item>
+        <item>30 minutes </item>
+        <item>1 hours </item>
+        <item>2 hours </item>
+        <item>3 hours </item>
+        <item>4 hours </item>
+        <item>6 hours </item>
+        <item>8 hours </item>
+        <item>12 hours </item>
+        <item>24 hours </item>
+    </string-array>
+
+    <string-array name="comm_type">
+        <item>Nothing</item>
+        <item>Hydrology</item>
+        <item>Agreement 1</item>
+        <item>Agreement 2</item>
+        <item>Agreement 3</item>
+        <item>Agreement 4</item>
+        <item>Agreement 5</item>
+        <item>Agreement 6</item>
+        <item>Agreement 7</item>
+        <item>Agreement 8</item>
+        <item>Agreement 9</item>
+        <item>Agreement 10</item>
+        <item>Agreement 11</item>
+        <item>Agreement 12</item>
+        <item>Agreement 13</item>
+        <item>Agreement 14</item>
+        <item>Agreement 15</item>
+        <item>Agreement 16</item>
+        <item>Agreement 17</item>
+        <item>Agreement 18</item>
+        <item>Agreement 19</item>
+        <item>Agreement 20</item>
+    </string-array>
+    <string-array name="water_soil_type">
+        <item>Nothing</item>
+        <item>10cm</item>
+        <item>20cm</item>
+        <item>30cm</item>
+        <item>40cm </item>
+        <item>50cm </item>
+        <item>60cm </item>
+        <item>80cm </item>
+        <item>100cm</item>
+    </string-array>
+
+    <string-array name="ratio_array">
+        <item>320*240</item>
+        <item>640*480</item>
+        <item>800*600</item>
+        <item>1024*768</item>
+        <item>1280*960</item>
+        <item>1600*1200</item>
+        <item>2048*1536</item>
+        <item>2592*1944</item>
+        <item>3264*2448</item>
+        <item>Null</item>
+    </string-array>
+
+
+    <string-array name="call_test">
+        <item>Measure</item>
+        <item>Non calling</item>
+    </string-array>
+    <string-array name="channel_main">
+        <item>Disable</item>
+        <item>GPRS</item>
+        <item>GPRS+GSM</item>
+    </string-array>
+    <string-array name="channel_sencond">
+        <item>Disable</item>
+        <item>SMS</item>
+        <item>Big Dipper</item>
+    </string-array>
+    <string-array name="water_select">
+        <item>0-5V</item>
+        <item>0-10V</item>
+        <item>0-20V</item>
+        <item>4-20mA</item>
+    </string-array>
+    <string-array name="water_select_485">
+        <item>Force of energy</item>
+        <item>Mike</item>
+        <item>Old</item>
+        <item>Winsis</item>
+        <item>Dalian Haifeng</item>
+        <item>Huibo</item>
+        <item>Svejk</item>
+        <item>Taiyuan ShangShui</item>
+        <item>Force energy pressure type</item>
+        <item>Gallop Split type</item>
+        <item>Gallop Radar type</item>
+        <item>Haikawa Hiromichi</item>
+        <item>South</item>
+        <item>Mike 4780</item>
+        <item>Geokon</item>
+        <item>OTT</item>
+        <item>Shenyang dry peak</item>
+        <item>yc-cz Water gauge</item>
+        <item>Chongqing Prefecture</item>
+        <item>Winsis float 4800</item>
+        <item>Taiyuangong</item>
+        <item>Bubble level gauge</item>
+        <item>Jingbo</item>
+        <item>Shares</item>
+        <item>Wei Si WYZ-80</item>
+        <item>Taiyuan Water Level Meter</item>
+        <item>BRYL pressure gauge</item>
+        <item>Eagle Radar</item>
+        <item>Yi Li can pressure MODBUS</item>
+        <item>WLZ radar</item>
+        <item>HR8000</item>
+        <item>Hengrui - Pressure Water Level</item>
+        <item>Zhaozhou-MH-CTIR ultrasonic level transmitter</item>
+        <item>Beirui _BRC100 ultrasonic water level gauge</item>
+    </string-array>
+
+    <string-array name="flow_485">
+        <item>Dalian Haifeng</item>
+        <item>Dalian Piercing</item>
+        <item>Tangshan Huizhong</item>
+        <item>Tangshan Meilen</item>
+        <item>Linly Water meter</item>
+        <item>Pasadena acoustic flowmeter</item>
+        <item>Shandong Weiwei micro meter</item>
+        <item>Jinshui In section</item>
+        <item>Gallop Ultrasonic open channel flowmeter</item>
+        <item>Shanghai Kent</item>
+        <item>RQ30</item>
+        <item>Mike</item>
+        <item>sontek Flowmeter</item>
+        <item>WFU-1000</item>
+        <item>Ningbo Youjing</item>
+        <item>Dalian Haifeng ascii</item>
+        <item>RSS flow meter</item>
+        <item>Messence Yongxin flow meter</item>
+        <item>Boida</item>
+        <item>Mike MBMAG</item>
+        <item>Messing time letter flow meter</item>
+        <item>Dalian Rover</item>
+        <item>E+H</item>
+        <item>Haichuan Broadcom</item>
+        <item>Visi Doppler</item>
+        <item>Kaifeng Power</item>
+    </string-array>
+
+    <string-array name="flow_485_new">
+        <item>Dalian Haifeng</item>
+        <item>Dalian Piercing</item>
+        <item>Tangshan Huizhong</item>
+        <item>Tangshan Meilen</item>
+        <item>Linly Water meter</item>
+        <item>Pasadena acoustic flowmeter</item>
+        <item>Shandong Weiwei micro meter</item>
+        <item>Jinshui In section</item>
+        <item>Gallop Ultrasonic open channel flowmeter</item>
+        <item>Shanghai Kent</item>
+        <item>RQ30</item>
+        <item>Mike</item>
+        <item>sontek Flowmeter</item>
+        <item>WFU-1000</item>
+        <item>Ningbo Youjing</item>
+        <item>Dalian Haifeng ascii</item>
+        <item>RSS flow meter</item>
+        <item>Kaifeng open flow L-MAG</item>
+        <item>Shaanxi Yuexing</item>
+        <item>Mike MBMAG</item>
+        <item>Messing time letter flow meter</item>
+        <item>Dalian Rover</item>
+        <item>E+H</item>
+        <item>Haichuan Broadcom</item>
+        <item>Visi Doppler</item>
+        <item>Kaifeng Power</item>
+    </string-array>
+
+    <string-array name="Pressure_manufacturers">
+        <item>Star instrument</item>
+        <item>Kunlun Zhongda</item>
+    </string-array>
+    <string-array name="Water_quality">
+        <item>Tianjian innovative machine</item>
+        <item>Tianjian Innovation</item>
+    </string-array>
+
+    <string-array name="ammeter">
+        <item>DLT645-1997</item>
+        <item>DLT645-2007</item>
+    </string-array>
+
+    <string-array name="weather_param">
+        <item>FWS600 weather station</item>
+    </string-array>
+
+    <string-array name="apn">
+        <item>cmnet</item>
+        <item>3gnet</item>
+        <item>ctnet</item>
+    </string-array>
+
+    <string-array name="Work_status">
+        <item>Self-reporting work status</item>
+        <item>Self-reported work status</item>
+        <item>Query answer work status</item>
+        <item>Debug status</item>
+    </string-array>
+
+    <string-array name="ay_element">
+        <item>Null</item>
+        <item>Water level</item>
+        <item>Gate position</item>
+        <item>Pressure</item>
+        <item>Turbidity</item>
+        <item>Residual chlorine</item>
+        <item>Sensation</item>
+    </string-array>
+
+
+</resources>

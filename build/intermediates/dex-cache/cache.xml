@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/badd04ed6a121d0192af4a2fb006d5da2fa6f374/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="26674000177e45447a0326a6ad84612761199a13">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_4d1fb09e61b8bf6d45462d7a7ac0f9db43641d12.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/io.reactivex/rxjava/1.1.4/3cc424c6eda381bf4aee40dc3ccdecc27b2106aa/rxjava-1.1.4.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="3cc424c6eda381bf4aee40dc3ccdecc27b2106aa">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/rxjava-1.1.4_eebe1463d6f0cb90d68142252d24ac48d718701d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/Downloads/VcontrolPT/app/libs/jcore-android-1.1.9.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d36b4154d952a6f18fd438469929820a6e598127">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/jcore-android-1.1.9_b78788d15a2ddf31d34ced6e525a49fbcfcd7d3c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/4ae67cf0ba7f39540dd778a53839a157799feb82/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_2962ee42d0fbdd5f2b085c2b2301c131b16545a5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/a659784896465a75a0db1ec925914967bed326fb/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="0c6d948e6cb9ea6f535d175fb61ba2930719c0e9">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_2a7cc64c94b2aa01ebaa67e5355f5201f0a910df.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/221dfc8651d2470133e797fc8a79fe6be438661f/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="79452e9bc0e62674c9c65cdcabb4302c946894b5">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_9bad1f6647d795bff1397b1143888748e77ab3c2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/939e67c8738660e7fcb55f503349dcc8130ed912/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="5f2e256c95c7a9ded6576230856001b0b25b3add">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_1e16be49e451ae3c93330c62fdb1640737d72b57.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/com.jakewharton/butterknife-annotations/8.2.1/d6f54d76edfbe779a50a8636b10fd3f555d8f780/butterknife-annotations-8.2.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d6f54d76edfbe779a50a8636b10fd3f555d8f780">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/butterknife-annotations-8.2.1_6f43c41c95c5ad20f2468897764e4f767923ad8a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/logging-interceptor/3.0.1/1d232df84491c0453e077002509911301109409d/logging-interceptor-3.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="1d232df84491c0453e077002509911301109409d">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/logging-interceptor-3.0.1_eff42831c1749e175057558c3a31624d2ad2f614.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/org.greenrobot/greendao/3.2.0/e70040568b2929b8e5869ad1ffca8e4386dc53bc/greendao-3.2.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="e70040568b2929b8e5869ad1ffca8e4386dc53bc">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/greendao-3.2.0_a071a2af87dc53bba1465f9a131b4aaabe0e2ea8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/org.greenrobot/greendao-api/3.2.0/c6d610abe1d75d758431c9234917a349abc0a0ac/greendao-api-3.2.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="c6d610abe1d75d758431c9234917a349abc0a0ac">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/greendao-api-3.2.0_5096f347da2632738c6a9699633917b7788b9256.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/25.0.0/support-annotations-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="a22d2cc94da87b254451fa8ed28afc30b4653773">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/support-annotations-25.0.0_2a3337a9a52c45606107850a6cf404e6237fd159.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/269bcf7adcc5a0594ba366dee8609b58aebfab0b/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ca5e58104f56f918f0fb3a5b1b371ab599ae56b2">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_1a5ea710fe92167f073acd398be82c21f2f7101e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/4ae67cf0ba7f39540dd778a53839a157799feb82/output/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="3b61a70884adaf0be3fc06c70c801e3e6df13133">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_68ba06e3a8431d63b2c25393813abb6a171c3866.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/1b219cde51c2e5bdf2fc961b7869bab0d5e75b76/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="5e497d60f0cb6ce87c458ac5420a46d0fed49bd0">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_2b2476a7ca516d584c23572ac60db996a0337e23.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/b78430a9fea90d48d0bde46036e8c7e39db93d68/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_6feea1e9d1df56e29472fa33ebb8535eef57c067.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/a86fc17e48482a43bd0574990c117fd111717319/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ef4dca9bb5afb2bd535b10afae516b0dd461b621">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_642e9c3e01adba95e96ee8d8f21d4febf224705a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/Downloads/VcontrolPT/app/libs/universal-image-loader-1.9.5.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="442dbfb517b9ab5cb5c6da7ebf8cc28ec5bd0375">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/universal-image-loader-1.9.5_195d97c6156b79d702aca1aa7b921ff157781322.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.6.0/98476622f10715998eacf9240d6b479f12c66143/okio-1.6.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="98476622f10715998eacf9240d6b479f12c66143">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/okio-1.6.0_c5204fbb1010e0eac15d3c802ceaf89392116038.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/ef986cf911990427df01fcb7c6affa66556b5d22/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="927e8ef5711b115b65b2f35495d77352be2b3c09">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_5441cd757150da7b5d5d159cc206a0891e410e82.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/badd04ed6a121d0192af4a2fb006d5da2fa6f374/output/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="e5343c9d19cb19ff55f6b268c7f3fe8c9d224f6f">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_20e26ea5e2e467f6c55296c26d656cd54606bc96.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/960491840fead20bf44414a31ac7606a11f6d93d/output/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_ed03ab3538194205a2d0af75edfe93cfdee6258a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/converter-gson/2.0.0-beta4/de5935a367ba5e343e9df786ac8fc0c7d52b5f0c/converter-gson-2.0.0-beta4.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="de5935a367ba5e343e9df786ac8fc0c7d52b5f0c">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/converter-gson-2.0.0-beta4_7ddac9e7e555a775555c01a61093a92a868dc08d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.0.1/b34c1f2d993044656e87f88970b6818e99e886ba/okhttp-3.0.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="b34c1f2d993044656e87f88970b6818e99e886ba">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/okhttp-3.0.1_d58d5c92908d4df2ec738d236860822ec4ce2457.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/7e354e7d708c4876bdd1dc9382c42f139e546c6e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_3d7d6937566f2ec60dc0f989ff7a250b365688b0.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/Downloads/VcontrolPT/app/libs/volley.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="4a94601db9bdfb7dc60efabb3dea91a0675f591d">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/volley_daceddb3f80f7fdd35ddfeec22fdd967e6f3f29b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/3bf90375d7b1d6a7aefc0898e8622cbaa2d4e47c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="75b1f366ff0bbc78f8b1f7cf0dc82e7c53afef6a">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_5cd8f216907603e73bc7bc0bc8b2989a9fdfec21.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/com.readystatesoftware.systembartint/systembartint/1.0.3/de4f7404e2f58d8f6e83cb1e85d0c2d6c2987287/systembartint-1.0.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="de4f7404e2f58d8f6e83cb1e85d0c2d6c2987287">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/systembartint-1.0.3_37284d982af285a8280cb45712719c2562f89cf5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/7628c8a75b27541b0a15419170e5f816f7b77ec9/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_694da10dc5e38d3aeef56218f5ec27116110defd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.4/695b63d702f505b9b916e02272e3b6381bade7f/gson-2.4.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="0695b63d702f505b9b916e02272e3b6381bade7f">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/gson-2.4_0574bd8ef77ecd9b4239b021b0aa5378be94a429.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/cfe6f98569b3825753470796dd33bbe8a5e5868c/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_5b286d8e005754c2945e822052c71fc06279c8c4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/Downloads/VcontrolPT/app/libs/jpush-android-3.1.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="989c1fc762c0424b2e25692444e9f1df60288a1d">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/jpush-android-3.1.1_e62378a942702d5e373f4306fcdfc78cb82e423d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/2268e2ec1486d090d875ffb3b8b6640b588703f3/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="26384be22ddc74cfe197ebda9edbc7d1fd8bd537">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_ef224800786a51e0e7190c79baa5796ab2518238.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/adapter-rxjava/2.0.0-beta4/bd49baf667542c7d06f71e598bdee7fe57272013/adapter-rxjava-2.0.0-beta4.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="bd49baf667542c7d06f71e598bdee7fe57272013">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/adapter-rxjava-2.0.0-beta4_c65884e94628ac149c43ff0ef012b5dbd35ac0d8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/960491840fead20bf44414a31ac7606a11f6d93d/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_926eb4c9a241a08c0b5b1bb834290e02abdfe2a1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/com.squareup.retrofit2/retrofit/2.0.0-beta4/739e00dea1f0ac04fdb9b6160d667e23cc50a791/retrofit-2.0.0-beta4.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="739e00dea1f0ac04fdb9b6160d667e23cc50a791">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/retrofit-2.0.0-beta4_01ef4399fcf5cf80787664d5679a636987033bb3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/Downloads/VcontrolPT/app/libs/commons-net-3.6.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="b71de00508dcb078d2b24b5fa7e538636de9b3da">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/commons-net-3.6_68d473b12da875750fd8c1b76b566bc8ddd3ba4f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/8b2bc27b585fbbe8405c29f0867623b06e89c283/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="9b69b69f0f434b79d767329fcf1ca6ba1540c509">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_59145d860889170d193b008f2822b5790057a702.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.7.0/9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4/glide-3.7.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="9e9eeaf9948ee4d6c3ab354e8dc14368f16994a4">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/glide-3.7.0_f068913db82df7fb8888533159234e2f61ce0e9f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/3bf90375d7b1d6a7aefc0898e8622cbaa2d4e47c/output/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="f2e3b9bc1ec25f652e8007ce7774c991e38f6a00">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_32afc106331cb7bc8d366332381cca478fcaef6e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/171deb8b7b8c20d92ee3c5b14d61d943305cd187/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="53a420cd4f49274db6bd43475f8006ba67ef6bbd">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_0d19f72c32b0d7fb2347b69a22749bdfad53c16d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/b9be8a3e6afffb31074a99f55d0fde5a9a504314/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="8fbb42c8758da6740bf1ec7a7b73848f54de8271">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/classes_4fed218aecd2c64ed51f1fa30b07481bff63d614.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/saibaokeji/.android/build-cache/b78430a9fea90d48d0bde46036e8c7e39db93d68/output/jars/libs/internal_impl-25.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="665d21a8a069c96b4d9e8b434f5096d865b4e261">
+        <dex dex="/Users/saibaokeji/Downloads/VcontrolPT/app/build/intermediates/pre-dexed/debug/internal_impl-25.0.0_fd22f523c75005f1eeade5e77f9af8cd90e5c8e4.jar" />
+    </item>
+
+</items>

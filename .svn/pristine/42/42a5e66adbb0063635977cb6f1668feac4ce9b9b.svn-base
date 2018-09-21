@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+    <LinearLayout
+        android:id="@+id/c"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="摄像头个数"
+            android:textColor="@color/black"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/camera_num_edittext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.8"
+                android:background="@drawable/bg_edittext"
+                android:hint="1-9"
+                android:inputType="number"
+                android:maxLines="2"
+                android:padding="5dp"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.3"
+                android:text="@string/m"
+                android:textColor="@color/black"
+                android:visibility="invisible"/>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.8">
+
+                <Button
+                    android:id="@+id/camera_num_button"
+                    android:layout_width="@dimen/x80"
+                    android:layout_height="@dimen/x60"
+                    android:background="@drawable/bg_button"
+                    android:text="@string/setting"
+                    android:textColor="@color/black"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ca"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@id/c"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="摄像头厂家"
+            android:textColor="@color/black"/>
+
+        <RadioGroup
+            android:id="@+id/company_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/company_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/radio_bg"
+                android:text="尚鑫航"
+                android:textColor="@color/black"/>
+
+            <RadioButton
+                android:id="@+id/company_button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:button="@drawable/radio_bg"
+                android:text="海康"
+                android:textColor="@color/black"/>
+
+            <RadioButton
+                android:id="@+id/company_button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:button="@drawable/radio_bg"
+                android:text="青青子木/深圳艾视"
+                android:textColor="@color/black"/>
+
+
+
+        </RadioGroup>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ca1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_below="@id/ca"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/camera_type"
+            android:textColor="@color/black"/>
+
+        <RadioGroup
+            android:id="@+id/type_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/type_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/radio_bg"
+                android:text="@string/day_type"
+                android:textColor="@color/black"/>
+
+            <RadioButton
+                android:id="@+id/type_button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:button="@drawable/radio_bg"
+                android:text="@string/night_type"
+                android:textColor="@color/black"/>
+
+            <RadioButton
+                android:id="@+id/type_button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/x20"
+                android:button="@drawable/radio_bg"
+                android:text="@string/no"
+                android:textColor="@color/black"/>
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ca1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/camera_dip"
+            android:textColor="@color/black"/>
+
+        <RadioGroup
+            android:id="@+id/camera_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/camera_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/radio_bg"
+                android:text="@string/dip_320_240"
+                android:textColor="@color/black"/>
+
+            <RadioButton
+                android:id="@+id/camera_button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/x20"
+                android:button="@drawable/radio_bg"
+                android:checked="false"
+                android:text="@string/dip_640_480"
+                android:textColor="@color/black"/>
+
+            <RadioButton
+                android:id="@+id/camera_button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/x20"
+                android:button="@drawable/radio_bg"
+                android:checked="false"
+                android:text="@string/dip_1280_960"
+                android:textColor="@color/black"/>
+        </RadioGroup>
+    </LinearLayout>
+
+</RelativeLayout>

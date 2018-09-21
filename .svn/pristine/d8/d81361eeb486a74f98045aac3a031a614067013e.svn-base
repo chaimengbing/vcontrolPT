@@ -1,0 +1,253 @@
+package com.vcontrol.vcontroliot.act;
+
+import android.content.Intent;
+import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.VcontrolApplication;
+import com.vcontrol.vcontroliot.adapter.GridMainAdapter;
+import com.vcontrol.vcontroliot.log.Log;
+import com.vcontrol.vcontroliot.model.MainInfo;
+import com.vcontrol.vcontroliot.util.ConfigParams;
+import com.vcontrol.vcontroliot.util.DensityUtil;
+import com.vcontrol.vcontroliot.util.EventNotifyHelper;
+import com.vcontrol.vcontroliot.util.SocketUtil;
+import com.vcontrol.vcontroliot.util.ToastUtil;
+import com.vcontrol.vcontroliot.util.UiEventEntry;
+import com.vcontrol.vcontroliot.util.UiUtils;
+import com.vcontrol.vcontroliot.view.ImageCycleView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends BaseActivity implements EventNotifyHelper.NotificationCenterDelegate, AdapterView.OnItemClickListener
+{
+
+
+    private static final String TAG = MainActivity.class.getName();
+
+    private ImageCycleView topImageView;
+    private List<ImageCycleView.ImageInfo> list;
+
+    private GridView mainGrid;
+    private List<MainInfo> data = new ArrayList<>();
+    private long exitTime = 0;
+
+    @Override
+    public int getLayoutView()
+    {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    public void initViewData()
+    {
+
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.CONNCT_FAIL);
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.CONNCT_OK);
+    }
+
+    @Override
+    public void initComponentViews()
+    {
+        VcontrolApplication.setCurrentContext(getApplicationContext());
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.CONNCT_OK);
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.CONNCT_FAIL);
+
+        ToastUtil.setCurrentContext(getApplication());
+        UiUtils.height = DensityUtil.getDisplayHeightPixels(this);
+        UiUtils.width = DensityUtil.getDisplayWidthPixels(this);
+
+        Log.info(TAG, "width:" + UiUtils.width + ",height：" + UiUtils.height);
+
+        topImageView = (ImageCycleView) findViewById(R.id.top_imageview);
+        mainGrid = (GridView) findViewById(R.id.grid_main);
+
+        hideToolbar();
+
+        list = new ArrayList<ImageCycleView.ImageInfo>();
+//        list.add(new ImageCycleView.ImageInfo(R.mipmap.lru_3000, "", ""));
+        list.add(new ImageCycleView.ImageInfo(R.mipmap.small_rtu1, "", ""));
+
+        topImageView.setAutoCycle(false);
+        topImageView.loadData(list, new ImageCycleView.LoadImageCallBack()
+        {
+
+            @Override
+            public ImageView loadAndDisplay(ImageCycleView.ImageInfo imageInfo)
+            {
+                // 本地图片
+                ImageView imageView = new ImageView(getApplicationContext());
+                imageView.setBackgroundResource(Integer.parseInt(imageInfo.image.toString()));
+                return imageView;
+
+            }
+        });
+
+        GridMainAdapter adapter = new GridMainAdapter(getApplicationContext());
+
+
+        MainInfo main1 = new MainInfo(UiEventEntry.WRU_1901, R.mipmap.wru_1901, getString(R.string.wru_1801));
+        MainInfo main2 = new MainInfo(UiEventEntry.WRU_2100, R.mipmap.wru_2000, getString(R.string.wru_2100));
+        MainInfo main3 = new MainInfo(UiEventEntry.WRU_2800, R.mipmap.wru_2800, getString(R.string.wru_2800));
+        MainInfo main4 = new MainInfo(UiEventEntry.WRU_2801, R.mipmap.wru_2800, getString(R.string.wru_2801));
+        MainInfo main5 = new MainInfo(UiEventEntry.RTU_2800, R.mipmap.wru_2800, getString(R.string.rtu_2800));
+        MainInfo main6 = new MainInfo(UiEventEntry.RTU_2801, R.mipmap.wru_2800, getString(R.string.rtu_2801));
+//        MainInfo main7 = new MainInfo(UiEventEntry.LRU_3000, R.mipmap.port_test, getString(R.string.lru_3000));
+        MainInfo main8 = new MainInfo(UiEventEntry.RCM_2000, R.mipmap.wru_2800, getString(R.string.rcm_2000));
+//        MainInfo main9 = new MainInfo(UiEventEntry.LRU_3200, R.mipmap.wru_2000, getString(R.string.wru_2000));
+
+        data.add(main1);
+        data.add(main2);
+        data.add(main3);
+        data.add(main4);
+        data.add(main5);
+        data.add(main6);
+//        data.add(main7);
+        data.add(main8);
+//        data.add(main9);
+
+        adapter.setData(data);
+        mainGrid.setAdapter(adapter);
+
+        setListener();
+    }
+
+    private void setListener()
+    {
+
+        mainGrid.setOnItemClickListener(this);
+
+        topImageView.setOnPageClickListener(new ImageCycleView.OnPageClickListener()
+        {
+
+            @Override
+            public void onClick(View imageView, ImageCycleView.ImageInfo imageInfo)
+            {
+                // ToastUtil.showToastLong("点击图片！！");
+            }
+        });
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings)
+        {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item)
+    {
+        return false;
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+
+
+    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            exitApp();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 按下返回键退出APP
+     */
+    private void exitApp()
+    {
+        // 判断2次点击事件时间
+        if ((System.currentTimeMillis() - exitTime) > 2000)
+        {
+            ToastUtil.showToastLong("再按一次退出程序");
+            exitTime = System.currentTimeMillis();
+        }
+        else
+        {
+            SocketUtil.closeSocket();
+            VcontrolApplication.getInstance().exit();
+
+            finish();
+            System.exit(0);
+        }
+    }
+
+    @Override
+    public void didReceivedNotification(int id, Object... args)
+    {
+        if (id == UiEventEntry.CONNCT_OK)
+        {
+            ToastUtil.showToastLong("设备连接成功！");
+        }
+        else if (id == UiEventEntry.CONNCT_FAIL)
+        {
+            ToastUtil.showToastLong("设备连接失败,请检查wifi设置！");
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+    {
+
+        if (i == 0)
+        {
+            SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.GROUND_PORT);
+        }
+        else
+        {
+            SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
+        }
+
+
+        if (i == 8)
+        {
+            Intent intent = new Intent(this, RTUInfoActivity.class);
+            startActivity(intent);
+        }
+        else
+        {
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.putExtra(UiEventEntry.NOTIFY_BASIC_NAME, data.get(i).getName());
+            intent.putExtra(UiEventEntry.NOTIFY_BASIC_TYPE, data.get(i).getId());
+            startActivity(intent);
+        }
+
+
+    }
+}

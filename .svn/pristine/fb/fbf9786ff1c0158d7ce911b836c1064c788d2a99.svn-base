@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 0-降水站 1-河道站 2-水库站 3-闸坝站 4-泵站 5-墒情站 6-地下 -->
+    <string-array name="site_type">
+        <item>降水站</item>
+        <item>河道站 </item>
+        <item>水库站</item>
+        <item>闸坝站</item>
+        <item>泵站</item>
+        <item>墒情站</item>
+        <item>地下水站</item>
+    </string-array>
+    <string-array name="sensor_type">
+        <item>MPM4780</item>
+        <item>WRU1902 </item>
+        <item>WYS-III</item>
+        <item>DS1300</item>
+        <item>MPM4700</item>
+        <item>MK18+AP701</item>
+        <item>HSWH</item>
+    </string-array>
+    <string-array name="lru_num">
+        <item>阀门1</item>
+        <item>阀门2</item>
+        <item>阀门3</item>
+        <item>阀门4</item>
+        <item>阀门5</item>
+        <item>阀门6</item>
+        <item>阀门7</item>
+    </string-array>
+
+    <string-array name="ground_collect_time">
+        <item>10分钟</item>
+        <item>1小时</item>
+        <item>2小时</item>
+        <item>4小时</item>
+    </string-array>
+
+    <string-array name="comm_rtu_time">
+        <item>5分钟</item>
+        <item>10分钟</item>
+        <item>30分钟</item>
+        <item>1小时</item>
+        <item>2小时</item>
+        <item>4小时</item>
+    </string-array>
+    <!-- 0-低功耗  1-永在线 -->
+    <string-array name="operation_status">
+        <item>低功耗</item>
+        <item>用在线 </item>
+    </string-array>
+    <string-array name="ip_config">
+        <item>DHCP</item>
+        <item>静态IP</item>
+    </string-array>
+    <string-array name="time_interval">
+        <item>5分钟</item>
+        <item>10分钟 </item>
+        <item>15分钟 </item>
+        <item>30分钟 </item>
+        <item>1小时 </item>
+        <item>2小时 </item>
+        <item>3小时 </item>
+        <item>4小时 </item>
+        <item>6小时 </item>
+        <item>8小时 </item>
+        <item>12小时 </item>
+        <item>24小时 </item>
+    </string-array>
+
+    <string-array name="comm_type">
+        <item>无</item>
+        <item>水文</item>
+        <item>协议1</item>
+        <item>协议2</item>
+        <item>协议3</item>
+        <item>协议4</item>
+        <item>协议5</item>
+        <item>协议6</item>
+        <item>协议7</item>
+        <item>协议8</item>
+        <item>协议9</item>
+        <item>协议10</item>
+        <item>协议11</item>
+        <item>协议12</item>
+        <item>协议13</item>
+        <item>协议14</item>
+        <item>协议15</item>
+        <item>协议16</item>
+        <item>协议17</item>
+        <item>协议18</item>
+        <item>协议19</item>
+        <item>协议20</item>
+    </string-array>
+    <string-array name="water_soil_type">
+        <item>10cm</item>
+        <item>20cm</item>
+        <item>30cm</item>
+        <item>40cm </item>
+        <item>50cm </item>
+        <item>60cm </item>
+        <item>80cm </item>
+        <item>100cm</item>
+    </string-array>
+    <string-array name="call_test">
+        <item>召测</item>
+        <item>不召测</item>
+    </string-array>
+    <string-array name="channel_main">
+        <item>禁用</item>
+        <item>GPRS</item>
+        <item>GPRS+GSM</item>
+    </string-array>
+    <string-array name="channel_sencond">
+        <item>禁用</item>
+        <item>短信</item>
+        <item>北斗</item>
+    </string-array>
+    <string-array name="water_select">
+        <item>0-5V</item>
+        <item>0-10V</item>
+        <item>0-20V</item>
+        <item>4-20mA</item>
+    </string-array>
+    <string-array name="water_select_485">
+        <item>亿力能</item>
+        <item>麦克</item>
+        <item>古大</item>
+        <item>伟思</item>
+        <item>大连海峰</item>
+        <item>慧博</item>
+        <item>帅克</item>
+        <item>太原尚水</item>
+        <item>亿力能压力式</item>
+        <item>格乐普分体式</item>
+        <item>格乐普雷达式</item>
+        <item>海川博通</item>
+        <item>南水</item>
+        <item>麦克4780</item>
+        <item>基康</item>
+        <item>OTT</item>
+        <item>沈阳乾峰</item>
+        <item>yc-cz水尺</item>
+        <item>重庆兆州</item>
+    </string-array>
+
+    <string-array name="flow_485">
+        <item>大连海峰</item>
+        <item>大连明锐</item>
+        <item>唐山汇中</item>
+        <item>唐山美伦</item>
+        <item>连利水表</item>
+        <item>迪纳声流量计</item>
+        <item>山东潍微远传水表</item>
+        <item>金水中科</item>
+        <item>格乐普超声波明渠流量计</item>
+        <item>上海肯特</item>
+        <item>RQ30</item>
+        <item>麦克</item>
+    </string-array>
+
+</resources>

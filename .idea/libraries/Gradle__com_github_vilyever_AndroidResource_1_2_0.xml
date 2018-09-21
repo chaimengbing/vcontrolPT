@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.vilyever:AndroidResource-1.2.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/221dfc8651d2470133e797fc8a79fe6be438661f/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/221dfc8651d2470133e797fc8a79fe6be438661f/output/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,250 @@
+package com.vcontrol.vcontroliot.fragment;
+
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.VcontrolApplication;
+import com.vcontrol.vcontroliot.util.ConfigParams;
+import com.vcontrol.vcontroliot.util.EventNotifyHelper;
+import com.vcontrol.vcontroliot.util.ImageTools;
+import com.vcontrol.vcontroliot.util.ProgressBarUtil;
+import com.vcontrol.vcontroliot.util.ServiceUtils;
+import com.vcontrol.vcontroliot.util.SocketUtil;
+import com.vcontrol.vcontroliot.util.ToastUtil;
+import com.vcontrol.vcontroliot.util.UiEventEntry;
+import com.vcontrol.vcontroliot.view.ZoomImageView;
+
+import java.io.File;
+import java.io.FileInputStream;
+
+import static com.vcontrol.vcontroliot.util.ConfigParams.GPRS_Status;
+
+/**
+ * Created by Vcontrol on 2016/11/23.
+ */
+
+public class GroundWaterSearchFragment extends BaseFragment implements EventNotifyHelper.NotificationCenterDelegate
+{
+    private static final String TAG = GroundWaterSearchFragment.class.getSimpleName();
+    private TextView resultTextView;
+
+//    遥测站编号: %d\r\n
+//    0号中心站IP: %s\r\n
+//    端口: %d\r\n
+//    埋深: %dcm\r\n
+//    软件版本号: %s\r\n
+//    电池电压: %0.2f\r\n
+//    水位: %0.3f\r\n
+//    水温: %0.1f\r\n
+//    信号值: %d\r\n
+//    监测站时间: %4d-%2d-%2d %2d:%2d:%2d\r\n
+//    GPRS召测模式: %d\r\n
+//    低功耗模式: %d\r\n
+
+    //全部参数
+    public String GROUND_RTUid = "遥测站编号：";
+    public String GROUND_Server_IP = "1号中心站ip：";
+    public String GROUND_Socket_Port = "端口：";
+    public String GROUND_maishen = "埋深：";
+    public String GROUND_Ver = "软件版本号：";
+    public String GROUND_BatteryVolts = "电池电压：";
+    public String GROUND_WaterLevel = "水位：";
+    public String GROUND_Water_Temperature = "水温：";
+    public String GROUND_GPRS_CSQ = "信号值：";
+//    public String GROUND_tm_year = "监测站时间：";
+    public String GROUND_GPRSCallMode = "GPRS召测模式：";
+    public String GROUND_RunMode = "低功耗模式：";
+
+    private String CM = " cm";
+    private String M = " m";
+    private String C = " ℃";
+    private String V = " V";
+
+    private ScrollView resultScroll;
+    private RelativeLayout receLayout;
+    private StringBuffer currentSB = new StringBuffer();
+
+    @Override
+    public int getLayoutView()
+    {
+        return R.layout.fragment_search;
+    }
+
+    @Override
+    public void initComponentViews(View view)
+    {
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_DATA);
+
+        resultTextView = (TextView) view.findViewById(R.id.result_data_textview);
+        resultScroll = (ScrollView) view.findViewById(R.id.result_scroll);
+        receLayout = (RelativeLayout) view.findViewById(R.id.img_layout);
+
+        setData();
+
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.READ_DATA);
+    }
+
+    @Override
+    public void initData()
+    {
+        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadData);
+    }
+
+
+    @Override
+    public void setListener()
+    {
+    }
+
+    @Override
+    public void didReceivedNotification(int id, Object... args)
+    {
+        if (id == UiEventEntry.READ_DATA)
+        {
+            String result = (String) args[0];
+            String content = (String) args[1];
+            if (TextUtils.isEmpty(result) || TextUtils.isEmpty(content))
+            {
+                return;
+            }
+            readData(result, content);
+        }
+    }
+
+    private void readData(String result, String content)
+    {
+        if (content.equals(ConfigParams.ReadData))
+        {//通信状态查询
+            if (result.contains(ConfigParams.GROUND_RTUid))
+            {
+                currentSB.insert(currentSB.indexOf(GROUND_RTUid) + GROUND_RTUid.length(), result.replaceAll(ConfigParams.GROUND_RTUid, "").trim());
+            }
+            else if (result.contains(ConfigParams.GROUND_Server_IP))
+            {
+                currentSB.insert(currentSB.indexOf(GROUND_Server_IP) + GROUND_Server_IP.length(), ServiceUtils.getRemoteIp(result.replaceAll(ConfigParams.GROUND_Server_IP, "").trim()));
+            }
+            else if (result.contains(ConfigParams.GROUND_Socket_Port))
+            {
+                currentSB.insert(currentSB.indexOf(GROUND_Socket_Port) + GROUND_Socket_Port.length(), result.replaceAll(ConfigParams.GROUND_Socket_Port, "").trim());
+            }
+            else if (result.contains(ConfigParams.GROUND_maishen))
+            {
+                currentSB.insert(currentSB.indexOf(GROUND_maishen) + GROUND_maishen.length(), result.replaceAll(ConfigParams.GROUND_maishen, "").trim());
+            }
+//            else if (result.contains(ConfigParams.GROUND_Ver))
+//            {
+//                currentSB.insert(currentSB.indexOf(GROUND_Ver) + GROUND_Ver.length(), result.replaceAll(ConfigParams.GROUND_Ver, "").trim());
+//            }
+            else if (result.contains(ConfigParams.GROUND_BatteryVolts))
+            {
+                currentSB.insert(currentSB.indexOf(GROUND_BatteryVolts) + GROUND_BatteryVolts.length(), result.replaceAll(ConfigParams.GROUND_BatteryVolts, "").trim());
+            }
+            else if (result.contains(ConfigParams.GROUND_WaterLevel))
+            {
+                currentSB.insert(currentSB.indexOf(GROUND_WaterLevel) + GROUND_WaterLevel.length(),result.replaceAll(ConfigParams.GROUND_WaterLevel, "").trim());
+            }
+            else if (result.contains(ConfigParams.GROUND_Water_Temperature))
+            {
+                currentSB.insert(currentSB.indexOf(GROUND_Water_Temperature) + GROUND_Water_Temperature.length(), result.replaceAll(ConfigParams.GROUND_Water_Temperature, "").trim());
+            }
+            else if (result.contains(ConfigParams.GROUND_GPRS_CSQ))
+            {
+                currentSB.insert(currentSB.indexOf(GROUND_GPRS_CSQ) + GROUND_GPRS_CSQ.length(), result.replaceAll(ConfigParams.GROUND_GPRS_CSQ, "").trim());
+            }
+//            else if (result.contains(ConfigParams.GROUND_tm_year))
+//            {
+//                currentSB.insert(currentSB.indexOf(GROUND_tm_year) + GROUND_tm_year.length(), result.replaceAll(ConfigParams.GROUND_tm_year, "").trim());
+//            }
+            else if (result.contains(ConfigParams.GROUND_GPRSCallMode))
+            {
+                String model = result.replaceAll(ConfigParams.GROUND_GPRSCallMode, "").trim();
+                String res = "";
+                if (!TextUtils.isEmpty(model))
+                {
+                    if ("0".equals(model))
+                    {
+                        res = "不召测";
+                    }
+                    else
+                    {
+                        res = "召测";
+                    }
+                    currentSB.insert(currentSB.indexOf(GROUND_GPRSCallMode) + GROUND_GPRSCallMode.length(), res);
+                }
+            }
+            else if (result.contains(ConfigParams.GROUND_RunMode))
+            {
+                String model = result.replaceAll(ConfigParams.GROUND_RunMode, "").trim();
+                String res = "";
+                if (!TextUtils.isEmpty(model))
+                {
+                    if ("0".equals(model))
+                    {
+                        res = "低功耗";
+                    }
+                    else
+                    {
+                        res = "永在线";
+                    }
+                    currentSB.insert(currentSB.indexOf(GROUND_RunMode) + GROUND_RunMode.length(), res);
+                }
+            }
+
+            resultTextView.setText(currentSB.toString());
+        }
+    }
+
+
+    public void setData()
+    {
+
+        currentSB.delete(0, currentSB.length());
+        receLayout.setVisibility(View.GONE);
+        resultScroll.setVisibility(View.VISIBLE);
+        currentSB.append(GROUND_RTUid);
+        currentSB.append("\n");
+        currentSB.append(GROUND_Server_IP);
+        currentSB.append("\n");
+        currentSB.append(GROUND_Socket_Port);
+        currentSB.append("\n");
+        currentSB.append(GROUND_maishen);
+        currentSB.append(CM);
+        currentSB.append("\n");
+//        currentSB.append(GROUND_Ver);
+//        currentSB.append("\n");
+        currentSB.append(GROUND_BatteryVolts);
+        currentSB.append(V);
+        currentSB.append("\n");
+        currentSB.append(GROUND_WaterLevel);
+        currentSB.append(M);
+        currentSB.append("\n");
+        currentSB.append(GROUND_Water_Temperature);
+        currentSB.append(C);
+        currentSB.append("\n");
+        currentSB.append(GROUND_GPRS_CSQ);
+        currentSB.append("\n");
+//        currentSB.append(GROUND_tm_year);
+//        currentSB.append("\n");
+        currentSB.append(GROUND_GPRSCallMode);
+        currentSB.append("\n");
+        currentSB.append(GROUND_RunMode);
+        currentSB.append("\n");
+        if (resultTextView != null && currentSB.length() > 0)
+        {
+            resultTextView.setText(currentSB.toString());
+        }
+    }
+}

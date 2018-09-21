@@ -1,0 +1,178 @@
+package com.vcontrol.vcontroliot.fragment;
+
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.log.Log;
+import com.vcontrol.vcontroliot.util.ConfigParams;
+import com.vcontrol.vcontroliot.util.EventNotifyHelper;
+import com.vcontrol.vcontroliot.util.SocketUtil;
+import com.vcontrol.vcontroliot.util.ToastUtil;
+import com.vcontrol.vcontroliot.util.UiEventEntry;
+
+/**
+ * Created by Vcontrol on 2016/11/23.
+ */
+
+public class RTUVersionFragment extends BaseFragment implements View.OnClickListener, EventNotifyHelper.NotificationCenterDelegate
+{
+
+    private static final String TAG = RTUVersionFragment.class.getSimpleName();
+    private TextView appVers;
+    private TextView rtuVers;
+
+    private int currentType;
+
+    @Override
+    public int getLayoutView()
+    {
+        return R.layout.fragment_setting_version;
+    }
+
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.READ_DATA);
+    }
+
+    @Override
+    public void initComponentViews(View view)
+    {
+
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_DATA);
+        appVers = (TextView) view.findViewById(R.id.app_ver);
+        rtuVers = (TextView) view.findViewById(R.id.rtu_ver);
+        appVers.setText("APP版本：" + getAppVersion());
+    }
+
+    private String getAppVersion()
+    {
+        String versionName = null;
+
+        try
+        {
+            versionName = getActivity().getPackageManager().getPackageInfo(
+                    getActivity().getPackageName(), 0).versionName;
+        } catch (Exception e)
+        {
+
+        }
+        return versionName;
+    }
+
+    @Override
+    public void initData()
+    {
+        if (getArguments() != null)
+        {
+            currentType = getArguments().getInt(UiEventEntry.CURRENT_RTU_NAME);
+            if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100)
+            {
+                SocketUtil.sendData(ConfigParams.ReadSensorPara2);
+            }
+            else if (currentType == UiEventEntry.WRU_1901)
+            {
+                SocketUtil.sendData(ConfigParams.ReadData);
+            }
+            else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.WRU_2801)
+            {
+                SocketUtil.sendData(ConfigParams.ReadParameter);
+            }
+            else if (currentType == UiEventEntry.LRU_3000)
+            {
+                SocketUtil.sendData(ConfigParams.ReadRTUVer);
+            }
+            else if (currentType == UiEventEntry.RCM_2000)
+            {
+                SocketUtil.sendData(ConfigParams.ReadData);
+            }
+        }
+        else
+        {
+            SocketUtil.sendData(ConfigParams.ReadSensorPara2);
+        }
+    }
+
+    @Override
+    public void setListener()
+    {
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+
+    }
+
+    @Override
+    public void didReceivedNotification(int id, Object... args)
+    {
+        if (id == UiEventEntry.READ_DATA)
+        {
+            String result = (String) args[0];
+            if (TextUtils.isEmpty(result))
+            {
+                return;
+            }
+
+            setData(result);
+        }
+    }
+
+    public void setData(String data)
+    {
+        if (currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2100)
+        {
+            if (data.contains(ConfigParams.Ver))
+            {
+                String ver = data.replaceAll(ConfigParams.Ver, "").trim();
+                Log.debug(TAG, "Version:" + ver);
+                rtuVers.setText(ver);
+            }
+        }
+        else if (currentType == UiEventEntry.WRU_1901)
+        {
+            if (data.contains(ConfigParams.GROUND_Ver))
+            {
+
+                String ver = data.replaceAll(ConfigParams.GROUND_Ver, "").trim();
+                Log.debug(TAG, "Version:" + ver);
+                rtuVers.setText(ver);
+            }
+        }
+        else if (currentType == UiEventEntry.LRU_3000)
+        {
+            if (data.contains(ConfigParams.ReadRTUVer))
+            {
+
+                String ver = data.replaceAll(ConfigParams.ReadRTUVer, "").trim();
+                Log.debug(TAG, "Version:" + ver);
+                rtuVers.setText(ver);
+            }
+        }
+        else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801)
+        {
+            if (data.contains(ConfigParams.SoftVer))
+            {
+                String ver = data.replaceAll(ConfigParams.SoftVer, "").trim();
+                Log.debug(TAG, "Version:" + ver);
+                rtuVers.setText(ver);
+            }
+        }
+        else if (currentType == UiEventEntry.RCM_2000 )
+        {
+            if (data.contains(ConfigParams.SoftVer))
+            {
+                String ver = data.replaceAll(ConfigParams.Version, "").trim();
+                Log.debug(TAG, "Version:" + ver);
+                rtuVers.setText(ver);
+            }
+        }
+    }
+}

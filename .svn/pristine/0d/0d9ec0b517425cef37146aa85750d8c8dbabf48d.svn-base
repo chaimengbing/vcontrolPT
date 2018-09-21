@@ -1,0 +1,138 @@
+package com.vcontrol.vcontroliot.fragment;
+
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.util.ConfigParams;
+import com.vcontrol.vcontroliot.util.EventNotifyHelper;
+import com.vcontrol.vcontroliot.util.SocketUtil;
+import com.vcontrol.vcontroliot.util.ToastUtil;
+import com.vcontrol.vcontroliot.util.UiEventEntry;
+
+/**
+ * Created by Vcontrol on 2016/11/23.
+ */
+
+public class ADFragment extends BaseFragment implements View.OnClickListener
+{
+
+    private EditText adTlaEdittext;
+    private EditText adTlvEdittext;
+    private EditText adThvEdittext;
+    private EditText adThaEdittext;
+    private EditText adWayEdittext;
+
+    private Button adTlaButton;
+    private Button adTlvButton;
+    private Button adThvButton;
+    private Button adThaButton;
+    @Override
+    public int getLayoutView()
+    {
+        return R.layout.fragment_setting_ad;
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+    }
+
+    @Override
+    public void initComponentViews(View view)
+    {
+        adTlaButton = (Button) view.findViewById(R.id.ad_tla_button);
+        adTlvButton = (Button) view.findViewById(R.id.ad_tlv_button);
+        adThvButton = (Button) view.findViewById(R.id.ad_thv_button);
+        adThaButton = (Button) view.findViewById(R.id.ad_tha_button);
+
+        adTlaEdittext = (EditText) view.findViewById(R.id.ad_tla_edittext);
+        adTlvEdittext = (EditText) view.findViewById(R.id.ad_tlv_edittext);
+        adThvEdittext = (EditText) view.findViewById(R.id.ad_thv_edittext);
+        adThaEdittext = (EditText) view.findViewById(R.id.ad_tha_edittext);
+        adWayEdittext = (EditText) view.findViewById(R.id.ad_way_edittext);
+
+    }
+
+    @Override
+    public void initData()
+    {
+
+    }
+
+    @Override
+    public void setListener()
+    {
+        adTlaButton.setOnClickListener(this);
+        adTlvButton.setOnClickListener(this);
+        adThvButton.setOnClickListener(this);
+        adThaButton.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        String adH = "";
+        String way = adWayEdittext.getText().toString().trim();
+        if (TextUtils.isEmpty(way))
+        {
+            ToastUtil.showToastLong("请输入要设置的AD路数！");
+            return;
+        }
+        int wayNum = Integer.parseInt(way);
+        if (wayNum > 8 || wayNum < 1)
+        {
+            ToastUtil.showToastLong("AD路数范围是1-8，请重新输入！");
+            return;
+        }
+
+        switch (view.getId())
+        {
+            case R.id.ad_tha_button:
+                adH = adThaEdittext.getText().toString().trim();
+                if (TextUtils.isEmpty(adH))
+                {
+                    ToastUtil.showToastLong("AD电流校准大值不能为空！");
+                    return;
+                }
+                SocketUtil.sendData(ConfigParams.SETHA + wayNum + " " + adH);
+                break;
+            case R.id.ad_tla_button:
+                adH = adTlaEdittext.getText().toString().trim();
+                if (TextUtils.isEmpty(adH))
+                {
+                    ToastUtil.showToastLong("AD电流校准小值不能为空！");
+                    return;
+                }
+                SocketUtil.sendData(ConfigParams.SETLA + wayNum + " " + adH);
+                break;
+            case R.id.ad_thv_button:
+                adH = adThvEdittext.getText().toString().trim();
+                if (TextUtils.isEmpty(adH))
+                {
+                    ToastUtil.showToastLong("AD电压校准大值不能为空！");
+                    return;
+                }
+                SocketUtil.sendData(ConfigParams.SETHV + wayNum + " " + adH);
+                break;
+            case R.id.ad_tlv_button:
+                adH = adTlvEdittext.getText().toString().trim();
+                if (TextUtils.isEmpty(adH))
+                {
+                    ToastUtil.showToastLong("AD电压校准小值不能为空！");
+                    return;
+                }
+                SocketUtil.sendData(ConfigParams.SETLV + wayNum + " " + adH);
+
+                break;
+
+            default:
+                break;
+        }
+
+    }
+
+}

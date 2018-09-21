@@ -1,0 +1,50 @@
+package com.vcontrol.vcontroliot.act;
+
+import android.app.Fragment;
+import android.view.View;
+import android.widget.TextView;
+
+import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.fragment.BaseFragment;
+
+/**
+ * Created by linxi on 2017/4/27.
+ */
+public class ControlShowFragment extends BaseFragment
+{
+
+    private  static final String TAG = ControlShowFragment.class.getSimpleName();
+
+    private String showResult = "温度：23℃\n" +
+            "湿度：55%RH\n" +
+            "风速：2\n" +
+            "大气压：95KPa\n" +
+            "墒情：30%";
+    private TextView showTextView;
+
+    @Override
+    public int getLayoutView()
+    {
+        return R.layout.fragment_setting_control;
+    }
+
+    @Override
+    public void initComponentViews(View view)
+    {
+        showTextView = (TextView) view.findViewById(R.id.show_data_textview);
+
+        showTextView.setText(showResult);
+    }
+
+    @Override
+    public void initData()
+    {
+
+    }
+
+    @Override
+    public void setListener()
+    {
+
+    }
+}

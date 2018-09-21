@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="true"
+    android:orientation="vertical">
+
+    <include
+        layout="@layout/include_toolbar"
+        android:visibility="visible" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="@mipmap/top_shoda1" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imageView">
+
+        <LinearLayout
+            android:id="@+id/layout_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="8dp"
+            android:background="@mipmap/signup_down"
+            android:elevation="5dp"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="11dp"
+                android:layout_weight="0.02"
+                android:background="@mipmap/avatar" />
+
+            <LinearLayout
+                android:id="@+id/login_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/imageView2"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="11dp"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#969696" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="18dp"
+                        android:gravity="center"
+                        android:text="@string/user_name"
+                        android:textColor="#323232"
+                        android:textSize="18sp" />
+
+                    <com.vcontrol.vcontroliot.view.CleanEditText
+                        android:id="@+id/et_email_phone"
+                        style="@style/login_edit_style"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginRight="50dp"
+                        android:background="#f9f9f9"
+                        android:hint="@string/Pleas_name"
+                        android:inputType="text" />
+
+                    <Button
+                        android:id="@+id/clean_one"
+                        android:layout_width="@dimen/x30"
+                        android:layout_height="@dimen/x30"
+                        android:layout_marginLeft="-42dp"
+                        android:background="@mipmap/clean" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#969696" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="18dp"
+                        android:gravity="center"
+                        android:text="@string/email_address"
+                        android:textColor="#323232"
+                        android:textSize="18sp" />
+
+                    <com.vcontrol.vcontroliot.view.CleanEditText
+                        android:id="@+id/et_phone"
+                        style="@style/login_edit_style"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginRight="50dp"
+                        android:background="#f9f9f9"
+                        android:hint="@string/Please_account"
+                        android:inputType="textEmailAddress" />
+
+                    <Button
+                        android:id="@+id/clean_seven"
+                        android:layout_width="@dimen/x30"
+                        android:layout_height="@dimen/x30"
+                        android:layout_marginLeft="-42dp"
+                        android:background="@mipmap/clean" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#969696" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="18dp"
+                        android:gravity="center"
+                        android:text="@string/cellphone_number"
+                        android:textColor="#323232"
+                        android:textSize="18sp" />
+
+                    <com.vcontrol.vcontroliot.view.CleanEditText
+                        android:id="@+id/et_emil"
+                        style="@style/login_edit_style"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginRight="50dp"
+                        android:background="#f9f9f9"
+                        android:hint="@string/phone"
+                        android:inputType="phone"
+                        android:maxLength="11" />
+
+                    <Button
+                        android:id="@+id/clean_two"
+                        android:layout_width="@dimen/x30"
+                        android:layout_height="@dimen/x30"
+                        android:layout_marginLeft="-42dp"
+                        android:background="@mipmap/clean" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#969696" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="18dp"
+                        android:gravity="center"
+                        android:text="@string/Affiliated_companies"
+                        android:textColor="#323232"
+                        android:textSize="18sp" />
+
+                    <com.vcontrol.vcontroliot.view.CleanEditText
+                        android:id="@+id/et_company"
+                        style="@style/login_edit_style"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginRight="50dp"
+                        android:background="#f9f9f9"
+                        android:hint="@string/company_name"
+                        android:inputType="text" />
+
+                    <Button
+                        android:id="@+id/clean_three"
+                        android:layout_width="@dimen/x30"
+                        android:layout_height="@dimen/x30"
+                        android:layout_marginLeft="-42dp"
+                        android:background="@mipmap/clean" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#969696" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="18dp"
+                        android:gravity="center"
+                        android:text="@string/Affiliated_project"
+                        android:textColor="#323232"
+                        android:textSize="18sp" />
+
+                    <com.vcontrol.vcontroliot.view.CleanEditText
+                        android:id="@+id/et_project"
+                        style="@style/login_edit_style"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginRight="50dp"
+                        android:background="#f9f9f9"
+                        android:hint="@string/project_name"
+                        android:inputType="textPhonetic" />
+
+                    <Button
+                        android:id="@+id/clean_four"
+                        android:layout_width="@dimen/x30"
+                        android:layout_height="@dimen/x30"
+                        android:layout_marginLeft="-42dp"
+                        android:background="@mipmap/clean" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#969696" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="18dp"
+                        android:gravity="center"
+                        android:text="@string/account_password"
+                        android:textColor="#323232"
+                        android:textSize="18sp" />
+
+                    <com.vcontrol.vcontroliot.view.CleanEditText
+                        android:id="@+id/et_password"
+                        style="@style/login_edit_style"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginRight="50dp"
+                        android:background="#f9f9f9"
+                        android:hint="@string/tip_please_input_6_32_password"
+                        android:inputType="textPassword" />
+
+                    <Button
+                        android:id="@+id/clean_five"
+                        android:layout_width="@dimen/x30"
+                        android:layout_height="@dimen/x30"
+                        android:layout_marginLeft="-42dp"
+                        android:background="@mipmap/clean" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#969696" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/x100"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="18dp"
+                        android:gravity="center"
+                        android:text="@string/confirm_password"
+                        android:textColor="#323232"
+                        android:textSize="18sp" />
+
+                    <com.vcontrol.vcontroliot.view.CleanEditText
+                        android:id="@+id/et_ispassword"
+                        style="@style/login_edit_style"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginRight="50dp"
+                        android:background="#f9f9f9"
+                        android:hint="@string/Please_password"
+                        android:inputType="textPassword" />
+
+                    <Button
+                        android:id="@+id/clean_six"
+                        android:layout_width="@dimen/x30"
+                        android:layout_height="@dimen/x30"
+                        android:layout_marginLeft="-42dp"
+                        android:background="@mipmap/clean" />
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/view1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#969696" />
+
+                <Button
+                    android:id="@+id/btn_create_account"
+                    android:layout_width="@dimen/x400"
+                    android:layout_height="@dimen/x80"
+                    android:layout_below="@+id/view1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="13dp"
+                    android:background="@mipmap/registered_end" />
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

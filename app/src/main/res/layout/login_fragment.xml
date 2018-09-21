@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <include layout="@layout/include_toolbar"
+             android:visibility="visible"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@mipmap/top_shoda1"
+        android:id="@+id/imageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <LinearLayout
+        android:id="@+id/layout_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@mipmap/login_down"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:orientation="vertical"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:elevation="5dp"
+        android:weightSum="1">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/avatar"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.29"/>
+        <LinearLayout
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView2"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="@dimen/x120"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#969696"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/account_number"
+                    android:textColor="#323232"
+                    android:gravity="center"
+                    android:layout_marginLeft="18dp"
+                    android:textSize="18sp"/>
+                <com.vcontrol.vcontroliot.view.CleanEditText
+                    android:id="@+id/et_email_phone"
+                    style="@style/login_edit_style"
+                    android:hint="@string/phone"
+                    android:inputType="textEmailAddress"
+                    android:layout_marginRight="@dimen/x100"
+                    android:background="#f9f9f9"/>
+                <Button
+                    android:id="@+id/clean_one"
+                    android:layout_width="@dimen/x30"
+                    android:layout_height="@dimen/x30"
+                    android:background="@mipmap/clean"
+                    android:layout_marginLeft="-42dp"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#969696"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/x100"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/password1"
+                    android:textColor="#323232"
+                    android:gravity="center"
+                    android:layout_marginLeft="18dp"
+                    android:textSize="18sp"/>
+                <com.vcontrol.vcontroliot.view.CleanEditText
+                    android:id="@+id/et_password"
+                    style="@style/login_edit_style"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:layout_marginRight="@dimen/x100"
+                    android:background="#f9f9f9"/>
+                <Button
+                    android:id="@+id/clean_two"
+                    android:layout_width="@dimen/x30"
+                    android:layout_height="@dimen/x30"
+                    android:background="@mipmap/clean"
+                    android:layout_marginLeft="-42dp"/>
+
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="#969696"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"/>
+
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/login_button2"
+            android:layout_width="@dimen/x400"
+            android:layout_height="@dimen/x80"
+            android:background="@mipmap/login_button2"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="27dp"/>
+
+        <Button
+            android:id="@+id/user_registration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="#f9f9f9"
+            android:layout_marginTop="13.5dp"
+            android:textSize="16sp"
+            android:text="@string/User_registration"
+            android:textColor="#53b7ff"
+            android:layout_marginBottom="14dp"
+            style="?android:attr/borderlessButtonStyle" />
+
+    </LinearLayout>
+
+</LinearLayout>

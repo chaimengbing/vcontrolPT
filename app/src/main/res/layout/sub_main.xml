@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    android:orientation="vertical" >
+    
+    <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp" >
+                
+                  <TextView
+                    android:id="@+id/wru_1801"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/wru_1901"
+                    android:gravity="center"
+                    android:text="@string/wru_1801" />
+
+                <TextView
+                    android:id="@+id/wru_2800"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/wru_2100"
+                    android:gravity="center"
+                    android:text="@string/wru_2800" />
+
+                <TextView
+                    android:id="@+id/wru_2801"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/wru_2800"
+                    android:gravity="center"
+                    android:text="@string/wru_2801" />
+
+              
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp" >
+
+                <TextView
+                    android:id="@+id/wru_3800"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/rtu_3800"
+                    android:gravity="center"
+                    android:text="@string/wru_3800" />
+
+                <TextView
+                    android:id="@+id/virtual_message"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/rtu_3800"
+                    android:gravity="center"
+                    android:text="@string/lru_3000" />
+
+                <TextView
+                    android:id="@+id/port_test"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:drawableTop="@mipmap/port_test"
+                    android:gravity="center"
+                    android:text="@string/port_test" />
+            </LinearLayout>
+    
+
+</LinearLayout>

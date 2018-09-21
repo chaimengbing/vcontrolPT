@@ -1,0 +1,765 @@
+package com.vcontrol.vcontroliot.util;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Arrays;
+
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
+
+import com.vcontrol.vcontroliot.log.Log;
+import com.vilyever.socketclient.SocketClient;
+import com.vilyever.socketclient.helper.SocketClientDelegate;
+import com.vilyever.socketclient.helper.SocketClientReceivingDelegate;
+import com.vilyever.socketclient.helper.SocketClientSendingDelegate;
+import com.vilyever.socketclient.helper.SocketPacket;
+import com.vilyever.socketclient.helper.SocketPacketHelper;
+import com.vilyever.socketclient.helper.SocketResponsePacket;
+import com.vilyever.socketclient.util.CharsetUtil;
+
+public class SocketUtil
+{
+
+    private static final String TAG = SocketUtil.class.getSimpleName();
+    private static Socket socket = null;
+
+    private static DataOutputStream runTimeDos;
+    private static DataOutputStream dos;
+    private static BufferedReader reader;
+    private static PrintWriter writer;
+    private static DataInputStream dis;
+    private static FileOutputStream imgFos;
+
+    private static long beforeTime = 0;
+
+    private static void init(final String ip, final int port)
+    {
+
+        new Thread(new Runnable()
+        {
+
+            @Override
+            public void run()
+            {
+                try
+                {
+                    Log.info(TAG, "init::ip:" + ip + ",port:" + port);
+                    socket = new Socket(ip, port);
+                    // 设置超时
+                    socket.setSoTimeout(1500);
+
+                    EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.CONNCT_OK);
+                } catch (Exception e)
+                {
+                    EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.CONNCT_FAIL);
+                    Log.exception(TAG, e);
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 获得socket实例，建立连接
+     *
+     * @param ip
+     * @param port
+     * @return
+     */
+    public static Socket connectServer(String ip, int port)
+    {
+        closeSocket();
+        if (socket == null)
+        {
+            init(ip, port);
+        }
+        return socket;
+    }
+
+    public static boolean isConnect()
+    {
+        if (socket != null)
+        {
+            return socket.isConnected() && !socket.isClosed();
+        }
+        return false;
+    }
+
+    /**
+     * 发送数据
+     *
+     * @param content
+     */
+    public static void sendData(final String content)
+    {
+        if (TextUtils.isEmpty(content))
+        {
+            return;
+        }
+
+        if (System.currentTimeMillis() - beforeTime < 500)
+        {
+            return;
+        }
+        beforeTime = System.currentTimeMillis();
+
+        Log.info(TAG, "sendData::content:" + content);
+        ServiceUtils.getSocketThreads().execute(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (socket != null)
+                {
+                    try
+                    {
+
+//                        writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+//                                socket.getOutputStream())), true);
+////                        writer.println(content);
+//                        writer.write(content);
+                        dos = new DataOutputStream(socket.getOutputStream());
+                        dos.writeUTF(content + "\r\n");
+//                        dos.writeBytes(content + "\r\n");
+                        dos.flush();
+
+                        readData(content);
+                    } catch (Exception e)
+                    {
+                        ToastUtil.showToastLong("数据发送失败！");
+                        ProgressBarUtil.dismissProgressDialog();
+                        EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.CONNCT_AGAIN);
+                        Log.exception(TAG, e);
+                    } finally
+                    {
+                    }
+
+                }
+                else
+                {
+                    EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.CONNCT_AGAIN);
+                    ToastUtil.showToastLong("设备未连接！！");
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 发送实时数据的方法
+     *
+     * @param content
+     */
+    public static void sendRunTimeData(final String content)
+    {
+        if (TextUtils.isEmpty(content))
+        {
+            return;
+        }
+
+        ServiceUtils.getSocketThreads().execute(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Log.info(TAG, "sendRunTimeData::content:" + content);
+                if (socket != null)
+                {
+                    try
+                    {
+                        runTimeDos = new DataOutputStream(socket.getOutputStream());
+                        runTimeDos.writeUTF(content + "\r\n");
+                        runTimeDos.flush();
+                    } catch (Exception e)
+                    {
+                        ToastUtil.showToastLong("数据发送失败！");
+                        EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.CONNCT_AGAIN);
+                        isReadImage = false;
+                        ProgressBarUtil.dismissProgressDialog();
+                        Log.exception(TAG, e);
+                    }
+                }
+                else
+                {
+                    isReadImage = false;
+                    EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.CONNCT_AGAIN);
+                    ProgressBarUtil.dismissProgressDialog();
+                    ToastUtil.showToastLong("设备未连接！！");
+                }
+            }
+        });
+    }
+
+    private static boolean isReadImage = true;
+    /**
+     * 功能：分包获取图片
+     */
+    private static Runnable runTimeRunnable = new Runnable()
+    {
+
+        @Override
+        public void run()
+        {
+
+            isReadImage = true;
+            Log.info(TAG, "runTimeRunnable::isReadImage:" + isReadImage);
+
+            int temp = 0;
+            String tempCurrent = "";
+            // 上一包
+            String before = "000";
+            // 当前包数
+            String current = "000";
+            // 总包数
+            String length = "";
+
+            // RTU传过来的图片每包是 1047个字节
+            byte[] buffer = new byte[1047];
+
+
+            byte[] imageInfoBuffer = new byte[20];
+            byte[] imageBuffer = new byte[1024];
+            int next = 0;
+
+            File file = new File(ConfigParams.ImagePath + ConfigParams.ImageName);
+            try
+            {
+                if (!file.exists())
+                {
+                    // 图片文件不存在 创建文件
+                    file.createNewFile();
+                }
+                imgFos = new FileOutputStream(file);
+            } catch (Exception e)
+            {
+                Log.debug(TAG, "file is empty!");
+                Log.exception(TAG, e);
+                return;
+            }
+            while (isReadImage)
+            {
+                if (socket != null)
+                {
+                    if (!socket.isClosed())
+                    {
+
+                        try
+                        {
+                            InputStream is = socket.getInputStream();
+                            dis = new DataInputStream(is);
+
+                            while ((next = dis.read(buffer)) > 0)
+                            {
+                                temp = 0;
+                                // 跳过前19个字节
+                                System.arraycopy(buffer, 20, imageBuffer, 0, 1024);
+                                // 获取图片包信息
+                                System.arraycopy(buffer, 0, imageInfoBuffer, 0, 20);
+//                                Log.info(TAG, Arrays.toString(imageBuffer));
+                                // crc校验
+                                imgFos.write(imageBuffer, 0, imageBuffer.length);
+                                imgFos.flush();
+
+                                byte[] lengthByte = new byte[10];
+                                for (int i = 0; i < 7; i++)
+                                {
+                                    lengthByte[i] = imageInfoBuffer[i + 13];
+                                }
+                                String lengthS = new String(lengthByte);
+
+                                current = lengthS.substring(0, 3);
+                                length = lengthS.substring(4, 7);
+
+                                Log.info(TAG, "currentLength:" + current);
+                                Log.info(TAG, "length:" + length);
+
+                                if (ServiceUtils.isGarbledCode(current))
+                                {// 如果当前包有乱码，再次获取上一包数据
+                                    SocketUtil.sendRunTimeData(ConfigParams.ReadImage + before);
+                                }
+                                else
+                                {
+                                    before = current;
+                                }
+
+                                // 总包数等于当前包数
+                                if (!TextUtils.isEmpty(current) && !TextUtils.isEmpty(length) && current.equals(length))
+                                {
+                                    EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_IMAGE_SUCCESS);
+                                    stopReadRunTimeData();
+                                    return;
+                                }
+
+                                // 取完一包，在去获取下一包
+                                if (!ServiceUtils.isGarbledCode(current))
+                                {
+                                    SocketUtil.sendRunTimeData(ConfigParams.ReadImage + current);
+                                }
+
+                            }
+                        } catch (Exception e)
+                        {
+                            temp++;
+                            if (temp < 3)
+                            {
+                                // 取完一包，在去获取下一包
+                                if (!ServiceUtils.isGarbledCode(current))
+                                {
+                                    SocketUtil.sendRunTimeData(ConfigParams.ReadImage + current);
+
+                                }
+                            }
+                            else
+                            {
+                                isReadImage = false;
+                                ProgressBarUtil.dismissProgressDialog();
+                                ToastUtil.showToastLong("图片获取失败！");
+                                temp = 0;
+                            }
+                            e.printStackTrace();
+                        }
+                    }
+                    else
+                    {
+                        isReadImage = false;
+                        ProgressBarUtil.dismissProgressDialog();
+                        ToastUtil.showToastLong("图片获取失败！");
+                    }
+                }
+
+            }
+        }
+    };
+
+    public static void startReadRunTimeData()
+    {
+        Log.info(TAG, "startReadRunTimeData::");
+        File file = new File(ConfigParams.ImagePath + ConfigParams.ImageName);
+        if (file.exists())
+        {//获取图片之前，如果有图片就先删除
+            file.delete();
+        }
+//        ServiceUtils.getSocketThreads().execute(runTimeRunnable);
+    }
+
+    public static void stopReadRunTimeData()
+    {
+        Log.info(TAG, "stopReadRunTimeData::");
+        isReadImage = false;
+        ProgressBarUtil.dismissProgressDialog();
+    }
+
+    private static void readData(final String senData)
+    {
+
+        try
+        {
+            if (socket != null)
+            {
+                try
+                {
+//                    byte[] buffer = new byte[1024];
+//                    Log.info(TAG, "readData::run:");
+//                    socket.getInputStream().read(buffer);
+//                    Log.info(TAG,Arrays.toString(buffer));
+//                    DataInputStream disread = new DataInputStream(socket.getInputStream());
+                    reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    String result = "";
+                    Log.info(TAG, "readData::senData:" + senData);
+//                    Log.info(TAG, "readData::reader:" + reader.readLine());
+//                    Log.info(TAG, "readData::disread:" + disread.readUTF());
+                    while ((result = reader.readLine()) != null)
+                    {
+                        if (senData.contains(ConfigParams.ReadImage))
+                        {// 如果请求的是图片回放，摄像头状态，通信状态不做处理
+                        }
+                        else
+                        {
+                            Log.info(TAG, "result:" + result);
+                            if (ServiceUtils.isGarbledCode(result))
+                            {
+                                return;
+                            }
+                            if (ConfigParams.SetBatteryHigh.equals(senData) || ConfigParams.SetBatteryLow.equals(senData) || ConfigParams.ReadBatteryHighStatus.equals(senData) || ConfigParams.ReadBatteryLowStatus.equals(senData))
+                            {//AD电压采集单独处理
+                                EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_AD_LV, result);
+                            }
+                            else
+                            {
+                                if (result != null && result.toUpperCase().contains("OK"))
+                                {
+                                    EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_RESULT_OK, result, senData);
+                                }
+                                else if (result != null && result.toUpperCase().contains("ERROR"))
+                                {
+                                    EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_RESULT_ERROR, result, senData);
+                                }
+                                else
+                                {
+                                    EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_DATA, result, senData);
+                                }
+                            }
+                        }
+                    }
+
+                    Log.info(TAG, "finish::");
+                } catch (Exception e)
+                {
+                    Log.exception(TAG, e);
+                }
+            }
+            else
+            {
+                ToastUtil.showToastLong("设备未连接！！");
+            }
+        } catch (Exception e)
+        {
+            Log.exception(TAG, e);
+        }
+    }
+
+    /**
+     * 关闭Socket连接
+     */
+    public static void closeSocket()
+    {
+        Log.info(TAG, "closeSocket::");
+        ServiceUtils.getSocketThreads().execute(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    if (reader != null)
+                    {
+                        reader.close();
+                    }
+                    if (writer != null)
+                    {
+                        writer.close();
+                    }
+                    if (dis != null)
+                    {
+                        dis.close();
+                    }
+                    if (runTimeDos != null)
+                    {
+                        runTimeDos.close();
+                    }
+                    if (dos != null)
+                    {
+                        dos.close();
+                    }
+                    if (imgFos != null)
+                    {
+                        imgFos.close();
+                    }
+                    if (socket != null)
+                    {
+                        socket.close();
+                        socket = null;
+                    }
+
+                } catch (Exception e)
+                {
+                    Log.exception(TAG, e);
+                }
+            }
+        });
+    }
+
+
+    /**
+     * SocketClient 实例测试
+     */
+
+    private static SocketUtil socketUtil = null;
+    private SocketClient socketClient;
+
+    public static SocketUtil getSocketUtil()
+    {
+
+        if (socketUtil == null)
+        {
+            socketUtil = new SocketUtil();
+        }
+        return socketUtil;
+    }
+
+    String send;
+
+    public void connectRTU(String ip, String port)
+    {
+        Log.info(TAG, "connectRTU::");
+        closeSocketClient();
+        socketClient = new SocketClient();
+        // 远程端IP地址
+        socketClient.getAddress().setRemoteIP(ip);
+        // 远程端端口号
+        socketClient.getAddress().setRemotePort(port);
+        // 连接超时时长，单位毫
+        socketClient.getAddress().setConnectionTimeout(15 * 1000);
+        // 设置编码为UTF-8
+        socketClient.setCharsetName(CharsetUtil.UTF_8);
+        //设置发送自动增加\r\n
+//        socketClient.getSocketPacketHelper().setSendTrailerData("\r\n".getBytes());
+
+        //设置自动接收
+        socketClient.getSocketPacketHelper().setReadStrategy(SocketPacketHelper.ReadStrategy.AutoReadToTrailer);
+        socketClient.getSocketPacketHelper().setReceiveTrailerData("\r\n".getBytes());
+        // 设置接收超时时长，单位毫秒
+//        socketClient.getSocketPacketHelper().setReceiveTimeout(120 * 1000);
+//        socketClient.getSocketPacketHelper().setReceiveTimeoutEnabled(true);
+
+        socketClient.registerSocketClientDelegate(new SocketClientDelegate()
+        {
+            @Override
+            public void onConnected(SocketClient client)
+            {
+                Log.info(TAG, "onConnected::");
+                EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.CONNCT_OK);
+            }
+
+            @Override
+            public void onDisconnected(SocketClient client)
+            {
+                Log.info(TAG, "onDisconnected::");
+                ProgressBarUtil.dismissProgressDialog();
+                EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.CONNCT_FAIL);
+            }
+
+            @Override
+            public void onResponse(SocketClient client, @NonNull SocketResponsePacket responsePacket)
+            {
+//                Log.info(TAG,"onResponse::");
+//                String message = responsePacket.getMessage();
+//                Log.info(TAG,"message:" + message);
+            }
+        });
+
+        socketClient.registerSocketClientReceiveDelegate(new SocketClientReceivingDelegate()
+        {
+            @Override
+            public void onReceivePacketBegin(SocketClient client, SocketResponsePacket packet)
+            {
+//                Log.info(TAG, "onReceivePacketBegin:");
+            }
+
+            @Override
+            public void onReceivePacketEnd(SocketClient client, SocketResponsePacket packet)
+            {
+                byte[] data = packet.getData();
+                String result = new String(data, 0, data.length);
+                Log.info(TAG, "onReceivePacketEnd:" + result);
+                if (send.contains(ConfigParams.ReadImage))
+                {// 请求图片
+                    receiveImage(data);
+                }
+                else
+                {
+                    if (ServiceUtils.isGarbledCode(result))
+                    {
+                        return;
+                    }
+                    if (ConfigParams.SetBatteryHigh.equals(send) || ConfigParams.SetBatteryLow.equals(send) || ConfigParams.ReadBatteryHighStatus.equals(send) || ConfigParams.ReadBatteryLowStatus.equals(send))
+                    {//AD电压采集单独处理
+                        EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_AD_LV, result);
+                    }
+                    else
+                    {
+                        if (result != null && result.toUpperCase().contains("OK"))
+                        {
+                            EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_RESULT_OK, result, send);
+                        }
+                        else if (result != null && result.toUpperCase().contains("ERROR"))
+                        {
+                            EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_RESULT_ERROR, result, send);
+                        }
+                        else
+                        {
+                            EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_DATA, result, send);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onReceivePacketCancel(SocketClient client, SocketResponsePacket packet)
+            {
+                Log.info(TAG, "onReceivePacketCancel:");
+                ProgressBarUtil.dismissProgressDialog();
+            }
+
+            @Override
+            public void onReceivingPacketInProgress(SocketClient client, SocketResponsePacket packet, float progress, int receivedLength)
+            {
+                Log.info(TAG, "onReceivingPacketInProgress:");
+            }
+        });
+
+        socketClient.registerSocketClientSendingDelegate(new SocketClientSendingDelegate()
+        {
+            @Override
+            public void onSendPacketBegin(SocketClient client, SocketPacket packet)
+            {
+                Log.info(TAG, "onSendPacketBegin:");
+            }
+
+            @Override
+            public void onSendPacketEnd(SocketClient client, SocketPacket packet)
+            {
+                Log.info(TAG, "onSendPacketEnd:");
+            }
+
+            @Override
+            public void onSendPacketCancel(SocketClient client, SocketPacket packet)
+            {
+                Log.info(TAG, "onSendPacketCancel:");
+            }
+
+            @Override
+            public void onSendingPacketInProgress(SocketClient client, SocketPacket packet, float progress, int sendedLength)
+            {
+//                Log.info(TAG, "onSendingPacketInProgress:");
+            }
+        });
+        socketClient.connect();
+    }
+
+
+    /**
+     * 发送数据
+     *
+     * @param content
+     */
+    public void sendContent(String content)
+    {
+        if (TextUtils.isEmpty(content))
+        {
+            return;
+        }
+        if (socketClient == null)
+        {
+            return;
+        }
+        this.send = content;
+        Log.info(TAG, "content:" + content);
+        socketClient.sendString(content + "\r\n");
+
+    }
+
+
+    /**
+     * 关闭Socket连接
+     */
+    public void closeSocketClient()
+    {
+        if (socketClient != null)
+        {
+            socketClient.disconnect();
+        }
+    }
+
+    /**
+     * Socket是否连接
+     */
+    public boolean isConnected()
+    {
+        if (socketClient != null)
+        {
+            return socketClient.isConnected();
+        }
+        return false;
+    }
+
+    private void receiveImage(byte[] buffer)
+    {
+
+        try
+        {
+            // 上一包
+            String before = "000";
+            // 当前包数
+            String current = "000";
+            // 总包数
+            String length = "";
+
+            // RTU传过来的图片每包是 1047个字节
+//            byte[] buffer = new byte[1047];
+
+
+            byte[] imageInfoBuffer = new byte[20];
+            byte[] imageBuffer = new byte[1024];
+
+            File file = new File(ConfigParams.ImagePath + ConfigParams.ImageName);
+            if (!file.exists())
+            {
+                // 图片文件不存在 创建文件
+                file.createNewFile();
+            }
+            imgFos = new FileOutputStream(file);
+
+
+            // 跳过前19个字节
+            System.arraycopy(buffer, 20, imageBuffer, 0, 1024);
+            // 获取图片包信息
+            System.arraycopy(buffer, 0, imageInfoBuffer, 0, 20);
+//                                Log.info(TAG, Arrays.toString(imageBuffer));
+            // crc校验
+            imgFos.write(imageBuffer, 0, imageBuffer.length);
+            imgFos.flush();
+
+            byte[] lengthByte = new byte[10];
+            for (int i = 0; i < 7; i++)
+            {
+                lengthByte[i] = imageInfoBuffer[i + 13];
+            }
+            String lengthS = new String(lengthByte);
+
+            current = lengthS.substring(0, 3);
+            length = lengthS.substring(4, 7);
+
+            Log.info(TAG, "currentLength:" + current);
+            Log.info(TAG, "length:" + length);
+
+            if (ServiceUtils.isGarbledCode(current))
+            {// 如果当前包有乱码，再次获取上一包数据
+                sendContent(ConfigParams.ReadImage + before);
+            }
+            else
+            {
+                before = current;
+            }
+
+            // 总包数等于当前包数
+            if (!TextUtils.isEmpty(current) && !TextUtils.isEmpty(length) && current.equals(length))
+            {
+                EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_IMAGE_SUCCESS);
+                stopReadRunTimeData();
+                return;
+            }
+
+            // 取完一包，在去获取下一包
+            if (!ServiceUtils.isGarbledCode(current))
+            {
+                sendContent(ConfigParams.ReadImage + current);
+            }
+        } catch (Exception e)
+        {
+            ProgressBarUtil.dismissProgressDialog();
+            ToastUtil.showToastLong("图片获取失败！");
+            Log.exception(TAG, e);
+        }
+
+    }
+}

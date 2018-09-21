@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <!--使用FrameLayout当做盛放Fragment对象的容器-->
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    <!--中间为一条分割线-->
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/radioGroup"
+        android:background="@mipmap/frame_shadow" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffff"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radio_equipment"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:button="@null"
+            android:drawableTop="@drawable/selector_equipment"
+            android:gravity="center"
+            android:paddingLeft="0dp"
+            android:paddingTop="5dp"
+            android:text="@string/Equipment_docking"
+            android:textColor="#6f6f6f"
+            android:textSize="12sp" />
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"></LinearLayout>
+
+        <RadioButton
+            android:id="@+id/radio_system"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:button="@null"
+            android:drawableTop="@drawable/selector_system"
+            android:gravity="center"
+            android:paddingLeft="0dp"
+            android:paddingTop="5dp"
+            android:text="@string/Parameter_configuration"
+            android:textColor="#6f6f6f"
+            android:textSize="12sp" />
+
+    </RadioGroup>
+
+
+    <Button
+        android:id="@+id/client"
+        android:layout_width="73dp"
+        android:layout_height="73dp"
+        android:layout_above="@id/radioGroup"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="-78dp"
+        android:background="@drawable/selector_client"
+        android:visibility="visible" />
+</LinearLayout>
