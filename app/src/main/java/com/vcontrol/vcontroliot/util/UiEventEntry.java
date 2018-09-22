@@ -21,6 +21,7 @@ public class UiEventEntry
     public static final int LRU_3200 = 209;
     public static final int RCM_2000 = 210;
     public static final int LRU_6000 = 211;
+    public static final int LRU_BLE_3300 = 212;
 
 
     public static final int TAB_SETTING = 44;

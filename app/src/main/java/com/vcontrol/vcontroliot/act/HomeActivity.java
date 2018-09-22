@@ -29,6 +29,7 @@ import com.vcontrol.vcontroliot.fragment.AmmeterFragment;
 import com.vcontrol.vcontroliot.fragment.AmmeterSearchFragment;
 import com.vcontrol.vcontroliot.fragment.AnalogQuantityFragment;
 import com.vcontrol.vcontroliot.fragment.AtherPamarsFragment;
+import com.vcontrol.vcontroliot.fragment.BleSearchFragment;
 import com.vcontrol.vcontroliot.fragment.CameraFragment;
 import com.vcontrol.vcontroliot.fragment.ChannelBEIFragment;
 import com.vcontrol.vcontroliot.fragment.ChannelCENTERFragment;
@@ -95,8 +96,7 @@ import java.util.List;
  * Created by Vcontrol on 2016/11/24.
  */
 
-public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissListener, EventNotifyHelper.NotificationCenterDelegate,ViewDialogFragment.Callback
-{
+public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissListener, EventNotifyHelper.NotificationCenterDelegate, ViewDialogFragment.Callback {
     private static final String TAG = HomeActivity.class.getSimpleName();
     private int currentType = 200;
 
@@ -137,7 +137,8 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
     private LruSearchFragment LruSearch = null;
     private RcmSearchFragment rcmSearch = null;
     private RcmFunSearchFragment rcmFunSearch = null;
-    private ChannelFragment channelFragment = null;;
+    private ChannelFragment channelFragment = null;
+    ;
     private DevicesFragment devicesFragment = null;
     private LSearchFragment lSearchFragment = null;
     private ValveControlRelayFragment valveControlRelayFragment = null;
@@ -152,14 +153,12 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
     private int currentSel = 100;
 
     @Override
-    public int getLayoutView()
-    {
+    public int getLayoutView() {
         return R.layout.fragment_rtu_basic;
     }
 
     @Override
-    public void initViewData()
-    {
+    public void initViewData() {
         //显示toolbar
         showToolbar();
         setTitleName(rtuSetting.getText().toString().trim());
@@ -168,62 +167,48 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
         rtuSearch.setOnClickListener(this);
         rtuVersion.setOnClickListener(this);
 
-        if (getIntent() != null)
-        {
+        if (getIntent() != null) {
             String name = getIntent().getStringExtra(UiEventEntry.NOTIFY_BASIC_NAME);
             currentType = getIntent().getIntExtra(UiEventEntry.NOTIFY_BASIC_TYPE, UiEventEntry.WRU_1901);
             setTitleMain(name);
         }
 
-        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100)
-        {
+        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
             Bundle bundle = new Bundle();
             bundle.putInt(UiEventEntry.CURRENT_RTU_NAME, currentType);
             currentSel = UiEventEntry.TAB_SETTING_SYS;
             turnToFragmentStack(R.id.detail_layout, SystemPamarsFragment.class, bundle);
             currentSel = UiEventEntry.TAB_SETTING_SYS;
-        }
-        else if (currentType == UiEventEntry.WRU_1901)
-        {
+        } else if (currentType == UiEventEntry.WRU_1901) {
             turnToFragmentStack(R.id.detail_layout, GroundWaterBasicFragment.class);
             setCurrentSel(UiEventEntry.TAB_GROUND_WATER_BASIC);
-        }
-        else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801)
-        {
+        } else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801) {
 
             turnToFragmentStack(R.id.detail_layout, CommRtuSysFragment.class);
             setCurrentSel(UiEventEntry.TAB_COMM_SYSTEM);
             currentSel = UiEventEntry.TAB_GROUND_WATER_BASIC;
-        }
-        else if (currentType == UiEventEntry.LRU_3000)
-        {
+        } else if (currentType == UiEventEntry.LRU_3000) {
             turnToFragmentStack(R.id.detail_layout, LruSysPamarsFragment.class);
             currentSel = UiEventEntry.TAB_LRU_SYS;
             titleLayout.setVisibility(View.GONE);
-        }
-        else if (currentType == UiEventEntry.RCM_2000)
-        {
+        } else if (currentType == UiEventEntry.RCM_2000) {
             turnToFragmentStack(R.id.detail_layout, RcmSysPamarsFragment.class);
             currentSel = UiEventEntry.TAB_RCM_SYS;
-        }
-        else if (currentType == UiEventEntry.LRU_3200)
-        {
+        } else if (currentType == UiEventEntry.LRU_3200) {
             currentSel = UiEventEntry.TAB_SETTING_SYS;
             turnToFragmentStack(R.id.detail_layout, LSysPamarsFragment.class);
             currentSel = UiEventEntry.TAB_SETTING_SYS;
             titleLayout.setVisibility(View.GONE);
-        }
-        else if (currentType == UiEventEntry.LRU_3100)
-        {
+        } else if (currentType == UiEventEntry.LRU_3100) {
             turnToFragmentStack(R.id.detail_layout, ControlShowFragment.class);
             currentSel = UiEventEntry.TAB_LRU_CONTROL;
             bottomenuLayout.setVisibility(View.GONE);
             bottomLayout.setVisibility(View.GONE);
-        }
-        else if (currentType == UiEventEntry.LRU_6000)
-        {
+        } else if (currentType == UiEventEntry.LRU_6000) {
             turnToFragmentStack(R.id.detail_layout, LNewSysPamarsFragment.class);
             currentSel = UiEventEntry.TAB_LRU_NEW_SETTING;
+        } else if (currentType == UiEventEntry.LRU_BLE_3300) {
+            turnToFragmentStack(R.id.detail_layout, LNewSysPamarsFragment.class);
         }
 
         setTitleRightVisible(View.VISIBLE);
@@ -236,21 +221,18 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
         initSetToLRUData();
 
 
-        if (setList.size() > 0)
-        {
+        if (setList.size() > 0) {
             setTextView.setText(setList.get(0));
         }
         setLayout.setOnClickListener(this);
 
     }
 
-    public void setCurrentSel(int currentSel)
-    {
+    public void setCurrentSel(int currentSel) {
         this.currentSel = currentSel;
     }
 
-    private void initSetToData()
-    {
+    private void initSetToData() {
 
         setToList.add(getString(R.string.rain_pamars));
         setToList.add(getString(R.string.water_pamars));
@@ -265,15 +247,13 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
         setToList.add(getString(R.string.Analog_settings));
         setToList.add(getString(R.string.Meter_settings));
         setToList.add("温度计");
-        if (currentType == UiEventEntry.WRU_2100)
-        {
+        if (currentType == UiEventEntry.WRU_2100) {
             setToList.add(getString(R.string.Manometer));
         }
 
     }
 
-    private void initSetChannelData()
-    {
+    private void initSetChannelData() {
 
         setToChannelList.add(getString(R.string.channel_select));
         setToChannelList.add(getString(R.string.gprs_pamars));
@@ -285,10 +265,8 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
     }
 
 
-        private void initSetData()
-    {
-        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100)
-        {
+    private void initSetData() {
+        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
             setList.add(getString(R.string.system_params_setting));
             setList.add(getString(R.string.collect_setting));
             setList.add(getString(R.string.comm_params_setting));
@@ -296,72 +274,53 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
             setList.add(getString(R.string.sensor_setting));
             setList.add(getString(R.string.ad_setting));
             setList.add(getString(R.string.Valve_control_relay_settings));
-        }
-        else if (currentType == UiEventEntry.WRU_1901)
-        {
+        } else if (currentType == UiEventEntry.WRU_1901) {
             setList.add(getString(R.string.groundwater_basic_setting));
             setList.add(getString(R.string.groundwater_server_setting));
             setList.add(getString(R.string.ad_setting));
             setList.add(getString(R.string.collect_setting));
-        }
-        else if (currentType == UiEventEntry.RTU_2801 || currentType == UiEventEntry.RTU_2800 )
-        {
+        } else if (currentType == UiEventEntry.RTU_2801 || currentType == UiEventEntry.RTU_2800) {
             setList.add(getString(R.string.system_params_setting));
             setList.add(getString(R.string.comm_params_setting));
             setList.add(getString(R.string.sensor_setting));
             setList.add(getString(R.string.ad_setting));
 
-        }
-        else if (currentType == UiEventEntry.LRU_3100)
-        {
+        } else if (currentType == UiEventEntry.LRU_3100) {
             setList.add("RTU-1");
             setList.add("RTU-2");
             setList.add("RTU-3");
             setList.add("RTU-4");
 
-        }
-        else if (currentType == UiEventEntry.RCM_2000)
-        {
+        } else if (currentType == UiEventEntry.RCM_2000) {
             setList.add(getString(R.string.System_board_settings));
             setList.add(getString(R.string.Function_board_settings));
             setList.add(getString(R.string.PTZ_settings));
             setList.add(getString(R.string.sensor_setting));
-        }
-
-        else if (currentType == UiEventEntry.LRU_6000)
-        {
+        } else if (currentType == UiEventEntry.LRU_6000) {
             setList.add(getString(R.string.system_params_setting));
             setToChannelList.add(getString(R.string.Channel_demonstration_settings));
+        } else if (currentType == UiEventEntry.LRU_BLE_3300) {
+            setList.add(getString(R.string.system_params_setting));
+            setList.add(getString(R.string.sensor_setting));
         }
 
     }
 
-    private void initSetToRcmData()
-    {
+    private void initSetToRcmData() {
 
         setToRcmList.add(getString(R.string.rain_pamars));
         setToRcmList.add(getString(R.string.water_pamars));
         setToRcmList.add(getString(R.string.water_plan));
     }
 
-    private void initSetToLRUData()
-    {
-
-        setToLruList.add(getString(R.string.rain_pamars));
-        setToLruList.add(getString(R.string.water_pamars));
+    private void initSetToLRUData() {
         setToLruList.add(getString(R.string.water_plan));
-//        setToList.add(getString(R.string.camera));
         setToLruList.add(getString(R.string.shangqing));
-        setToLruList.add(getString(R.string.gprs_plan));
         setToLruList.add(getString(R.string.zawei_plan));
-        setToLruList.add(getString(R.string.ather_pamars));
-
-
     }
 
     @Override
-    public void initComponentViews()
-    {
+    public void initComponentViews() {
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_RESULT_ERROR);
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_RESULT_OK);
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.CONNCT_AGAIN);
@@ -395,8 +354,7 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
 
     @Override
-    protected void onDestroy()
-    {
+    protected void onDestroy() {
         super.onDestroy();
         Log.debug(TAG, "onDestroy::");
         EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.READ_RESULT_OK);
@@ -406,39 +364,32 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
         EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.CONNCT_FAIL);
     }
 
-    private void selRtu(TextView textView, int id)
-    {
+    private void selRtu(TextView textView, int id) {
 
-        if (textView != null)
-        {
+        if (textView != null) {
             textView.setTextColor(getResources().getColor(R.color.bottomblack));
             textView.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(id), null, null);
         }
     }
 
-    private void nolRtu(TextView textView, int id)
-    {
-        if (textView != null)
-        {
+    private void nolRtu(TextView textView, int id) {
+        if (textView != null) {
             textView.setTextColor(getResources().getColor(R.color.white));
             textView.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(id), null, null);
         }
     }
 
     @Override
-    public void onClick(View view)
-    {
+    public void onClick(View view) {
 //        bundle.clear();
         String rtuDetail = "";
         Bundle bundle = new Bundle();
         bundle.putInt(UiEventEntry.CURRENT_RTU_NAME, currentType);
         bundle.putInt(UiEventEntry.CURRENT_SEARCH, UiEventEntry.TAB_SEARCH_BASIC);
-        switch (view.getId())
-        {
+        switch (view.getId()) {
             case R.id.rtu_setting:
                 SearchFragment gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
-                if (gprsFragment != null && gprsFragment.isVisible())
-                {
+                if (gprsFragment != null && gprsFragment.isVisible()) {
                     gprsFragment.stopUpdate();
                 }
 
@@ -450,50 +401,36 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
 
                 titleLayout.setVisibility(View.VISIBLE);
-                if (setList.size() > 0)
-                {
+                if (setList.size() > 0) {
                     setTextView.setText(setList.get(0));
                 }
                 currentTab = UiEventEntry.TAB_SETTING;
 
-                if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100)
-                {
+                if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
                     currentSel = UiEventEntry.TAB_SETTING_SYS;
 
                     turnToFragmentStack(R.id.detail_layout, SystemPamarsFragment.class, bundle);
-                }
-                else if (currentType == UiEventEntry.WRU_1901)
-                {
+                } else if (currentType == UiEventEntry.WRU_1901) {
                     turnToFragmentStack(R.id.detail_layout, GroundWaterBasicFragment.class);
                     setCurrentSel(UiEventEntry.TAB_GROUND_WATER_BASIC);
-                }
-                else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801)
-                {
+                } else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801) {
 
                     turnToFragmentStack(R.id.detail_layout, CommRtuSysFragment.class);
                     setCurrentSel(UiEventEntry.TAB_COMM_SYSTEM);
-                }
-                else if (currentType == UiEventEntry.LRU_3000)
-                {
+                } else if (currentType == UiEventEntry.LRU_3000) {
 
                     turnToFragmentStack(R.id.detail_layout, LruSysPamarsFragment.class);
                     setCurrentSel(UiEventEntry.TAB_LRU_SYS);
                     titleLayout.setVisibility(View.GONE);
-                }
-                else if (currentType == UiEventEntry.LRU_3200)
-                {
+                } else if (currentType == UiEventEntry.LRU_3200) {
                     turnToFragmentStack(R.id.detail_layout, LSysPamarsFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SETTING_SYS);
                     titleLayout.setVisibility(View.GONE);
-                }
-                else if (currentType == UiEventEntry.RCM_2000)
-                {
+                } else if (currentType == UiEventEntry.RCM_2000) {
 
                     turnToFragmentStack(R.id.detail_layout, RcmSysPamarsFragment.class);
                     setCurrentSel(UiEventEntry.TAB_RCM_SYS);
-                }
-                else if (currentType == UiEventEntry.LRU_6000)
-                {
+                } else if (currentType == UiEventEntry.LRU_6000) {
 
                     turnToFragmentStack(R.id.detail_layout, LNewSysPamarsFragment.class);
                     setCurrentSel(UiEventEntry.TAB_LRU_NEW_SETTING);
@@ -501,12 +438,9 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
                 updateRight();
                 setTitleRightVisible(View.VISIBLE);
 
-                if (setList.size() == 1)
-                {
+                if (setList.size() == 1) {
                     iconImageView.setVisibility(View.GONE);
-                }
-                else
-                {
+                } else {
                     iconImageView.setVisibility(View.VISIBLE);
                 }
 
@@ -521,65 +455,50 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
 
                 titleLayout.setVisibility(View.VISIBLE);
-                if (searchList.size() > 0)
-                {
+                if (searchList.size() > 0) {
                     setTextView.setText(searchList.get(0));
                 }
                 currentTab = UiEventEntry.TAB_SEARCH;
 
 
-                if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100)
-                {
+                if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
                     currentSel = UiEventEntry.TAB_SEARCH_BASIC;
                     SearchFragment fragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
-                    if (!fragment.isVisible())
-                    {
+                    if (!fragment.isVisible()) {
                         turnToFragmentStack(R.id.detail_layout, SearchFragment.class, bundle);
                     }
-                }
-                else if (currentType == UiEventEntry.WRU_1901)
-                {
+                } else if (currentType == UiEventEntry.WRU_1901) {
                     turnToFragmentStack(R.id.detail_layout, GroundWaterSearchFragment.class);
                     setCurrentSel(UiEventEntry.TAB_GROUND_WATER_ALL);
-                }
-                else if (currentType == UiEventEntry.RTU_2801 || currentType == UiEventEntry.RTU_2800)
-                {
+                } else if (currentType == UiEventEntry.RTU_2801 || currentType == UiEventEntry.RTU_2800) {
                     turnToFragmentStack(R.id.detail_layout, CommBasicSearchFragment.class);
                     setCurrentSel(UiEventEntry.TAB_COMM_BASIC);
-                }
-                else if (currentType == UiEventEntry.LRU_3000)
-                {
+                } else if (currentType == UiEventEntry.LRU_3000) {
                     turnToFragmentStack(R.id.detail_layout, LruSearchFragment.class);
                     setCurrentSel(UiEventEntry.TAB_LRU_SEARCH);
                     titleLayout.setVisibility(View.GONE);
-                }
-                else if (currentType == UiEventEntry.RCM_2000)
-                {
+                } else if (currentType == UiEventEntry.RCM_2000) {
                     turnToFragmentStack(R.id.detail_layout, RcmSearchFragment.class);
                     setCurrentSel(UiEventEntry.TAB_RCM_SEARCH);
-                }
-                else if (currentType == UiEventEntry.LRU_3200)
-                {
+                } else if (currentType == UiEventEntry.LRU_3200) {
                     turnToFragmentStack(R.id.detail_layout, LSearchFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SEARCH_LRU_BASIC);
                     titleLayout.setVisibility(View.GONE);
-                }
-                else if (currentType == UiEventEntry.LRU_6000)
-                {
+                } else if (currentType == UiEventEntry.LRU_6000) {
                     turnToFragmentStack(R.id.detail_layout, LNewSearchFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SEARCH_LRU_NEW);
+                    titleLayout.setVisibility(View.GONE);
+                } else if (currentType == UiEventEntry.LRU_BLE_3300) {
+                    turnToFragmentStack(R.id.detail_layout, BleSearchFragment.class);
                     titleLayout.setVisibility(View.GONE);
                 }
 
                 updateRight();
                 setTitleRightVisible(View.VISIBLE);
 
-                if (searchList.size() == 1)
-                {
+                if (searchList.size() == 1) {
                     iconImageView.setVisibility(View.GONE);
-                }
-                else
-                {
+                } else {
                     iconImageView.setVisibility(View.VISIBLE);
                 }
 
@@ -624,14 +543,12 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         super.onBackPressed();
         backMain();
     }
 
-    private void backMain()
-    {
+    private void backMain() {
         SocketUtil.getSocketUtil().closeSocketClient();
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra(UiEventEntry.NOTIFY_NOWEL, true);
@@ -640,23 +557,16 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 //        moveTaskToBack(true);
     }
 
-    private void updateData()
-    {
+    private void updateData() {
 
-        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100 )
-        {
-            if (titleRight == null)
-            {
+        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
+            if (titleRight == null) {
                 return;
             }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim()))
-            {
+            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
                 SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
-            }
-            else
-            {
-                switch (currentSel)
-                {
+            } else {
+                switch (currentSel) {
                     case UiEventEntry.TAB_CHANNEL_SELECT:
                         SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadCommPara1);
                         break;
@@ -690,13 +600,11 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
                         SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadTemp_SensorPara);
                         break;
                     case UiEventEntry.TAB_SETTING_CHANNEL:
-                        if (channelFragment == null)
-                        {
+                        if (channelFragment == null) {
                             channelFragment = (ChannelFragment) FgManager.getFragment(ChannelFragment.class);
                         }
 
-                        if (channelFragment != null)
-                        {
+                        if (channelFragment != null) {
                             channelFragment.refreshData();
                         }
                         break;
@@ -740,80 +648,65 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 //                        SocketUtil.getSocketUtil().sendContent(ConfigParams.Read_SHUIZHI_data);
 //                        break;
                     case UiEventEntry.TAB_SEARCH_BASIC:
-                        if (gprsFragment == null)
-                        {
+                        if (gprsFragment == null) {
                             gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
                         }
-                        if (gprsFragment != null && gprsFragment.isVisible())
-                        {
+                        if (gprsFragment != null && gprsFragment.isVisible()) {
                             gprsFragment.setData();
                         }
                         break;
                     case UiEventEntry.TAB_SEARCH_GPRS:
                     case UiEventEntry.TAB_SEARCH_CAMERA:
-                        if (currentSel == UiEventEntry.TAB_SEARCH_CAMERA)
-                        {
+                        if (currentSel == UiEventEntry.TAB_SEARCH_CAMERA) {
                             SocketUtil.getSocketUtil().sendContent(ConfigParams.SENDPIC);
                             SocketUtil.getSocketUtil().sendContent(ConfigParams.SEND2PIC);
 
                         }
-                        if (gprsFragment == null)
-                        {
+                        if (gprsFragment == null) {
                             gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
                         }
-                        if (gprsFragment != null && gprsFragment.isVisible())
-                        {
+                        if (gprsFragment != null && gprsFragment.isVisible()) {
                             gprsFragment.updateData();
                         }
                         break;
 
                     case UiEventEntry.TAB_SEARCH_SENSOR:
-                        if (gprsFragment == null)
-                        {
+                        if (gprsFragment == null) {
                             gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
                         }
-                        if (gprsFragment.isVisible())
-                        {
+                        if (gprsFragment.isVisible()) {
                             gprsFragment.setData();
                         }
                         break;
                     case UiEventEntry.TAB_SEARCH_SIOL:
-                        if (soilSearchFragment == null)
-                        {
+                        if (soilSearchFragment == null) {
                             soilSearchFragment = (SoilSearchFragment) FgManager.getFragment(SoilSearchFragment.class);
                         }
-                        if (soilSearchFragment.isVisible())
-                        {
+                        if (soilSearchFragment.isVisible()) {
                             soilSearchFragment.setData();
                         }
                         break;
                     case UiEventEntry.TAB_SEARCH_WQ:
-                        if (wQualitySearchFragment == null)
-                        {
+                        if (wQualitySearchFragment == null) {
                             wQualitySearchFragment = (WQualitySearchFragment) FgManager.getFragment(WQualitySearchFragment.class);
                         }
-                        if (wQualitySearchFragment.isVisible())
-                        {
+                        if (wQualitySearchFragment.isVisible()) {
                             wQualitySearchFragment.setData();
                         }
                         break;
                     case UiEventEntry.TAB_SEARCH_Ammeter:
-                        if (ammeterSearchFragment == null)
-                        {
+                        if (ammeterSearchFragment == null) {
                             ammeterSearchFragment = (AmmeterSearchFragment) FgManager.getFragment(WQualitySearchFragment.class);
                         }
-                        if (ammeterSearchFragment.isVisible())
-                        {
+                        if (ammeterSearchFragment.isVisible()) {
                             ammeterSearchFragment.setData();
                         }
                         break;
                     case UiEventEntry.TAB_SETTING_AD:
-                        if (adFragment == null)
-                        {
+                        if (adFragment == null) {
                             adFragment = (ADFragment) FgManager.getFragment(ADFragment.class);
                         }
-                        if (adFragment.isVisible())
-                        {
+                        if (adFragment.isVisible()) {
                             adFragment.setData();
                         }
                         break;
@@ -826,237 +719,151 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
                         break;
                 }
             }
-        }
-        else if (currentType == UiEventEntry.LRU_3200)
-        {
-            if (titleRight == null)
-            {
+        } else if (currentType == UiEventEntry.LRU_3200) {
+            if (titleRight == null) {
                 return;
             }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim()))
-            {
+            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
                 SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
-            }
-            else
-            {
-                if (currentSel == UiEventEntry.TAB_SETTING_SYS)
-                {//全部参数  常规设置
+            } else {
+                if (currentSel == UiEventEntry.TAB_SETTING_SYS) {//全部参数  常规设置
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadNetCfg);
-                }
-                else if (currentSel == UiEventEntry.TAB_SEARCH_LRU_BASIC)
-                {
+                } else if (currentSel == UiEventEntry.TAB_SEARCH_LRU_BASIC) {
 
-                    if (lSearchFragment == null)
-                    {
+                    if (lSearchFragment == null) {
                         lSearchFragment = (LSearchFragment) FgManager.getFragment(LSearchFragment.class);
                     }
-                    if (lSearchFragment != null && lSearchFragment.isVisible())
-                    {
+                    if (lSearchFragment != null && lSearchFragment.isVisible()) {
                         lSearchFragment.setData();
                     }
                 }
             }
-        }
-        else if (currentType == UiEventEntry.WRU_1901)
-        {
-            if (titleRight == null)
-            {
+        } else if (currentType == UiEventEntry.WRU_1901) {
+            if (titleRight == null) {
                 return;
             }
             GroundServerFragment serverFragment = null;
             GroundWaterSearchFragment gprsFragment = null;
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim()))
-            {
+            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
                 SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.GROUND_PORT);
-            }
-            else if (getString(R.string.collect_ad_lv).equals(titleRight.getText().toString().trim()))
-            {
+            } else if (getString(R.string.collect_ad_lv).equals(titleRight.getText().toString().trim())) {
                 SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadBattery);
-            }
-            else
-            {
+            } else {
 
-                if (currentSel == UiEventEntry.TAB_GROUND_WATER_ALL)
-                {//全部参数  常规设置
+                if (currentSel == UiEventEntry.TAB_GROUND_WATER_ALL) {//全部参数  常规设置
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadData);
-                    if (gprsFragment == null)
-                    {
+                    if (gprsFragment == null) {
                         gprsFragment = (GroundWaterSearchFragment) FgManager.getFragment(GroundWaterSearchFragment.class);
                     }
-                    if (gprsFragment != null && gprsFragment.isVisible())
-                    {
+                    if (gprsFragment != null && gprsFragment.isVisible()) {
                         gprsFragment.setData();
                     }
-                }
-                else if (currentSel == UiEventEntry.TAB_GROUND_WATER_BASIC)
-                {//服务器设置
+                } else if (currentSel == UiEventEntry.TAB_GROUND_WATER_BASIC) {//服务器设置
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadData);
 
-                }
-                else if (currentSel == UiEventEntry.TAB_GROUND_WATER_SERVER)
-                {//服务器设置
-                    if (serverFragment == null)
-                    {
+                } else if (currentSel == UiEventEntry.TAB_GROUND_WATER_SERVER) {//服务器设置
+                    if (serverFragment == null) {
                         serverFragment = (GroundServerFragment) FgManager.getFragment(GroundServerFragment.class);
                     }
-                    if (serverFragment != null && serverFragment.isVisible())
-                    {
+                    if (serverFragment != null && serverFragment.isVisible()) {
                         serverFragment.initData();
                     }
                 }
             }
 
-        }
-        else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801)
-        {
-            if (titleRight == null)
-            {
+        } else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801) {
+            if (titleRight == null) {
                 return;
             }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim()))
-            {
+            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
                 SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
-            }
-            else
-            {
-                if (currentSel == UiEventEntry.TAB_COMM_SYSTEM)
-                {//全部参数  常规设置
+            } else {
+                if (currentSel == UiEventEntry.TAB_COMM_SYSTEM) {//全部参数  常规设置
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadParameter);
-                }
-                else if (currentSel == UiEventEntry.TAB_COMM_COMM)
-                {
+                } else if (currentSel == UiEventEntry.TAB_COMM_COMM) {
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadStaticIP);
 
-                }
-                else if (currentSel == UiEventEntry.TAB_COMM_BASIC)
-                {
-                    if (commFragment == null)
-                    {
+                } else if (currentSel == UiEventEntry.TAB_COMM_BASIC) {
+                    if (commFragment == null) {
                         commFragment = (CommBasicSearchFragment) FgManager.getFragment(CommBasicSearchFragment.class);
                     }
-                    if (commFragment != null && commFragment.isVisible())
-                    {
+                    if (commFragment != null && commFragment.isVisible()) {
                         commFragment.setData();
                     }
                 }
             }
-        }
-        else if (currentType == UiEventEntry.LRU_6000)
-        {
-            if (titleRight == null)
-            {
+        } else if (currentType == UiEventEntry.LRU_6000) {
+            if (titleRight == null) {
                 return;
             }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim()))
-            {
+            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
                 SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
-            }
-            else
-            {
-                if (currentSel == UiEventEntry.TAB_LRU_NEW_SETTING)
-                {//全部参数  常规设置
+            } else {
+                if (currentSel == UiEventEntry.TAB_LRU_NEW_SETTING) {//全部参数  常规设置
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadParameter);
-                }
-                else if (currentSel == UiEventEntry.TAB_LRU_NEW_CHANNEL_SETTING)
-                {
+                } else if (currentSel == UiEventEntry.TAB_LRU_NEW_CHANNEL_SETTING) {
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadStaticIP);
 
-                }
-                else if (currentSel == UiEventEntry.TAB_SEARCH_LRU_NEW)
-                {
-                    if (lNewSearchFragment == null)
-                    {
+                } else if (currentSel == UiEventEntry.TAB_SEARCH_LRU_NEW) {
+                    if (lNewSearchFragment == null) {
                         lNewSearchFragment = (LNewSearchFragment) FgManager.getFragment(LNewSearchFragment.class);
                     }
-                    if (lNewSearchFragment != null && lNewSearchFragment.isVisible())
-                    {
+                    if (lNewSearchFragment != null && lNewSearchFragment.isVisible()) {
                         lNewSearchFragment.setData();
                     }
                 }
             }
-        }
-        else if (currentType == UiEventEntry.LRU_3000)
-        {
-            if (titleRight == null)
-            {
+        } else if (currentType == UiEventEntry.LRU_3000) {
+            if (titleRight == null) {
                 return;
             }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim()))
-            {
+            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
                 SocketUtil.getSocketUtil().connectRTU(ConfigParams.LRU_IP, ConfigParams.LRU_PORT);
-            }
-            else
-            {
-                if (currentSel == UiEventEntry.TAB_LRU_SYS)
-                {//全部参数  常规设置
+            } else {
+                if (currentSel == UiEventEntry.TAB_LRU_SYS) {//全部参数  常规设置
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadParameters);
-                }
-                else if (currentSel == UiEventEntry.TAB_LRU_SEARCH)
-                {
+                } else if (currentSel == UiEventEntry.TAB_LRU_SEARCH) {
 
-                    if (LruSearch == null)
-                    {
+                    if (LruSearch == null) {
                         LruSearch = (LruSearchFragment) FgManager.getFragment(LruSearchFragment.class);
                     }
-                    if (LruSearch != null && LruSearch.isVisible())
-                    {
+                    if (LruSearch != null && LruSearch.isVisible()) {
                         LruSearch.setData();
                     }
                 }
             }
-        }
-        else if (currentType == UiEventEntry.RCM_2000)
-        {
-            if (titleRight == null)
-            {
+        } else if (currentType == UiEventEntry.RCM_2000) {
+            if (titleRight == null) {
                 return;
             }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim()))
-            {
+            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
                 SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
-            }
-            else
-            {
-                if (currentSel == UiEventEntry.TAB_RCM_SYS)
-                {//全部参数  常规设置
+            } else {
+                if (currentSel == UiEventEntry.TAB_RCM_SYS) {//全部参数  常规设置
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadData);
-                }
-                else if (currentSel == UiEventEntry.TAB_RCM_SEARCH)
-                {
+                } else if (currentSel == UiEventEntry.TAB_RCM_SEARCH) {
 
-                    if (rcmSearch == null)
-                    {
+                    if (rcmSearch == null) {
                         rcmSearch = (RcmSearchFragment) FgManager.getFragment(RcmSearchFragment.class);
                     }
-                    if (rcmSearch != null && rcmSearch.isVisible())
-                    {
+                    if (rcmSearch != null && rcmSearch.isVisible()) {
                         rcmSearch.setData();
                     }
-                }
-                else if (currentSel == UiEventEntry.TAB_RCM_FUN_SYS)
-                {//全部参数  常规设置
+                } else if (currentSel == UiEventEntry.TAB_RCM_FUN_SYS) {//全部参数  常规设置
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadFunctionData);
-                }
-                else if (currentSel == UiEventEntry.TAB_RCM_YUN)
-                {//云台设置
+                } else if (currentSel == UiEventEntry.TAB_RCM_YUN) {//云台设置
                     SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadYUNStatus);
-                }
-                else if (currentSel == UiEventEntry.TAB_RCM_FUN_SEARCH)
-                {
+                } else if (currentSel == UiEventEntry.TAB_RCM_FUN_SEARCH) {
 
-                    if (rcmFunSearch == null)
-                    {
+                    if (rcmFunSearch == null) {
                         rcmFunSearch = (RcmFunSearchFragment) FgManager.getFragment(RcmFunSearchFragment.class);
                     }
-                    if (rcmFunSearch != null && rcmFunSearch.isVisible())
-                    {
+                    if (rcmFunSearch != null && rcmFunSearch.isVisible()) {
                         rcmFunSearch.setData();
                     }
-                }
-                else//RCM传感器更新
+                } else//RCM传感器更新
                 {
-                    switch (currentSel)
-                    {
+                    switch (currentSel) {
                         case UiEventEntry.TAB_SENSOR_RAIN:
                         case UiEventEntry.TAB_SENSOR_WATER_PARAMS:
                             SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSensorPara1);
@@ -1072,10 +879,8 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
     }
 
-    private void initSearchData()
-    {
-        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100)
-        {
+    private void initSearchData() {
+        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
             searchList.add(getString(R.string.basic_search));
             searchList.add(getString(R.string.comm_status_search));
             searchList.add(getString(R.string.camera_search));
@@ -1085,17 +890,11 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
             searchList.add(getString(R.string.Soil_inquiry));
             searchList.add(getString(R.string.Water_quality_inquiry));
             searchList.add(getString(R.string.Electricity_meter_inquiry));
-        }
-        else if (currentType == UiEventEntry.WRU_1901)
-        {
+        } else if (currentType == UiEventEntry.WRU_1901) {
             searchList.add(getString(R.string.groundwater_all));
-        }
-        else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801)
-        {
+        } else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801) {
             searchList.add(getString(R.string.Basic_display));
-        }
-        else if (currentType == UiEventEntry.RCM_2000)
-        {
+        } else if (currentType == UiEventEntry.RCM_2000) {
             searchList.add(getString(R.string.System_board_parameter));
             searchList.add(getString(R.string.Function_board_parameter));
 
@@ -1105,11 +904,9 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
     View contentView = null;
 
-    public void showPopupWindow(View anchor)
-    {
+    public void showPopupWindow(View anchor) {
 
-        if (popupWindow == null)
-        {
+        if (popupWindow == null) {
             contentView = LayoutInflater.from(getApplicationContext()).inflate(
                     R.layout.windows_popupwindow, null);
             popupWindow = new PopupWindow(contentView, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, true);
@@ -1125,60 +922,45 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
             popupWindow.setBackgroundDrawable(new PaintDrawable());
         }
 
-        if (currentTab == UiEventEntry.TAB_SEARCH)
-        {
+        if (currentTab == UiEventEntry.TAB_SEARCH) {
             setAdapter = new CustomAdapter(getApplicationContext(), searchList);
             sensorLayout.setVisibility(View.GONE);
             setListView.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        } else {
             setAdapter = new CustomAdapter(getApplicationContext(), setList);
         }
         setListView.setAdapter(setAdapter);
 
-        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100)
-        {//RTU
+        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {//RTU
             handRTU(setListView);
-        }
-        else if (currentType == UiEventEntry.LRU_3200)
-        {
+        } else if (currentType == UiEventEntry.LRU_3200) {
 //            handRTU1(setListView);
-        }
-        else if (currentType == UiEventEntry.WRU_1901)
-        {//地下水
+        } else if (currentType == UiEventEntry.WRU_1901) {//地下水
             handGroundWater(setListView);
-        }
-        else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801)
-        {//通用RTU
+        } else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801) {//通用RTU
             handCommRTU(setListView);
-        }
-        else if (currentType == UiEventEntry.RCM_2000)
-        {//一体化摄像头
+        } else if (currentType == UiEventEntry.RCM_2000) {//一体化摄像头
             handRcmRTU(setListView);
-        }
-        else if (currentType == UiEventEntry.LRU_6000)
-        {//一体化摄像头
+        } else if (currentType == UiEventEntry.LRU_6000) {//一体化摄像头
             handLRURTU(setListView);
+        } else if (currentType == UiEventEntry.LRU_BLE_3300) {//蓝牙
+            handBLERTU(setListView);
         }
 
 
-        if (Build.VERSION.SDK_INT < 24)
-        {
+        if (Build.VERSION.SDK_INT < 24) {
             popupWindow.showAsDropDown(anchor);
-        }
-        else
-        {
-
+        } else {
             int[] location = calculatePopWindowPos(anchor, contentView);
+//            int measuredHeight = anchor.getMeasuredHeight();
+//            anchor.getLocationOnScreen(location);
             // 适配 android 7.0
             popupWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, 0, location[1]);
         }
 
     }
 
-    private static int[] calculatePopWindowPos(final View anchorView, final View contentView)
-    {
+    private static int[] calculatePopWindowPos(final View anchorView, final View contentView) {
         final int windowPos[] = new int[2];
         final int anchorLoc[] = new int[2];
         // 获取锚点View在屏幕上的左上角坐标位置
@@ -1191,13 +973,10 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
         final int windowWidth = contentView.getMeasuredWidth();
         // 判断需要向上弹出还是向下弹出显示
         final boolean isNeedShowUp = (UiUtils.height - anchorLoc[1] - anchorHeight < windowHeight);
-        if (isNeedShowUp)
-        {
+        if (isNeedShowUp) {
             windowPos[0] = UiUtils.width - windowWidth;
             windowPos[1] = anchorLoc[1] - windowHeight;
-        }
-        else
-        {
+        } else {
             windowPos[0] = UiUtils.width - windowWidth;
             windowPos[1] = anchorLoc[1] + anchorHeight;
         }
@@ -1205,39 +984,26 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
     }
 
 
-    private void handCommRTU(final ListView setListView)
-    {
-        setListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+    private void handCommRTU(final ListView setListView) {
+        setListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                if (currentTab == UiEventEntry.TAB_SEARCH)
-                {
-                }
-                else
-                {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (currentTab == UiEventEntry.TAB_SEARCH) {
+                } else {
                     tabName = setList.get(i);
-                    if (i == 0)
-                    {//系统参数设置
+                    if (i == 0) {//系统参数设置
                         turnToFragmentStack(R.id.detail_layout, CommRtuSysFragment.class);
                         setCurrentSel(UiEventEntry.TAB_COMM_SYSTEM);
                         setTitleRightVisible(View.VISIBLE);
-                    }
-                    else if (i == 1)
-                    {//通讯参数
+                    } else if (i == 1) {//通讯参数
                         turnToFragmentStack(R.id.detail_layout, CommRtuChannelFragment.class);
                         setCurrentSel(UiEventEntry.TAB_COMM_COMM);
                         setTitleRightVisible(View.VISIBLE);
-                    }
-                    else if (i == 2)
-                    {//传感器设置
+                    } else if (i == 2) {//传感器设置
                         setTitleRightVisible(View.GONE);
                         turnToFragmentStack(R.id.detail_layout, CommSensorFragment.class);
                         setCurrentSel(UiEventEntry.TAB_COMM_SENSOR);
-                    }
-                    else if (i == 3)
-                    {//传感器设置
+                    } else if (i == 3) {//传感器设置
                         setTitleRightVisible(View.GONE);
                         turnToFragmentStack(R.id.detail_layout, ADFragment.class);
                         setCurrentSel(UiEventEntry.TAB_SETTING_AD);
@@ -1251,27 +1017,18 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
         });
     }
 
-    private void handLRURTU(final ListView setListView)
-    {
-        setListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+    private void handLRURTU(final ListView setListView) {
+        setListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                if (currentTab == UiEventEntry.TAB_SEARCH)
-                {
-                }
-                else
-                {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (currentTab == UiEventEntry.TAB_SEARCH) {
+                } else {
                     tabName = setList.get(i);
-                    if (i == 0)
-                    {//系统参数设置
+                    if (i == 0) {//系统参数设置
                         turnToFragmentStack(R.id.detail_layout, LNewSysPamarsFragment.class);
                         setCurrentSel(UiEventEntry.TAB_LRU_NEW_SETTING);
                         setTitleRightVisible(View.VISIBLE);
-                    }
-                    else if (i == 1)
-                    {//通讯参数
+                    } else if (i == 1) {//通讯参数
                         dialogEditText1();
                         setTitleRightVisible(View.VISIBLE);
                     }
@@ -1285,57 +1042,59 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
         });
     }
 
-    private void handRcmRTU(final ListView setListView)
-    {
-//        if ( setListView != null)
-        setListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+    private void handBLERTU(final ListView setListView) {
+        setListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                if (currentTab == UiEventEntry.TAB_SEARCH)
-                {
-                    tabName = searchList.get(i);
-                    if (i == 0)
-                    {//系统板参数
-                        turnToFragmentStack(R.id.detail_layout, RcmSearchFragment.class);
-                        setCurrentSel(UiEventEntry.TAB_RCM_SEARCH);
-                    }
-                    else if (i == 1)
-                    {//功能板参数
-                        turnToFragmentStack(R.id.detail_layout, RcmFunSearchFragment.class);
-                        setCurrentSel(UiEventEntry.TAB_RCM_FUN_SEARCH);
-                    }
-                    else if (i == 2)
-                    {//功能参数
-                        turnToFragmentStack(R.id.detail_layout, YUNFragment.class);
-                        setCurrentSel(UiEventEntry.TAB_RCM_FUN_SEARCH);
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (currentTab == UiEventEntry.TAB_SEARCH) {
+                } else {
+                    tabName = setList.get(i);
+                    if (i == 0) {//系统参数设置
+                        turnToFragmentStack(R.id.detail_layout, LNewSysPamarsFragment.class);
+                        setCurrentSel(UiEventEntry.TAB_LRU_NEW_SETTING);
+                        setTitleRightVisible(View.VISIBLE);
+                        popupWindow.dismiss();
+                    } else if (sensorLayout.getVisibility() == View.GONE && i == 1) {//传感器
+                        handSensorBLELRU();
                     }
                 }
-                else
-                {
+                setTextView.setText(tabName);
+            }
+        });
+    }
+
+    private void handRcmRTU(final ListView setListView) {
+//        if ( setListView != null)
+        setListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (currentTab == UiEventEntry.TAB_SEARCH) {
+                    tabName = searchList.get(i);
+                    if (i == 0) {//系统板参数
+                        turnToFragmentStack(R.id.detail_layout, RcmSearchFragment.class);
+                        setCurrentSel(UiEventEntry.TAB_RCM_SEARCH);
+                    } else if (i == 1) {//功能板参数
+                        turnToFragmentStack(R.id.detail_layout, RcmFunSearchFragment.class);
+                        setCurrentSel(UiEventEntry.TAB_RCM_FUN_SEARCH);
+                    } else if (i == 2) {//功能参数
+                        turnToFragmentStack(R.id.detail_layout, YUNFragment.class);
+                        setCurrentSel(UiEventEntry.TAB_RCM_FUN_SEARCH);
+                    }
+                } else {
                     tabName = setList.get(i);
-                    if (i == 0)
-                    {//系统板参数设置
+                    if (i == 0) {//系统板参数设置
                         turnToFragmentStack(R.id.detail_layout, RcmSysPamarsFragment.class);
                         setCurrentSel(UiEventEntry.TAB_RCM_SYS);
-                    }
-                    else if (i == 1)
-                    {//功能板参数
+                    } else if (i == 1) {//功能板参数
                         turnToFragmentStack(R.id.detail_layout, RcmFunPamarsFragment.class);
                         setCurrentSel(UiEventEntry.TAB_RCM_FUN_SYS);
-                    }
-                    else if (i == 2)
-                    {//云台参数
+                    } else if (i == 2) {//云台参数
                         turnToFragmentStack(R.id.detail_layout, YUNFragment.class);
                         setCurrentSel(UiEventEntry.TAB_RCM_YUN);
-                    }
-                    else if (i == 3)
-                    {
+                    } else if (i == 3) {
                         setTitleRightVisible(View.VISIBLE);
 
-                        if (sensorLayout.getVisibility() == View.GONE)
-                        {
+                        if (sensorLayout.getVisibility() == View.GONE) {
                             //传感器设置
                             handSensorRCM();
                         }
@@ -1343,8 +1102,7 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
                     }
                 }
                 setTextView.setText(tabName);
-                if (i != 3)
-                {
+                if (i != 3) {
 
                     popupWindow.dismiss();
                 }
@@ -1355,38 +1113,25 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
     }
 
-    private void handGroundWater(final ListView setListView)
-    {
-        setListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+    private void handGroundWater(final ListView setListView) {
+        setListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
-            {
-                if (currentTab == UiEventEntry.TAB_SEARCH)
-                {
-                }
-                else
-                {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (currentTab == UiEventEntry.TAB_SEARCH) {
+                } else {
                     tabName = setList.get(i);
                     setTitleRight(getString(R.string.update));
-                    if (i == 0)
-                    {//常规设置
+                    if (i == 0) {//常规设置
                         turnToFragmentStack(R.id.detail_layout, GroundWaterBasicFragment.class);
                         setCurrentSel(UiEventEntry.TAB_GROUND_WATER_BASIC);
-                    }
-                    else if (i == 1)
-                    {//服务器
+                    } else if (i == 1) {//服务器
                         turnToFragmentStack(R.id.detail_layout, GroundServerFragment.class);
                         setCurrentSel(UiEventEntry.TAB_GROUND_WATER_SERVER);
-                    }
-                    else if (i == 2)
-                    {//AD设置
+                    } else if (i == 2) {//AD设置
                         setTitleRight(getString(R.string.collect_ad_lv));
                         turnToFragmentStack(R.id.detail_layout, GroundADFragment.class);
                         setCurrentSel(UiEventEntry.TAB_GROUND_WATER_AD);
-                    }
-                    else if (i == 3)
-                    {
+                    } else if (i == 3) {
                         turnToFragmentStack(R.id.detail_layout, CollectFragment.class);
                         setCurrentSel(UiEventEntry.TAB_SETTING_COLLECT);
                     }
@@ -1399,88 +1144,58 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
         });
     }
 
-    private void handSensor()
-    {
+    private void handSensor() {
         sensorTextView.setText(getString(R.string.sensor_setting));
         sensorLayout.setVisibility(View.VISIBLE);
         setListView.setVisibility(View.GONE);
         setToAdapter = new CustomToAdapter(getApplicationContext(),
                 setToList);
         setToListView.setAdapter(setToAdapter);
-        setToListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        setToListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent,
-                                    View view, int position, long id)
-            {
-                if (position == UiEventEntry.NOTIFY_SENSOR_RAIN)
-                {
+                                    View view, int position, long id) {
+                if (position == UiEventEntry.NOTIFY_SENSOR_RAIN) {
                     turnToFragmentStack(R.id.detail_layout, RainPamarsFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SENSOR_RAIN);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_WATER_PARAMS)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_WATER_PARAMS) {
                     setCurrentSel(UiEventEntry.TAB_SENSOR_WATER_PARAMS);
                     turnToFragmentStack(R.id.detail_layout, WaterPamarsFragment.class);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_WATER_PLAN)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_WATER_PLAN) {
                     setCurrentSel(UiEventEntry.TAB_SENSOR_WATER_PLAN);
                     turnToFragmentStack(R.id.detail_layout, WaterPlanFragment.class);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_CAMERA)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_CAMERA) {
                     turnToFragmentStack(R.id.detail_layout, CameraFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SENSOR_CAMERA);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_SQ)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_SQ) {
                     turnToFragmentStack(R.id.detail_layout, SQFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SENSOR_SQ);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_FLOW)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_FLOW) {
                     turnToFragmentStack(R.id.detail_layout, FlowFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SENSOR_FLOW);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_ZW)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_ZW) {
                     turnToFragmentStack(R.id.detail_layout, ZWFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SENSOR_ZW);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_ATHER)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_ATHER) {
                     setCurrentSel(UiEventEntry.TAB_SENSOR_ATHER);
                     turnToFragmentStack(R.id.detail_layout, AtherPamarsFragment.class);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_Water_Quality)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_Water_Quality) {
                     setCurrentSel(UiEventEntry.TAB_SENSOR_Water_Quality);
                     turnToFragmentStack(R.id.detail_layout, WaterQualityFragment.class);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_Weather_Param)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_Weather_Param) {
                     setCurrentSel(UiEventEntry.TAB_SENSOR_Weather_Param);
                     turnToFragmentStack(R.id.detail_layout, WeatherParamFragment.class);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_AQ)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_AQ) {
                     turnToFragmentStack(R.id.detail_layout, AnalogQuantityFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SENSOR_AQ);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_Ammeter)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_Ammeter) {
                     turnToFragmentStack(R.id.detail_layout, AmmeterFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SENSOR_Ameeter);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_PRESS)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_PRESS) {
                     setCurrentSel(UiEventEntry.TAB_SENSOR_PRESS);
                     turnToFragmentStack(R.id.detail_layout, PressFragment.class);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_TEMP)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_TEMP) {
                     setCurrentSel(UiEventEntry.TAB_SENSOR_TEMP);
                     turnToFragmentStack(R.id.detail_layout, TempFragment.class);
                 }
@@ -1490,56 +1205,28 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
             }
         });
     }
-    private void handSensorLRU()
-    {
+
+    private void handSensorBLELRU() {
         sensorTextView.setText(getString(R.string.sensor_setting));
         sensorLayout.setVisibility(View.VISIBLE);
         setListView.setVisibility(View.GONE);
         setToAdapter = new CustomToAdapter(getApplicationContext(),
                 setToLruList);
         setToListView.setAdapter(setToAdapter);
-        setToListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        setToListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent,
-                                    View view, int position, long id)
-            {
-                if (position == UiEventEntry.NOTIFY_SENSOR_RAIN)
-                {
-                    turnToFragmentStack(R.id.detail_layout, RainPamarsFragment.class);
-                    setCurrentSel(UiEventEntry.TAB_SENSOR_RAIN);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_WATER_PARAMS)
-                {
-                    setCurrentSel(UiEventEntry.TAB_SENSOR_WATER_PARAMS);
-                    turnToFragmentStack(R.id.detail_layout, WaterPamarsFragment.class);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_WATER_PLAN)
-                {
-                    setCurrentSel(UiEventEntry.TAB_SENSOR_WATER_PLAN);
+                                    View view, int position, long id) {
+                if (position == 0) {
                     turnToFragmentStack(R.id.detail_layout, WaterPlanFragment.class);
-                }
-
-                else if (position == UiEventEntry.NOTIFY_SENSOR_SQ)
-                {
+                    setCurrentSel(UiEventEntry.TAB_SENSOR_WATER_PLAN);
+                } else if (position == 1) {
                     turnToFragmentStack(R.id.detail_layout, SQFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SENSOR_SQ);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_FLOW)
-                {
-                    turnToFragmentStack(R.id.detail_layout, FlowFragment.class);
-                    setCurrentSel(UiEventEntry.TAB_SENSOR_FLOW);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_ZW)
-                {
+                } else if (position == 2) {
                     turnToFragmentStack(R.id.detail_layout, ZWFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SENSOR_ZW);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_ATHER)
-                {
-                    setCurrentSel(UiEventEntry.TAB_SENSOR_ATHER);
-                    turnToFragmentStack(R.id.detail_layout, AtherPamarsFragment.class);
                 }
                 popupWindow.dismiss();
                 tabName = setToLruList.get(position);
@@ -1548,34 +1235,25 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
     }
 
 
-
-    private void handSensorRCM()
-    {
+    private void handSensorRCM() {
         sensorTextView.setText(getString(R.string.sensor_setting));
         sensorLayout.setVisibility(View.VISIBLE);
         setListView.setVisibility(View.GONE);
         setToAdapter = new CustomToAdapter(getApplicationContext(),
                 setToRcmList);
         setToListView.setAdapter(setToAdapter);
-        setToListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        setToListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent,
-                                    View view, int position, long id)
-            {
-                if (position == UiEventEntry.NOTIFY_SENSOR_RAIN)
-                {
+                                    View view, int position, long id) {
+                if (position == UiEventEntry.NOTIFY_SENSOR_RAIN) {
                     turnToFragmentStack(R.id.detail_layout, RainPamarsFragment.class);
                     setCurrentSel(UiEventEntry.TAB_SENSOR_RAIN);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_WATER_PARAMS)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_WATER_PARAMS) {
                     setCurrentSel(UiEventEntry.TAB_SENSOR_WATER_PARAMS);
                     turnToFragmentStack(R.id.detail_layout, WaterPamarsFragment.class);
-                }
-                else if (position == UiEventEntry.NOTIFY_SENSOR_WATER_PLAN)
-                {
+                } else if (position == UiEventEntry.NOTIFY_SENSOR_WATER_PLAN) {
                     setCurrentSel(UiEventEntry.TAB_SENSOR_WATER_PLAN);
                     turnToFragmentStack(R.id.detail_layout, WaterPlanFragment.class);
                 }
@@ -1585,48 +1263,34 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
         });
     }
 
-    private void handChannel()
-    {
+    private void handChannel() {
         sensorTextView.setText(getString(R.string.channel_setting));
         sensorLayout.setVisibility(View.VISIBLE);
         setListView.setVisibility(View.GONE);
         setToAdapter = new CustomToAdapter(getApplicationContext(),
                 setToChannelList);
         setToListView.setAdapter(setToAdapter);
-        setToListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        setToListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent,
-                                    View view, int position, long id)
-            {
-                if (position == UiEventEntry.NOTIFY_CHANNEL_SELECT)
-                {
+                                    View view, int position, long id) {
+                if (position == UiEventEntry.NOTIFY_CHANNEL_SELECT) {
                     turnToFragmentStack(R.id.detail_layout, ChannelSelectFragment.class);
                     setCurrentSel(UiEventEntry.TAB_CHANNEL_SELECT);
-                }
-                else if (position == UiEventEntry.NOTIFY_CHANNEL_GPRS)
-                {
+                } else if (position == UiEventEntry.NOTIFY_CHANNEL_GPRS) {
                     setCurrentSel(UiEventEntry.TAB_CHANNEL_GPRS);
                     turnToFragmentStack(R.id.detail_layout, ChannelGPRSFragment.class);
-                }
-                else if (position == UiEventEntry.NOTIFY_CHANNEL_GMS)
-                {
+                } else if (position == UiEventEntry.NOTIFY_CHANNEL_GMS) {
                     setCurrentSel(UiEventEntry.TAB_CHANNEL_GMS);
                     turnToFragmentStack(R.id.detail_layout, ChannelGMSFragment.class);
-                }
-                else if (position == UiEventEntry.NOTIFY_CHANNEL_BEI)
-                {
+                } else if (position == UiEventEntry.NOTIFY_CHANNEL_BEI) {
                     turnToFragmentStack(R.id.detail_layout, ChannelBEIFragment.class);
                     setCurrentSel(UiEventEntry.TAB_CHANNEL_BEI);
-                }
-                else if (position == UiEventEntry.NOTIFY_CHANNEL_CENTER)
-                {
+                } else if (position == UiEventEntry.NOTIFY_CHANNEL_CENTER) {
                     turnToFragmentStack(R.id.detail_layout, ChannelCENTERFragment.class);
                     setCurrentSel(UiEventEntry.TAB_CHANNEL_CENTER);
-                }
-                else if (position == UiEventEntry.NOTIFY_CHANNEL_YPT)
-                {
+                } else if (position == UiEventEntry.NOTIFY_CHANNEL_YPT) {
 //                    turnToFragmentStack(R.id.detail_layout, ChannelCENTERFragment.class);
 //                    ViewDialogFragment viewDialogFragment = new ViewDialogFragment();
 //                    viewDialogFragment.show(getFragmentManager());
@@ -1645,81 +1309,58 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
         });
     }
 
-    private void handRTU(final ListView setListView)
-    {
-        if (setListView != null)
-        {
-            setListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-            {
+    private void handRTU(final ListView setListView) {
+        if (setListView != null) {
+            setListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view,
-                                        int position, long id)
-                {
+                                        int position, long id) {
 
-                    if (currentTab == UiEventEntry.TAB_SEARCH)
-                    {
+                    if (currentTab == UiEventEntry.TAB_SEARCH) {
                         tabName = searchList.get(position);
 
-                        if (position == UiEventEntry.NOTIFY_SEARCH_RDDATA)
-                        {
+                        if (position == UiEventEntry.NOTIFY_SEARCH_RDDATA) {
                             Bundle bundle1 = new Bundle();
                             bundle1.putInt(UiEventEntry.CURRENT_RTU_NAME, currentType);
                             setCurrentSel(UiEventEntry.TAB_SEARCH_RADATA);
                             turnToFragmentStack(R.id.detail_layout, SearchDataFragment.class, bundle1);
-                        }
-                        else
-                        {
+                        } else {
                             Bundle bundle = new Bundle();
-                            if (gprsFragment == null)
-                            {
+                            if (gprsFragment == null) {
                                 gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
                             }
-                            if (gprsFragment != null && gprsFragment.isVisible())
-                            {
+                            if (gprsFragment != null && gprsFragment.isVisible()) {
                                 gprsFragment.stopUpdate();
                             }
 
-                            if (position == UiEventEntry.NOTIFY_SEARCH_BASIC)
-                            {
+                            if (position == UiEventEntry.NOTIFY_SEARCH_BASIC) {
                                 setCurrentSel(UiEventEntry.TAB_SEARCH_BASIC);
                                 bundle.putInt(UiEventEntry.CURRENT_SEARCH, UiEventEntry.TAB_SEARCH_BASIC);
                                 turnToFragmentStack(R.id.detail_layout, SearchFragment.class, bundle);
-                            }
-                            else if (position == UiEventEntry.NOTIFY_SEARCH_GPRS)
-                            {
+                            } else if (position == UiEventEntry.NOTIFY_SEARCH_GPRS) {
                                 setCurrentSel(UiEventEntry.TAB_SEARCH_GPRS);
                                 bundle.putInt(UiEventEntry.CURRENT_SEARCH, UiEventEntry.TAB_SEARCH_GPRS);
                                 turnToFragmentStack(R.id.detail_layout, SearchFragment.class, bundle);
-                            }
-                            else if (position == UiEventEntry.NOTIFY_SEARCH_CAMERA)
-                            {
+                            } else if (position == UiEventEntry.NOTIFY_SEARCH_CAMERA) {
                                 bundle.putInt(UiEventEntry.CURRENT_SEARCH, UiEventEntry.TAB_SEARCH_CAMERA);
                                 setCurrentSel(UiEventEntry.TAB_SEARCH_CAMERA);
                                 turnToFragmentStack(R.id.detail_layout, SearchFragment.class, bundle);
-                            }
-                            else if (position == UiEventEntry.NOTIFY_SEARCH_SENSOR)
-                            {
+                            } else if (position == UiEventEntry.NOTIFY_SEARCH_SENSOR) {
                                 bundle.putInt(UiEventEntry.CURRENT_SEARCH, UiEventEntry.TAB_SEARCH_SENSOR);
                                 setCurrentSel(UiEventEntry.TAB_SEARCH_SENSOR);
                                 turnToFragmentStack(R.id.detail_layout, SearchFragment.class, bundle);
-                            }
-                            else if (position == UiEventEntry.NOTIFY_SEARCH_READ_IMAGE)
-                            {
+                            } else if (position == UiEventEntry.NOTIFY_SEARCH_READ_IMAGE) {
                                 bundle.putInt(UiEventEntry.CURRENT_SEARCH, UiEventEntry.TAB_SEARCH_READ_IMAGE);
                                 setCurrentSel(UiEventEntry.TAB_SEARCH_READ_IMAGE);
                                 turnToFragmentStack(R.id.detail_layout, SearchFragment.class, bundle);
-                            }else if (position == UiEventEntry.NOTIFY_SEARCH_BASIC_SOIL)
-                            {
+                            } else if (position == UiEventEntry.NOTIFY_SEARCH_BASIC_SOIL) {
                                 setCurrentSel(UiEventEntry.TAB_SEARCH_SIOL);
                                 turnToFragmentStack(R.id.detail_layout, SoilSearchFragment.class, bundle);
-                            }else if (position == UiEventEntry.NOTIFY_SEARCH_BASIC_WQUALITY)
-                            {
+                            } else if (position == UiEventEntry.NOTIFY_SEARCH_BASIC_WQUALITY) {
                                 setCurrentSel(UiEventEntry.TAB_SEARCH_WQ);
                                 turnToFragmentStack(R.id.detail_layout, WQualitySearchFragment.class, bundle);
-                            }
-                            else if (position == UiEventEntry.NOTIFY_SEARCH_BASIC_AMMETER)
-                            {
+                            } else if (position == UiEventEntry.NOTIFY_SEARCH_BASIC_AMMETER) {
                                 setCurrentSel(UiEventEntry.TAB_SEARCH_Ammeter);
                                 turnToFragmentStack(R.id.detail_layout, AmmeterSearchFragment.class, bundle);
                             }
@@ -1728,54 +1369,35 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
                         setTextView.setText(tabName);
                         popupWindow.dismiss();
-                    }
-                    else
-                    {
+                    } else {
                         tabName = setList.get(position);
-                        if (parent.getAdapter() instanceof CustomAdapter)
-                        {
+                        if (parent.getAdapter() instanceof CustomAdapter) {
                             setTitleRightVisible(View.VISIBLE);
-                            if (sensorLayout.getVisibility() == View.GONE && position == 4)
-                            {//传感器设置
+                            if (sensorLayout.getVisibility() == View.GONE && position == 4) {//传感器设置
                                 handSensor();
-                            }
-                            else if ((sensorLayout.getVisibility() == View.GONE && position == 3) && (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2100))
-                            {//信道设置
+                            } else if ((sensorLayout.getVisibility() == View.GONE && position == 3) && (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2100)) {//信道设置
                                 handChannel();
-                            }
-                            else
-                            {
+                            } else {
                                 Bundle bundle = new Bundle();
                                 bundle.putInt(UiEventEntry.CURRENT_RTU_NAME, currentType);
                                 setTitleRight(getString(R.string.update));
-                                if (position == UiEventEntry.NOTIFY_SYSTEM_PAMARS)
-                                {
+                                if (position == UiEventEntry.NOTIFY_SYSTEM_PAMARS) {
                                     setCurrentSel(UiEventEntry.TAB_SETTING_SYS);
                                     turnToFragmentStack(R.id.detail_layout, SystemPamarsFragment.class, bundle);
-                                }
-                                else if (position == UiEventEntry.NOTIFY_COLLECT)
-                                {
+                                } else if (position == UiEventEntry.NOTIFY_COLLECT) {
                                     turnToFragmentStack(R.id.detail_layout, CollectFragment.class, bundle);
                                     setCurrentSel(UiEventEntry.TAB_SETTING_COLLECT);
-                                }
-                                else if (position == UiEventEntry.NOTIFY_COMM_PAMARS)
-                                {
+                                } else if (position == UiEventEntry.NOTIFY_COMM_PAMARS) {
                                     turnToFragmentStack(R.id.detail_layout, CommParamsFragment.class, bundle);
                                     setCurrentSel(UiEventEntry.TAB_SETTING_COMM);
-                                }
-                                else if (position == UiEventEntry.NOTIFY_CHANNEL_PAMARS)
-                                {
+                                } else if (position == UiEventEntry.NOTIFY_CHANNEL_PAMARS) {
 
                                     setCurrentSel(UiEventEntry.TAB_SETTING_CHANNEL);
                                     turnToFragmentStack(R.id.detail_layout, ChannelFragment.class, bundle);
-                                }
-                                else if (position == UiEventEntry.NOTIFY_AD_PAMARS)
-                                {
+                                } else if (position == UiEventEntry.NOTIFY_AD_PAMARS) {
                                     setCurrentSel(UiEventEntry.TAB_SETTING_AD);
                                     turnToFragmentStack(R.id.detail_layout, ADFragment.class, bundle);
-                                }
-                                else if (position == UiEventEntry.NOTIFY_VR_PAMARS)
-                                {
+                                } else if (position == UiEventEntry.NOTIFY_VR_PAMARS) {
                                     setCurrentSel(UiEventEntry.TAB_SETTING_VALVA);
                                     turnToFragmentStack(R.id.detail_layout, ValveControlRelayFragment.class, bundle);
                                 }
@@ -1791,131 +1413,93 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
     }
 
     @Override
-    public boolean onMenuItemClick(MenuItem item)
-    {
+    public boolean onMenuItemClick(MenuItem item) {
         return false;
     }
 
     @Override
-    public void onDismiss()
-    {
+    public void onDismiss() {
         iconImageView.setImageResource(R.mipmap.icon_default);
     }
 
     @Override
-    public void didReceivedNotification(int id, Object... args)
-    {
-        if (id == UiEventEntry.READ_RESULT_OK)
-        {
+    public void didReceivedNotification(int id, Object... args) {
+        if (id == UiEventEntry.READ_RESULT_OK) {
             String result = "";
-            if (args[1] != null)
-            {
+            if (args[1] != null) {
                 result = (String) args[1];
             }
-            if (!TextUtils.isEmpty(result))
-            {
-                if (result.equals(ConfigParams.RESETALL))
-                {
-                    ToastUtil.showToastLong(getString(R.string.device_returned_factory)+getString(R.string.Please_click)+"'"+getString(R.string.Save_settings_and_restart)+"'"+getString(R.string.Button_restart_device));
-                }
-                else if (result.equals(ConfigParams.ResetUnit) || result.equals(ConfigParams.RESETALL) || result.equals(ConfigParams.RESETUNIT))
-                {
+            if (!TextUtils.isEmpty(result)) {
+                if (result.equals(ConfigParams.RESETALL)) {
+                    ToastUtil.showToastLong(getString(R.string.device_returned_factory) + getString(R.string.Please_click) + "'" + getString(R.string.Save_settings_and_restart) + "'" + getString(R.string.Button_restart_device));
+                } else if (result.equals(ConfigParams.ResetUnit) || result.equals(ConfigParams.RESETALL) || result.equals(ConfigParams.RESETUNIT)) {
                     ToastUtil.showToastLong(getString(R.string.device_is_restarting));
-                }
-                else if (result.equals(ConfigParams.RESETALL10))
-                {
+                } else if (result.equals(ConfigParams.RESETALL10)) {
                     ToastUtil.showToastLong(getString(R.string.five_minutes));
-                }
-                else
-                {
+                } else {
                     ToastUtil.showToastLong(getString(R.string.Set_successfully));
                 }
             }
 
-        }
-        else if (id == UiEventEntry.CONNCT_AGAIN || id == UiEventEntry.CONNCT_FAIL)
-        {
+        } else if (id == UiEventEntry.CONNCT_AGAIN || id == UiEventEntry.CONNCT_FAIL) {
             setTitleRight(getString(R.string.re_connect));
-            if (gprsFragment != null && gprsFragment.isVisible())
-            {
+            if (gprsFragment != null && gprsFragment.isVisible()) {
                 gprsFragment.stopUpdate();
             }
-            if (lSearchFragment != null && lSearchFragment.isVisible())
-            {
+            if (lSearchFragment != null && lSearchFragment.isVisible()) {
                 lSearchFragment.stopUpdate();
             }
-        }
-        else if (id == UiEventEntry.CONNCT_OK)
-        {
+        } else if (id == UiEventEntry.CONNCT_OK) {
             updateRight();
-        }
-        else if (id == UiEventEntry.READ_RESULT_ERROR)
-        {
+        } else if (id == UiEventEntry.READ_RESULT_ERROR) {
             ToastUtil.showToastLong(getString(R.string.Set_error));
         }
     }
-    private void updateRight()
-    {
+
+    private void updateRight() {
         setTitleRightVisible(View.VISIBLE);
-        if (currentSel == UiEventEntry.TAB_SEARCH_GPRS)
-        {
+        if (currentSel == UiEventEntry.TAB_SEARCH_GPRS) {
             setTitleRight(getString(R.string.comm_test));
 
-        }
-        else if (currentSel == UiEventEntry.TAB_SEARCH_CAMERA)
-        {
+        } else if (currentSel == UiEventEntry.TAB_SEARCH_CAMERA) {
             setTitleRight(getString(R.string.send_img));
-        }
-        else if (currentSel == UiEventEntry.TAB_GROUND_WATER_AD)
-        {
+        } else if (currentSel == UiEventEntry.TAB_GROUND_WATER_AD) {
             setTitleRight(getString(R.string.collect_ad_lv));
-        }
-        else if (currentSel == UiEventEntry.TAB_SEARCH_READ_IMAGE)
-        {
+        } else if (currentSel == UiEventEntry.TAB_SEARCH_READ_IMAGE) {
             setTitleRight(getString(R.string.read_image));
-        }
-        else if (currentSel == UiEventEntry.TAB_SEARCH_RADATA)
-        {
+        } else if (currentSel == UiEventEntry.TAB_SEARCH_RADATA) {
             setTitleRight(getString(R.string.Receive_historical_data));
             setTitleRightVisible(View.GONE);
-        }
-        else
-        {
-            if (SocketUtil.getSocketUtil().isConnected())
-            {
+        } else {
+            if (SocketUtil.getSocketUtil().isConnected()) {
                 setTitleRight(getString(R.string.update));
-            }
-            else
-            {
+            } else {
                 setTitleRight(getString(R.string.re_connect));
             }
         }
     }
 
     @Override
-    public void onClick(String userName, String password)
-    {
+    public void onClick(String userName, String password) {
         Toast.makeText(HomeActivity.this, getString(R.string.username) + userName + getString(R.string.passWord) + password, Toast.LENGTH_SHORT).show();
     }
 
     private void dialogEditText() {
         final EditText editText = new EditText(this);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this,3);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, 3);
         builder.setTitle(getString(R.string.password1));
 
 //        builder.setIcon(R.mipmap.ic_launcher);
         builder.setView(editText);
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener()
-        {
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 //                Toast.makeText(HomeActivity.this, editText.getText().toString() + "", Toast.LENGTH_LONG).show();
 //                handChannel();
-                if (editText.getText().toString().equals("9527"))
-                {
+                if (editText.getText().toString().equals("9527")) {
                     turnToFragmentStack(R.id.detail_layout, YPTFragment.class);
                     setCurrentSel(UiEventEntry.TAB_CHANNEL_YPT);
-                }else {
+                } else {
                     ToastUtil.showToastLong(getString(R.string.Password_error));
                     turnToFragmentStack(R.id.detail_layout, ChannelSelectFragment.class);
                     setCurrentSel(UiEventEntry.TAB_CHANNEL_SELECT);
@@ -1935,22 +1519,20 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
     private void dialogEditText1() {
         final EditText editText = new EditText(this);
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this,3);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, 3);
         builder.setTitle(getString(R.string.password1));
 
 //        builder.setIcon(R.mipmap.ic_launcher);
         builder.setView(editText);
-        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener()
-        {
+        builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 //                Toast.makeText(HomeActivity.this, editText.getText().toString() + "", Toast.LENGTH_LONG).show();
 //                handChannel();
-                if (editText.getText().toString().equals("9527"))
-                {
+                if (editText.getText().toString().equals("9527")) {
                     turnToFragmentStack(R.id.detail_layout, YPTFragment.class);
                     setCurrentSel(UiEventEntry.TAB_LRU_NEW_CHANNEL_SETTING);
-                }else {
+                } else {
                     ToastUtil.showToastLong(getString(R.string.Password_error));
                     turnToFragmentStack(R.id.detail_layout, LNewSysPamarsFragment.class);
                     setCurrentSel(UiEventEntry.TAB_LRU_NEW_SETTING);

@@ -16,7 +16,6 @@ import java.util.List;
 import cn.com.heaton.blelibrary.ble.BleDevice;
 
 /**
- *
  * Created by LiuLei on 2016/11/26.
  */
 
@@ -38,9 +37,9 @@ public class LeDeviceListAdapter extends BaseAdapter {
     }
 
 
-    public void addDevices(List<BleDevice> devices){
-        for(BleDevice device : devices){
-            if(!mLeDevices.contains(device)){
+    public void addDevices(List<BleDevice> devices) {
+        for (BleDevice device : devices) {
+            if (!mLeDevices.contains(device)) {
                 mLeDevices.add(device);
             }
         }
@@ -87,21 +86,18 @@ public class LeDeviceListAdapter extends BaseAdapter {
 
         final BleDevice device = mLeDevices.get(i);
         final String deviceName = device.getBleName();
-        final String deviceRSSI = BluetoothDevice.EXTRA_RSSI;
-        if(device.isConnectting()){
+        if (device.isConnectting()) {
             viewHolder.deviceState.setText("正在连接中...");
-        }
-        else if(device.isConnected()){
+        } else if (device.isConnected()) {
             viewHolder.deviceState.setText("已连接");
-        }else {
+        } else {
             viewHolder.deviceState.setText("未连接");
         }
-        if (deviceName != null && deviceName.length() > 0)
+        if (deviceName != null && deviceName.length() > 0) {
             viewHolder.deviceName.setText(deviceName);
-        else if (deviceRSSI != null && deviceRSSI.length() > 0)
-            viewHolder.deviceRSSI.setText(deviceRSSI);
-        else
+        } else {
             viewHolder.deviceName.setText(R.string.unknown_device);
+        }
         viewHolder.deviceAddress.setText(device.getBleAddress());
 
         return view;

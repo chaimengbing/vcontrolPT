@@ -575,6 +575,7 @@ public class ConfigParams
 
     //读取墒情参数
     public static final String ReadMoisture_SensorPara = "ReadMoisture_SensorPara";
+    public static final String Moisture = "Moisture ";
     public static final String Moisture1 = "Moisture1 ";
     public static final String Moisture2 = "Moisture2 ";
     public static final String Moisture3 = "Moisture3 ";
