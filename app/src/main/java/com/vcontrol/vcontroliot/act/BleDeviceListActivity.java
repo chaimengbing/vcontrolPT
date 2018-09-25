@@ -69,7 +69,7 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
     public void initViewData() {
         showToolbar();
         setTitleRightVisible(View.VISIBLE);
-        setTitleMain("");
+        setMainVisible(View.GONE);
         setTitleName("选择设备");
         setTitleRight("扫描");
         setPrimary();
@@ -155,6 +155,8 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
 
 
     private void showLoading() {
+        mListView.setVisibility(View.GONE);
+        noDevice.setVisibility(View.GONE);
         loadingView.setVisibility(View.VISIBLE);
     }
 
@@ -166,10 +168,10 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
     //检查蓝牙是否支持及打开
     private void checkBluetoothStatus() {
         // 检查设备是否支持BLE4.0
-        if (!mBle.isSupportBle(this)) {
-            ToastUtil.showShort(getApplicationContext(), R.string.ble_not_supported);
-            finish();
-        }
+//        if (!mBle.isSupportBle(this)) {
+//            ToastUtil.showShort(getApplicationContext(), R.string.ble_not_supported);
+//            finish();
+//        }
         if (!mBle.isBleEnable()) {
             //4、若未打开，则请求打开蓝牙
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);

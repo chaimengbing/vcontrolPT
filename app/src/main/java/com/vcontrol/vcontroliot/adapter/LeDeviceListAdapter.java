@@ -1,7 +1,6 @@
 package com.vcontrol.vcontroliot.adapter;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,7 @@ public class LeDeviceListAdapter extends BaseAdapter {
     public LeDeviceListAdapter(Activity context) {
         super();
         mLeDevices = new ArrayList<BleDevice>();
-        mInflator = context.getLayoutInflater();
+        mInflator = LayoutInflater.from(context);
     }
 
     public void addDevice(BleDevice device) {

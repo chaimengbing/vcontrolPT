@@ -24,8 +24,7 @@ import com.vcontrol.vcontroliot.util.FgManager;
 /**
  * 说明：父类的Activity
  */
-public abstract class BaseActivity extends AppCompatActivity implements OnClickListener, Toolbar.OnMenuItemClickListener
-{
+public abstract class BaseActivity extends AppCompatActivity implements OnClickListener, Toolbar.OnMenuItemClickListener {
     private static final String TAG = BaseActivity.class.getName();
     /*Toolbar*/
     private Toolbar toolBar;
@@ -38,38 +37,31 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     /*右边操作*/
     public TextView titleRight;
 
-    public TextView getTitleRight()
-    {
+    public TextView getTitleRight() {
         return titleRight;
     }
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-        try
-        {
+    protected void onCreate(Bundle savedInstanceState) {
+        try {
             super.onCreate(savedInstanceState);
             setContentView(getLayoutView());
             initComponentViews();
             initToolbar();
             initViewData();
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.exception(TAG, e);
         }
     }
 
-    protected <T extends View> T getView(int resourcesId)
-    {
+    protected <T extends View> T getView(int resourcesId) {
         return (T) findViewById(resourcesId);
     }
 
     /*初始化toolbar*/
-    private void initToolbar()
-    {
+    private void initToolbar() {
         toolBar = getView(R.id.toolbar);
         toolBar.setTitle("");
         toolBar.setTitleTextColor(Color.WHITE);
@@ -79,29 +71,22 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
 
     }
 
-    public void hideToolbar()
-    {
-        if (toolBar != null)
-        {
+    public void hideToolbar() {
+        if (toolBar != null) {
             toolBar.setVisibility(View.GONE);
         }
     }
 
 
-
-    public Toolbar getToolbar()
-    {
-        if (toolBar != null)
-        {
+    public Toolbar getToolbar() {
+        if (toolBar != null) {
             return toolBar;
         }
         return null;
     }
 
-    public void showToolbar()
-    {
-        if (toolBar != null)
-        {
+    public void showToolbar() {
+        if (toolBar != null) {
             toolBar.setVisibility(View.VISIBLE);
         }
     }
@@ -111,28 +96,27 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
      *
      * @param title ：title
      */
-    public void setTitleMain(String title)
-    {
-        if (titleMain != null)
-        {
+    public void setTitleMain(String title) {
+        if (titleMain != null) {
             titleMain.setText(title);
             titleMain.setOnClickListener(this);
         }
-
     }
 
-    public void setTitleName(String title)
-    {
-        if (titleName != null)
-        {
+    public void setMainVisible(int visibile) {
+        if (titleMain != null) {
+            titleMain.setVisibility(visibile);
+        }
+    }
+
+    public void setTitleName(String title) {
+        if (titleName != null) {
             titleName.setText(title);
         }
     }
 
-    public void setTitleRight(String title)
-    {
-        if (titleRight != null)
-        {
+    public void setTitleRight(String title) {
+        if (titleRight != null) {
             titleRight.setText(title);
             titleRight.setOnClickListener(this);
         }
@@ -143,18 +127,14 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
      *
      * @param visibile
      */
-    public void setTitleRightVisible(int visibile)
-    {
-        if (titleRight != null)
-        {
+    public void setTitleRightVisible(int visibile) {
+        if (titleRight != null) {
             titleRight.setVisibility(visibile);
         }
     }
 
-    public void setTitleftVisible(int visibile)
-    {
-        if (titleMain != null)
-        {
+    public void setTitleftVisible(int visibile) {
+        if (titleMain != null) {
             titleMain.setVisibility(visibile);
         }
     }
@@ -162,8 +142,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     /**
      * title右侧:图标类
      */
-    protected void setRightRes()
-    {
+    protected void setRightRes() {
         //扩展menu
         toolBar.inflateMenu(R.menu.base_menu_main);
         //添加监听
@@ -171,19 +150,21 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     }
 
 
-    public static abstract class GrantedResult implements Runnable{
+    public static abstract class GrantedResult implements Runnable {
         private boolean mGranted;
+
         public abstract void onResult(boolean granted);
+
         @Override
-        public void run(){
+        public void run() {
             onResult(mGranted);
         }
     }
 
 
     /*---------------------------------------------------------------------------以下是android6.0动态授权的封装十分好用---------------------------------------------------------------------------*/
-    private int                   mPermissionIdx = 0x10;//请求权限索引
-    private SparseArray<GrantedResult> mPermissions   = new SparseArray<>();//请求权限运行列表
+    private int mPermissionIdx = 0x10;//请求权限索引
+    private SparseArray<GrantedResult> mPermissions = new SparseArray<>();//请求权限运行列表
 
     @SuppressLint("Override")
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -198,7 +179,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     }
 
     public void requestPermission(String[] permissions, String reason, GrantedResult runnable) {
-        if(runnable == null){
+        if (runnable == null) {
             return;
         }
         runnable.mGranted = false;
@@ -290,8 +271,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
     public abstract void initComponentViews();
 
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
     }
 
@@ -302,75 +282,57 @@ public abstract class BaseActivity extends AppCompatActivity implements OnClickL
 //    }
 
 
-    public boolean turnToFragmentStack(int containerViewId, Class<? extends Fragment> toFragmentClass, Bundle args)
-    {
+    public boolean turnToFragmentStack(int containerViewId, Class<? extends Fragment> toFragmentClass, Bundle args) {
         return FgManager.turnToFragmentStack(getFragmentManager(), containerViewId, toFragmentClass, args);
     }
 
-    public boolean turnToFragmentStack(int containerViewId, Class<? extends Fragment> toFragmentClass)
-    {
+    public boolean turnToFragmentStack(int containerViewId, Class<? extends Fragment> toFragmentClass) {
         return FgManager.turnToFragmentStack(getFragmentManager(), containerViewId, toFragmentClass, null);
     }
 
-    public void clearFragmentStack(int containerViewId)
-    {
+    public void clearFragmentStack(int containerViewId) {
         FgManager.clearFragmentStack(getFragmentManager(), containerViewId);
         FrameLayout vg = (FrameLayout) findViewById(containerViewId);
-        if (vg != null)
-        {
+        if (vg != null) {
             vg.removeAllViews();
         }
     }
 
-    public void clearFragmentStack(int[] containerViewIds)
-    {
+    public void clearFragmentStack(int[] containerViewIds) {
         clearFragmentStack(containerViewIds, null);
     }
 
-    public void clearFragmentStack(int[] containerViewIds, FgManager.Callback callback)
-    {
+    public void clearFragmentStack(int[] containerViewIds, FgManager.Callback callback) {
         FgManager.clearFragmentStack(getFragmentManager(), containerViewIds, callback);
         FrameLayout vg = null;
-        for (int containerViewId : containerViewIds)
-        {
+        for (int containerViewId : containerViewIds) {
             vg = (FrameLayout) findViewById(containerViewId);
-            if (vg != null)
-            {
+            if (vg != null) {
                 vg.removeAllViews();
             }
         }
     }
 
-    public void backToPreFragment(int containerViewId)
-    {
+    public void backToPreFragment(int containerViewId) {
         backToPreFragment(containerViewId, null, 1);
     }
 
-    public void backToPreFragment(int containerViewId, int backCount)
-    {
+    public void backToPreFragment(int containerViewId, int backCount) {
         backToPreFragment(containerViewId, null, backCount);
     }
 
-    private void backToPreFragment(int containerViewId, Bundle args, int backCount)
-    {
-        try
-        {
+    private void backToPreFragment(int containerViewId, Bundle args, int backCount) {
+        try {
             FgManager.backToPreFragment(getFragmentManager(), containerViewId, args, backCount);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.exception(TAG, e);
         }
     }
 
-    public void removeFragmentFromBackStack(int containerViewId, Class<? extends Fragment>... removeFragmentClass)
-    {
-        try
-        {
+    public void removeFragmentFromBackStack(int containerViewId, Class<? extends Fragment>... removeFragmentClass) {
+        try {
             FgManager.removeFragmentFromBackStack(getFragmentManager(), containerViewId, removeFragmentClass);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.exception(TAG, e);
         }
     }

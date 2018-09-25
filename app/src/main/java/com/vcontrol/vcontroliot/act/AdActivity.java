@@ -44,13 +44,21 @@ public class AdActivity extends BaseAutoLayoutActivity implements AdContract.Vie
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            countNum();
-            if (continueCount) {
-                handler.sendMessageDelayed(handler.obtainMessage(-1),1000);
-            }
+
+            goBleView();
+//            countNum();
+//            if (continueCount) {
+//                handler.sendMessageDelayed(handler.obtainMessage(-1), 1000);
+//            }
         }
     };
-    private Bitmap bitmap;
+
+    private void goBleView() {
+        Intent intent = new Intent(AdActivity.this, BleDeviceListActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private AdPresenterImpl pAd;
     private int initTimeCount;
 
@@ -58,18 +66,24 @@ public class AdActivity extends BaseAutoLayoutActivity implements AdContract.Vie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_ad);
         ButterKnife.bind(this);
+        layoutSkip.setVisibility(View.INVISIBLE);
+        ivAdvertising.setVisibility(View.VISIBLE);
+        handler.sendMessageDelayed(handler.obtainMessage(-1), 1000);
+    }
+
+
+    private void getImage() {
         pAd = new AdPresenterImpl();
         pAd.attachView(this);
         initTimeCount = 6;
         loginCheckBean = new LoginCheckBean();
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         if (NetUtils.isConnected(AdActivity.this)) {
             pAd.getLoginCheck();
         }
-        layoutSkip.setVisibility(View.INVISIBLE);
-        handler.sendMessageDelayed(handler.obtainMessage(-1),1000);
+        handler.sendMessageDelayed(handler.obtainMessage(-1), 1000);
     }
 
 
@@ -136,8 +150,6 @@ public class AdActivity extends BaseAutoLayoutActivity implements AdContract.Vie
     }
 
 
-
-
     @Override
     public void setAdTime(int count) {
         initTimeCount = count + 3;
@@ -162,10 +174,9 @@ public class AdActivity extends BaseAutoLayoutActivity implements AdContract.Vie
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (bitmap != null) {//进行bitmap回收
-            bitmap.recycle();
+        if (pAd != null) {
+            pAd.detachView();
         }
-        pAd.detachView();
     }
 }
 
