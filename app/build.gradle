@@ -21,58 +21,50 @@ android {
     sourceSets.main {
         jniLibs.srcDirs = ['libs']  // <-- Set your folder here!
     }
-//    signingConfigs { //gradle assembleRelease
-//        myConfig {
-//            storeFile file("vcontrol.jks")
-//            storePassword System.console().readLine("\nKeystore password: ")
-//            keyAlias "vcontrol"
-//            keyPassword System.console().readLine("\nKey password: ")
-//        }
-//    }
+    signingConfigs { //gradle assembleRelease
+        release {
+            storeFile file("vcontrol.jks")
+            storePassword 'vcontrol'
+            keyAlias "vcontrol"
+            keyPassword 'vcontrol'
+
+        }
+    }
 
     buildTypes {
         release {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            buildConfigField "boolean", "IS_DEBUG", "false"
+            buildConfigField "boolean", "IS_FORMAT_JSON_LOG", "false"
+        }
 
-            applicationVariants.all { variant ->
-                if (variant.buildType.name.equals('release')) {
-                    variant.outputs.each { output ->
-                        def outputFile = output.outputFile
-                        //def fileName = outputFile.name.replace("app", readApkName() + "-" + readVersion() + "-" + releaseTime());//获取的版本号是manifest中的版本号
-                        def fileName = outputFile.name.replace("app", readApkName() + "-" + defaultConfig.versionName + "-" + releaseTime());//获取的版本号是此gradle中的版本号
-                        def fileName_new = fileName.replace("-release", "");//去掉-release
-                        def f = fileName_new.replace(".apk", "");
-                        def filePath = "./release/" + f + "/";
-                        output.outputFile = new File(filePath, fileName_new)
-                    }
-                }
-            }
+        debug {
+//            applicationIdSuffix ".debug"
+            signingConfig signingConfigs.release
+            buildConfigField "boolean", "IS_DEBUG", "true"
+            buildConfigField "boolean", "IS_FORMAT_JSON_LOG", "true"
         }
     }
 
-    //修改生成的apk名字  MyAPPv2.0.0-production-201508171214.apk
-//    applicationVariants.all { variant ->
-//
+
+    applicationVariants.all { variant ->
 //        if (variant.buildType.name.equals('release')) {
-//            variant.outputs.each { output ->
-//                def appName = 'MyApp'
-//                def oldFile = output.outputFile
-//                def releaseApkName
-//
-//                releaseApkName = appName + variant.defaultConfig.versionName + '_' + getDate() + '.apk'
-//                output.outputFile = new File(oldFile.parent, releaseApkName)
-//            }
+            variant.outputs.each { output ->
+                def outputFile = output.outputFile
+                //def fileName = outputFile.name.replace("app", readApkName() + "-" + readVersion() + "-" + releaseTime());//获取的版本号是manifest中的版本号
+                def fileName = outputFile.name.replace("app", readApkName() + "-" + defaultConfig.versionName + "-" + releaseTime());//获取的版本号是此gradle中的版本号
+                def fileName_new = fileName.replace("-release", "");//去掉-release
+                def f = fileName_new.replace(".apk", "");
+                def filePath = "./release/" + f + "/";
+                output.outputFile = new File(filePath, fileName_new)
+            }
 //        }
-//    }
+    }
 }
 
-//v0.1打包后重命名：函数获取版本号(此方法获取到的版本号为manifest中的版本号，假如manifest没有写则返回为空字符串)
-def readVersion() {
-    def manifestParser = new com.android.builder.core.DefaultManifestParser();
-    return manifestParser.getVersionName(android.sourceSets.main.manifest.srcFile);
-}
 
 //v0.1打包后重命名：获取app名字
 def readApkName() {
