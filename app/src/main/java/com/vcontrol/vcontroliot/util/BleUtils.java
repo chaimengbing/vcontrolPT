@@ -1,0 +1,136 @@
+package com.vcontrol.vcontroliot.util;
+
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.util.Log;
+
+import com.vcontrol.vcontroliot.VcontrolApplication;
+
+import java.util.Arrays;
+import java.util.UUID;
+
+import cn.com.heaton.blelibrary.ble.Ble;
+import cn.com.heaton.blelibrary.ble.BleDevice;
+import cn.com.heaton.blelibrary.ble.callback.BleReadCallback;
+import cn.com.heaton.blelibrary.ble.callback.BleScanCallback;
+import cn.com.heaton.blelibrary.ble.callback.BleWriteCallback;
+
+public class BleUtils {
+
+    private static String TAG = "BleUtils";
+
+
+    private static BleUtils bleUtils = null;
+
+    private static Ble<BleDevice> mBle = null;
+
+
+    private BleUtils() {
+
+    }
+
+
+    public static BleUtils getInstance() {
+        if (bleUtils == null) {
+            bleUtils = new BleUtils();
+            getBle();
+        }
+        return bleUtils;
+    }
+
+
+    public static Ble<BleDevice> getBle() {
+        if (mBle == null) {
+            mBle = Ble.getInstance();
+            Ble.Options options = new Ble.Options();
+            options.logBleExceptions = true;//设置是否输出打印蓝牙日志
+            options.throwBleException = true;//设置是否抛出蓝牙异常
+            options.autoConnect = false;//设置是否自动连接
+            options.scanPeriod = 12 * 1000;//设置扫描时长
+            options.connectTimeout = 10 * 1000;//设置连接超时时长
+            options.uuid_service = UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb");//设置主服务的uuid
+            //options.uuid_services_extra = new UUID[]{UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb")};//添加额外的服务（如电量服务，心跳服务等）
+            options.uuid_write_cha = UUID.fromString("0000fff6-0000-1000-8000-00805f9b34fb");//设置可写特征的uuid
+            options.uuid_read_cha = UUID.fromString("0000fff6-0000-1000-8000-00805f9b34fb");//设置可读特征的uuid
+            //ota相关 修改为你们自己的
+        /*  options.uuid_ota_service = UUID.fromString("0000fee8-0000-1000-8000-00805f9b34fb");
+            options.uuid_ota_notify_cha = UUID.fromString("003784cf-f7e3-55b4-6c4c-9fd140100a16");
+            options.uuid_ota_write_cha = UUID.fromString("0000fff6-0000-1000-8000-00805f9b34fb");*/
+            mBle.init(VcontrolApplication.getCurrentContext(), options);
+        }
+        return mBle;
+    }
+
+
+    /**
+     * 发送数据
+     */
+    public void sendData(final BleDevice device, byte[] data) {
+        if (data == null) {
+            ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "发送数据为空");
+            return;
+        }
+        boolean result = false;
+        if (mBle != null) {
+            result = mBle.write(device, data,
+                    new BleWriteCallback<BleDevice>() {
+                        @Override
+                        public void onWriteSuccess(BluetoothGattCharacteristic characteristic) {
+                            ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "发送数据成功");
+                            readData(device);
+                        }
+                    });
+        }
+        if (!result) {
+            ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "发送数据失败!");
+        }
+    }
+
+    /**
+     * 主动读取数据
+     */
+    public void readData(BleDevice device) {
+        boolean result = false;
+        if (mBle != null) {
+            result = mBle.read(device, new BleReadCallback<BleDevice>() {
+                @Override
+                public void onReadSuccess(BluetoothGattCharacteristic characteristic) {
+                    super.onReadSuccess(characteristic);
+                    byte[] data = characteristic.getValue();
+                    ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "onReadSuccess: " + Arrays.toString(data));
+                }
+            });
+        }
+        if (!result) {
+            Log.d(TAG, "读取数据失败!");
+        }
+    }
+
+
+    /**
+     * 重新扫描
+     */
+    public void reScan() {
+        if (mBle != null) {
+            mBle.startScan(scanCallback);
+        }
+    }
+
+
+    BleScanCallback<BleDevice> scanCallback = new BleScanCallback<BleDevice>() {
+        @Override
+        public void onLeScan(final BleDevice device, int rssi, byte[] scanRecord) {
+            if (mBle != null) {
+                synchronized (mBle.getLocker()) {
+                }
+            }
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            Log.e(TAG, "onStop: ");
+        }
+    };
+
+
+}

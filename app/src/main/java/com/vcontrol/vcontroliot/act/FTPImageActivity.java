@@ -63,7 +63,6 @@ public class FTPImageActivity extends BaseActivity implements EventNotifyHelper.
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_IMAGE_LIST);
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.UPDATE_IMAGE_LIST);
         VcontrolApplication.getInstance().addActivity(this);
-        VcontrolApplication.setCurrentContext(getApplicationContext());
         ToastUtil.setCurrentContext(getApplication());
         ftpGridView = (GridView) findViewById(R.id.ftp_image_gridview);
         backTextView = (TextView) findViewById(R.id.back_textview);

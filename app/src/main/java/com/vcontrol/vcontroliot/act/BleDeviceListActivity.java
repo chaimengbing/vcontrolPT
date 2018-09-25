@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.vcontrol.vcontroliot.R;
 import com.vcontrol.vcontroliot.adapter.LeDeviceListAdapter;
-import com.vcontrol.vcontroliot.util.ServiceUtils;
+import com.vcontrol.vcontroliot.util.BleUtils;
 import com.vcontrol.vcontroliot.util.SystemBarTintManager;
 import com.vcontrol.vcontroliot.util.ToastUtil;
 import com.vcontrol.vcontroliot.util.UiEventEntry;
@@ -133,30 +133,14 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
 
     //初始化蓝牙
     private void initBle() {
-        mBle = Ble.getInstance();
-        Ble.Options options = new Ble.Options();
-        options.logBleExceptions = true;//设置是否输出打印蓝牙日志
-        options.throwBleException = true;//设置是否抛出蓝牙异常
-        options.autoConnect = false;//设置是否自动连接
-        options.scanPeriod = 12 * 1000;//设置扫描时长
-        options.connectTimeout = 10 * 1000;//设置连接超时时长
-        options.uuid_service = UUID.fromString("0000fff0-0000-1000-8000-00805f9b34fb");//设置主服务的uuid
-        //options.uuid_services_extra = new UUID[]{UUID.fromString("0000180f-0000-1000-8000-00805f9b34fb")};//添加额外的服务（如电量服务，心跳服务等）
-        options.uuid_write_cha = UUID.fromString("0000fff6-0000-1000-8000-00805f9b34fb");//设置可写特征的uuid
-        options.uuid_read_cha = UUID.fromString("0000fff6-0000-1000-8000-00805f9b34fb");//设置可读特征的uuid
-        //ota相关 修改为你们自己的
-       /* options.uuid_ota_service = UUID.fromString("0000fee8-0000-1000-8000-00805f9b34fb");
-        options.uuid_ota_notify_cha = UUID.fromString("003784cf-f7e3-55b4-6c4c-9fd140100a16");*/
-//        options.uuid_ota_write_cha = UUID.fromString("0000fff6-0000-1000-8000-00805f9b34fb");
-        mBle.init(getApplicationContext(), options);
+        BleUtils.getInstance();
+        mBle = BleUtils.getBle();
         //3、检查蓝牙是否支持及打开
         checkBluetoothStatus();
     }
 
 
     private void showLoading() {
-        mListView.setVisibility(View.GONE);
-        noDevice.setVisibility(View.GONE);
         loadingView.setVisibility(View.VISIBLE);
     }
 
@@ -172,6 +156,9 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
 //            ToastUtil.showShort(getApplicationContext(), R.string.ble_not_supported);
 //            finish();
 //        }
+        if (mBle == null){
+            mBle = BleUtils.getBle();
+        }
         if (!mBle.isBleEnable()) {
             //4、若未打开，则请求打开蓝牙
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -247,7 +234,7 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
             mLeDeviceListAdapter.addDevices(mBle.getConnetedDevices());
             mBle.startScan(scanCallback);
         } else {
-            hideLoading();
+            checkBluetoothStatus();
         }
     }
 

@@ -39,7 +39,6 @@ public class CheckVersion implements Runnable
     private static final String VERSIONINFO_URL = "我现在是空的，这个要自己填自己的查询url";
     private static final int HAVE_NEW_VERSION = 0;
     private static final int ALREADY_NEW_VERSION = 1;
-    private Context context = VcontrolApplication.mContext;
     private UpDataInfo updateInfo;
 
     //获取到主线程的looper,对UI操作
@@ -51,14 +50,14 @@ public class CheckVersion implements Runnable
                     openUpdateDialog();
                     break;
                 case ALREADY_NEW_VERSION:
-                    Toast.makeText(context, "已经是最新版本", Toast.LENGTH_LONG).show();
+                    Toast.makeText(VcontrolApplication.getCurrentContext(), "已经是最新版本", Toast.LENGTH_LONG).show();
                     break;
             }
         }
     };
 
     private void openUpdateDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(VcontrolApplication.getCurrentContext());
         builder.setTitle("版本有更新");
         builder.setMessage(updateInfo.description);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -71,7 +70,7 @@ public class CheckVersion implements Runnable
     }
 
     private void downloadNewVersion() {
-        final ProgressDialog pd = new ProgressDialog(context);
+        final ProgressDialog pd = new ProgressDialog(VcontrolApplication.getCurrentContext());
         pd.setTitle("更新进度");
         pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         pd.show();
@@ -133,7 +132,7 @@ public class CheckVersion implements Runnable
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-        context.startActivity(intent);
+        VcontrolApplication.getCurrentContext().startActivity(intent);
     }
 
     @Override
@@ -182,8 +181,8 @@ public class CheckVersion implements Runnable
     }
 
     private String getLocalVersionCode() throws PackageManager.NameNotFoundException {
-        PackageManager pm = context.getPackageManager();
-        PackageInfo info = pm.getPackageInfo(context.getPackageName(), 0);
+        PackageManager pm = VcontrolApplication.getCurrentContext().getPackageManager();
+        PackageInfo info = pm.getPackageInfo(VcontrolApplication.getCurrentContext().getPackageName(), 0);
         String versionCode = String.valueOf(Double.parseDouble(info.versionName));
         return  versionCode;
     }

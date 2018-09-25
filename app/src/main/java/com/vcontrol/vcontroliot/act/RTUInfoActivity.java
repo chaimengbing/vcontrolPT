@@ -39,7 +39,6 @@ public class RTUInfoActivity extends BaseActivity
     public void initComponentViews()
     {
         VcontrolApplication.getInstance().addActivity(this);
-        VcontrolApplication.setCurrentContext(getApplicationContext());
         ToastUtil.setCurrentContext(getApplication());
 
         rtuNumEdittext = (EditText) findViewById(R.id.rtu_num_edittext);

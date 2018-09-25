@@ -37,7 +37,6 @@ public class VcontrolApplication extends Application {
 
     private static Context context = null;
 
-    public static Context mContext;
     public static String getToken() {
         return token;
     }
@@ -94,10 +93,9 @@ public class VcontrolApplication extends Application {
         Logger.d(TAG, "[ExampleApplication] onCreate");
         Locale _UserLocale= LocaleUtils.getUserLocale(this);
         LocaleUtils.updateLocale(this, _UserLocale);
-
+        context = getApplicationContext();
 
         applicationHandler = new Handler(this.getMainLooper());
-        mContext = getApplicationContext();
         instance = this;
 
 
