@@ -299,24 +299,19 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-        intent.putExtra(UiEventEntry.NOTIFY_BASIC_NAME, getString(R.string.lru_3300));
-        intent.putExtra(UiEventEntry.NOTIFY_BASIC_TYPE, UiEventEntry.LRU_BLE_3300);
-        startActivity(intent);
-
-//        final BleDevice device = mLeDeviceListAdapter.getDevice(i);
-//        if (device == null) return;
-//        if (mBle.isScanning()) {
-//            mBle.stopScan();
-//        }
-//        if (device.isConnected()) {
-//            mBle.disconnect(device);
-//        } else if (!device.isConnectting()) {
-//            //扫描到设备时   务必用该方式连接(是上层逻辑问题， 否则点击列表  虽然能够连接上，但设备列表的状态不会发生改变)
-//            mBle.connect(device, connectCallback);
-//            //此方式只是针对不进行扫描连接（如上，若通过该方式进行扫描列表的连接  列表状态不会发生改变）
-////            mBle.connect(device.getBleAddress(), connectCallback);
-//        }
+        final BleDevice device = mLeDeviceListAdapter.getDevice(i);
+        if (device == null) return;
+        if (mBle.isScanning()) {
+            mBle.stopScan();
+        }
+        if (device.isConnected()) {
+            mBle.disconnect(device);
+        } else if (!device.isConnectting()) {
+            //扫描到设备时   务必用该方式连接(是上层逻辑问题， 否则点击列表  虽然能够连接上，但设备列表的状态不会发生改变)
+            mBle.connect(device, connectCallback);
+            //此方式只是针对不进行扫描连接（如上，若通过该方式进行扫描列表的连接  列表状态不会发生改变）
+//            mBle.connect(device.getBleAddress(), connectCallback);
+        }
     }
 
 
@@ -341,6 +336,11 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
             }
             Log.e(TAG, "onConnectionChanged: " + device.isConnected());
             mLeDeviceListAdapter.notifyDataSetChanged();
+//            Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+//            intent.putExtra(UiEventEntry.NOTIFY_BASIC_NAME, getString(R.string.lru_3300));
+//            intent.putExtra(UiEventEntry.NOTIFY_BASIC_TYPE, UiEventEntry.LRU_BLE_3300);
+//            intent.putExtra("device",device);
+//            startActivity(intent);
         }
 
         @Override

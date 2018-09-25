@@ -69,6 +69,10 @@ public class BleUtils {
             ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "发送数据为空");
             return;
         }
+        if (device == null){
+            ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "请选择设备");
+            return;
+        }
         boolean result = false;
         if (mBle != null) {
             result = mBle.write(device, data,
