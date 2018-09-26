@@ -118,12 +118,14 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
 
         initView(view);
 
-
+        if (bleDevice != null && bleDevice.isConnected()){
+            sendData(ConfigParams.ReadSystemPara);
+        }
     }
 
     @Override
     public void initData() {
-        sendData(ConfigParams.ReadSystemPara);
+
         timeItems = getResources().getStringArray(R.array.time_interval);
         timeAdapter = new SimpleSpinnerAdapter(getActivity(), R.layout.simple_spinner_item, timeItems);
         timeSpinner.setAdapter(timeAdapter);

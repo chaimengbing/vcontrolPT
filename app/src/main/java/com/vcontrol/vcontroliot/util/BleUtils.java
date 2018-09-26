@@ -102,11 +102,7 @@ public class BleUtils {
                 public void onReadSuccess(BluetoothGattCharacteristic characteristic) {
                     super.onReadSuccess(characteristic);
                     byte[] data = characteristic.getValue();
-
-                    if (sendData == data) {
-                        return;
-                    }
-                    String result1 = data.toString();
+                    String result1 = new String(data);
                     ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "onReadSuccess: " + result1);
                     if (TextUtils.isEmpty(result1)) {
                         return;
