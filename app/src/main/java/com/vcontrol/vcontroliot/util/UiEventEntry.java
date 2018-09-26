@@ -51,6 +51,14 @@ public class UiEventEntry
 
     public static final int SetAllConfigInfo = 165;
 
+    /**
+     * 蓝牙连接
+     */
+    public static final int NOTIFY_BLE_SCAN_SUCCESS = 1233;
+    public static final int NOTIFY_BLE_CONNECT_SUCCESS = 1234;
+    public static final int NOTIFY_BLE_CONNECT_FAIL = 1235;
+    public static final int NOTIFY_BLE_CONNECT_STOP = 1236;
+
 
     public static final String NOTIFY_BACK_HOME = "NOTIFY_BACK_HOME";
     public static final int NOTIFY_BUNDLE = 1;

@@ -547,7 +547,7 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
                 Log.debug(TAG, "update::");
                 if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
                     if (currentType == UiEventEntry.LRU_BLE_3300) {
-                        BleUtils.getBle().connect(bleDevice, connectCallback);
+                        BleUtils.getInstance().connectDevice(bleDevice);
                     } else {
                         SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
                     }

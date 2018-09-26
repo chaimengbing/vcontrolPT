@@ -3,7 +3,6 @@ package com.vcontrol.vcontroliot.act;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
@@ -22,26 +21,20 @@ import com.vcontrol.vcontroliot.R;
 import com.vcontrol.vcontroliot.VcontrolApplication;
 import com.vcontrol.vcontroliot.adapter.LeDeviceListAdapter;
 import com.vcontrol.vcontroliot.util.BleUtils;
-import com.vcontrol.vcontroliot.util.SocketUtil;
+import com.vcontrol.vcontroliot.util.EventNotifyHelper;
 import com.vcontrol.vcontroliot.util.SystemBarTintManager;
 import com.vcontrol.vcontroliot.util.ToastUtil;
 import com.vcontrol.vcontroliot.util.UiEventEntry;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.com.heaton.blelibrary.ble.Ble;
 import cn.com.heaton.blelibrary.ble.BleDevice;
-import cn.com.heaton.blelibrary.ble.callback.BleConnCallback;
-import cn.com.heaton.blelibrary.ble.callback.BleNotiftCallback;
-import cn.com.heaton.blelibrary.ble.callback.BleReadCallback;
 import cn.com.heaton.blelibrary.ble.callback.BleScanCallback;
-import cn.com.heaton.blelibrary.ble.callback.BleWriteCallback;
 
-public class BleDeviceListActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class BleDeviceListActivity extends BaseActivity implements AdapterView.OnItemClickListener, EventNotifyHelper.NotificationCenterDelegate {
     private static String TAG = BleDeviceListActivity.class.getName();
 
 
@@ -92,6 +85,22 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
     @Override
     public void initComponentViews() {
         ButterKnife.bind(this);
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.NOTIFY_BLE_CONNECT_SUCCESS);
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.NOTIFY_BLE_CONNECT_FAIL);
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.NOTIFY_BLE_CONNECT_STOP);
+        EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.NOTIFY_BLE_SCAN_SUCCESS);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.NOTIFY_BLE_CONNECT_SUCCESS);
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.NOTIFY_BLE_CONNECT_FAIL);
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.NOTIFY_BLE_CONNECT_STOP);
+        EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.NOTIFY_BLE_SCAN_SUCCESS);
+        if (mBle != null) {
+            mBle.destory(getApplicationContext());
+        }
     }
 
 
@@ -137,14 +146,13 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
 
     //初始化蓝牙
     private void initBle() {
-        BleUtils.getInstance();
-        mBle = BleUtils.getBle();
         //3、检查蓝牙是否支持及打开
         checkBluetoothStatus();
     }
 
 
     private void showLoading() {
+        noDevice.setVisibility(View.GONE);
         loadingView.setVisibility(View.VISIBLE);
     }
 
@@ -160,16 +168,13 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
 //            ToastUtil.showShort(getApplicationContext(), R.string.ble_not_supported);
 //            finish();
 //        }
-        if (mBle == null) {
-            mBle = BleUtils.getBle();
-        }
-        if (!mBle.isBleEnable()) {
+        if (!BleUtils.getInstance().isBleEnable()) {
             //4、若未打开，则请求打开蓝牙
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, Ble.REQUEST_ENABLE_BT);
         } else {
             //5、若已打开，则进行扫描
-            mBle.startScan(scanCallback);
+            BleUtils.getInstance().startScan();
         }
     }
 
@@ -179,10 +184,7 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
         @Override
         public void onLeScan(final BleDevice device, int rssi, byte[] scanRecord) {
             synchronized (mBle.getLocker()) {
-                mLeDeviceListAdapter.addDevice(device);
-                mLeDeviceListAdapter.notifyDataSetChanged();
-                hideLoading();
-                showEmptyView();
+
             }
         }
 
@@ -190,8 +192,7 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
         public void onStop() {
             super.onStop();
             Log.e(TAG, "onStop: ");
-            hideLoading();
-            showEmptyView();
+
         }
     };
 
@@ -209,22 +210,22 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
                 break;
             case R.id.title_right:
                 showLoading();
-                reScan();
+                BleUtils.getInstance().startScan();
                 break;
-            case R.id.send_button:
-                synchronized (mBle.getLocker()) {
-                    for (BleDevice device : list) {
-                        sendData(device, new byte[]{1, 2, 3});
-                    }
-                }
-                break;
-            case R.id.read_button:
-                synchronized (mBle.getLocker()) {
-                    for (BleDevice device : list) {
-                        read(device);
-                    }
-                }
-                break;
+//            case R.id.send_button:
+//                synchronized (mBle.getLocker()) {
+//                    for (BleDevice device : list) {
+//                        sendData(device, new byte[]{1, 2, 3});
+//                    }
+//                }
+//                break;
+//            case R.id.read_button:
+//                synchronized (mBle.getLocker()) {
+//                    for (BleDevice device : list) {
+//                        read(device);
+//                    }
+//                }
+//                break;
             default:
                 break;
         }
@@ -260,62 +261,47 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
     }
 
 
-    /*发送数据*/
-    public void sendData(BleDevice device, byte[] data) {
-        if (data == null) {
-            ToastUtil.showLong(getApplicationContext(), "发送数据为空");
-            return;
-        }
-        boolean result = mBle.write(device, data,
-                new BleWriteCallback<BleDevice>() {
-                    @Override
-                    public void onWriteSuccess(BluetoothGattCharacteristic characteristic) {
-                        ToastUtil.showLong(getApplicationContext(), "发送数据成功");
-                    }
-                });
-        if (!result) {
-            ToastUtil.showLong(getApplicationContext(), "发送数据失败!");
-        }
-    }
-
-    /*主动读取数据*/
-    public void read(BleDevice device) {
-        boolean result = mBle.read(device, new BleReadCallback<BleDevice>() {
-            @Override
-            public void onReadSuccess(BluetoothGattCharacteristic characteristic) {
-                super.onReadSuccess(characteristic);
-                byte[] data = characteristic.getValue();
-                ToastUtil.showLong(getApplicationContext(), "onReadSuccess: " + Arrays.toString(data));
-            }
-        });
-        if (!result) {
-            Log.d(TAG, "读取数据失败!");
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mBle != null) {
-            mBle.destory(getApplicationContext());
-        }
-    }
+//    /*发送数据*/
+//    public void sendData(BleDevice device, byte[] data) {
+//        if (data == null) {
+//            ToastUtil.showLong(getApplicationContext(), "发送数据为空");
+//            return;
+//        }
+//        boolean result = mBle.write(device, data,
+//                new BleWriteCallback<BleDevice>() {
+//                    @Override
+//                    public void onWriteSuccess(BluetoothGattCharacteristic characteristic) {
+//                        ToastUtil.showLong(getApplicationContext(), "发送数据成功");
+//                    }
+//                });
+//        if (!result) {
+//            ToastUtil.showLong(getApplicationContext(), "发送数据失败!");
+//        }
+//    }
+//
+//    /*主动读取数据*/
+//    public void read(BleDevice device) {
+//        boolean result = mBle.read(device, new BleReadCallback<BleDevice>() {
+//            @Override
+//            public void onReadSuccess(BluetoothGattCharacteristic characteristic) {
+//                super.onReadSuccess(characteristic);
+//                byte[] data = characteristic.getValue();
+//                ToastUtil.showLong(getApplicationContext(), "onReadSuccess: " + Arrays.toString(data));
+//            }
+//        });
+//        if (!result) {
+//            Log.d(TAG, "读取数据失败!");
+//        }
+//    }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-         BleDevice device = mLeDeviceListAdapter.getDevice(i);
+        BleDevice device = mLeDeviceListAdapter.getDevice(i);
         if (device == null) return;
-        if (mBle.isScanning()) {
-            mBle.stopScan();
+        if (BleUtils.getInstance().isScanning()) {
+            BleUtils.getInstance().stopScan();
         }
-        if (device.isConnected()) {
-            toBleView(device);
-        } else if (!device.isConnectting()) {
-            //扫描到设备时   务必用该方式连接(是上层逻辑问题， 否则点击列表  虽然能够连接上，但设备列表的状态不会发生改变)
-            mBle.connect(device, connectCallback);
-            //此方式只是针对不进行扫描连接（如上，若通过该方式进行扫描列表的连接  列表状态不会发生改变）
-//            mBle.connect(device.getBleAddress(), connectCallback);
-        }
+        BleUtils.getInstance().connectDevice(device);
     }
 
     @Override
@@ -332,9 +318,9 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
      */
     private void exitApp() {
         // 判断2次点击事件时间
-        Log.e(TAG,"exitApp::time:" + exitTime);
+        Log.e(TAG, "exitApp::time:" + exitTime);
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            ToastUtil.showLong(getApplicationContext(),getString(R.string.Press_again_to_exit_the_program));
+            ToastUtil.showLong(getApplicationContext(), getString(R.string.Press_again_to_exit_the_program));
             exitTime = System.currentTimeMillis();
         } else {
             VcontrolApplication.getInstance().exit();
@@ -345,43 +331,35 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
     }
 
 
-    /*设置通知的回调*/
-    private BleNotiftCallback<BleDevice> bleNotiftCallback = new BleNotiftCallback<BleDevice>() {
-        @Override
-        public void onChanged(BleDevice device, BluetoothGattCharacteristic characteristic) {
-            UUID uuid = characteristic.getUuid();
-            Log.e(TAG, "onChanged==uuid:" + uuid.toString());
-            Log.e(TAG, "onChanged==address:" + device.getBleAddress());
-            Log.e(TAG, "onChanged==data:" + Arrays.toString(characteristic.getValue()));
-        }
-    };
-
-    /*连接的回调*/
-    private BleConnCallback<BleDevice> connectCallback = new BleConnCallback<BleDevice>() {
-        @Override
-        public void onConnectionChanged(final BleDevice device) {
-            if (device.isConnected()) {
-                /*连接成功后，设置通知*/
-                mBle.startNotify(device, bleNotiftCallback);
-            }
-            Log.e(TAG, "onConnectionChanged: " + device.isConnected());
-            mLeDeviceListAdapter.notifyDataSetChanged();
-            toBleView(device);
-        }
-
-        @Override
-        public void onConnectException(BleDevice device, int errorCode) {
-            super.onConnectException(device, errorCode);
-            ToastUtil.showLong(getApplicationContext(), "连接异常，异常状态码:" + errorCode);
-        }
-    };
-
-
-    private void toBleView(BleDevice bleDevice){
+    private void toBleView(BleDevice bleDevice) {
         Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
         intent.putExtra(UiEventEntry.NOTIFY_BASIC_NAME, getString(R.string.lru_3300));
         intent.putExtra(UiEventEntry.NOTIFY_BASIC_TYPE, UiEventEntry.LRU_BLE_3300);
-        intent.putExtra("device",bleDevice);
+        intent.putExtra("device", bleDevice);
         startActivity(intent);
+    }
+
+    @Override
+    public void didReceivedNotification(int id, Object... args) {
+        if (id == UiEventEntry.NOTIFY_BLE_CONNECT_SUCCESS) {
+            BleDevice bleDevice = (BleDevice) args[0];
+            if (bleDevice != null) {
+                toBleView(bleDevice);
+            }
+        } else if (id == UiEventEntry.NOTIFY_BLE_SCAN_SUCCESS) {
+            BleDevice bleDevice = (BleDevice) args[0];
+            if (bleDevice != null) {
+                mLeDeviceListAdapter.addDevice(bleDevice);
+                mLeDeviceListAdapter.notifyDataSetChanged();
+            }
+            hideLoading();
+            showEmptyView();
+
+        } else if (id == UiEventEntry.NOTIFY_BLE_CONNECT_FAIL) {
+
+        } else if (id == UiEventEntry.NOTIFY_BLE_CONNECT_STOP) {
+            hideLoading();
+            showEmptyView();
+        }
     }
 }

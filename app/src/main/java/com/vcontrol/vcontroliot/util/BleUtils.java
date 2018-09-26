@@ -12,6 +12,8 @@ import java.util.UUID;
 
 import cn.com.heaton.blelibrary.ble.Ble;
 import cn.com.heaton.blelibrary.ble.BleDevice;
+import cn.com.heaton.blelibrary.ble.callback.BleConnCallback;
+import cn.com.heaton.blelibrary.ble.callback.BleNotiftCallback;
 import cn.com.heaton.blelibrary.ble.callback.BleReadCallback;
 import cn.com.heaton.blelibrary.ble.callback.BleScanCallback;
 import cn.com.heaton.blelibrary.ble.callback.BleWriteCallback;
@@ -27,20 +29,19 @@ public class BleUtils {
 
 
     private BleUtils() {
-
+        initBle();
     }
 
 
     public static BleUtils getInstance() {
         if (bleUtils == null) {
             bleUtils = new BleUtils();
-            getBle();
         }
         return bleUtils;
     }
 
 
-    public static Ble<BleDevice> getBle() {
+    private Ble<BleDevice> initBle() {
         if (mBle == null) {
             mBle = Ble.getInstance();
             Ble.Options options = new Ble.Options();
@@ -63,6 +64,68 @@ public class BleUtils {
     }
 
 
+    public boolean isScanning() {
+        if (mBle != null) {
+            return mBle.isScanning();
+        }
+        return false;
+    }
+
+    public void stopScan() {
+        if (mBle != null) {
+            mBle.stopScan();
+        }
+    }
+
+    public boolean isBleEnable() {
+        if (mBle != null) {
+            return mBle.isBleEnable();
+        }
+        return false;
+    }
+
+    public void connectDevice(BleDevice device) {
+        if (mBle != null) {
+            mBle.connect(device, connectCallback);
+        } else {
+            EventNotifyHelper.getInstance().postNotification(UiEventEntry.NOTIFY_BLE_CONNECT_FAIL);
+        }
+    }
+
+
+    /*设置通知的回调*/
+    private BleNotiftCallback<BleDevice> bleNotiftCallback = new BleNotiftCallback<BleDevice>() {
+        @Override
+        public void onChanged(BleDevice device, BluetoothGattCharacteristic characteristic) {
+            byte[] data = characteristic.getValue();
+            String result1 = new String(data);
+            ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "connectNotify: " + result1);
+            notifyData(result1);
+        }
+    };
+
+
+    /*连接的回调*/
+    private BleConnCallback<BleDevice> connectCallback = new BleConnCallback<BleDevice>() {
+        @Override
+        public void onConnectionChanged(final BleDevice device) {
+            if (device.isConnected()) {
+                /*连接成功后，设置通知*/
+                mBle.startNotify(device, bleNotiftCallback);
+            }
+            EventNotifyHelper.getInstance().postNotification(UiEventEntry.NOTIFY_BLE_CONNECT_SUCCESS, device);
+            Log.e(TAG, "onConnectionChanged: " + device.isConnected());
+        }
+
+        @Override
+        public void onConnectException(BleDevice device, int errorCode) {
+            super.onConnectException(device, errorCode);
+            EventNotifyHelper.getInstance().postNotification(UiEventEntry.NOTIFY_BLE_CONNECT_FAIL);
+//            ToastUtil.showLong(getApplicationContext(), "连接异常，异常状态码:" + errorCode);
+        }
+    };
+
+
     /**
      * 发送数据
      */
@@ -82,7 +145,6 @@ public class BleUtils {
                         @Override
                         public void onWriteSuccess(BluetoothGattCharacteristic characteristic) {
                             ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "发送数据成功");
-                            readData(device, data);
                         }
                     });
         }
@@ -91,10 +153,11 @@ public class BleUtils {
         }
     }
 
+
     /**
      * 主动读取数据
      */
-    public void readData(BleDevice device, final byte[] sendData) {
+    public void readData(BleDevice device) {
         boolean result = false;
         if (mBle != null) {
             result = mBle.read(device, new BleReadCallback<BleDevice>() {
@@ -107,19 +170,8 @@ public class BleUtils {
                     if (TextUtils.isEmpty(result1)) {
                         return;
                     }
-                    String[] res = result1.split("\r\n");
+                    notifyData(result1);
 
-                    for (String result : res) {
-                        if (result != null && result.toUpperCase().contains("OK")) {
-                            EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_RESULT_OK, result, sendData.toString());
-                        } else if (result != null && result.toUpperCase().contains("ERROR")) {
-                            EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_RESULT_ERROR, result, sendData.toString());
-                        } else if (result != null && result.contains("Not Started")) {// System Not Started
-                            ToastUtil.showToastLong(VcontrolApplication.getCurrentContext().getString(R.string.Device_again_later));
-                        } else {
-                            EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_DATA, result, sendData.toString());
-                        }
-                    }
                 }
             });
         }
@@ -129,10 +181,25 @@ public class BleUtils {
     }
 
 
+    private void notifyData(String data) {
+        String[] res = data.split("\r\n");
+        for (String result : res) {
+            if (result != null && result.toUpperCase().contains("OK")) {
+                EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_RESULT_OK, result);
+            } else if (result != null && result.toUpperCase().contains("ERROR")) {
+                EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_RESULT_ERROR, result);
+            } else if (result != null && result.contains("Not Started")) {// System Not Started
+                ToastUtil.showToastLong(VcontrolApplication.getCurrentContext().getString(R.string.Device_again_later));
+            } else {
+                EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_DATA, result);
+            }
+        }
+    }
+
     /**
      * 重新扫描
      */
-    public void reScan() {
+    public void startScan() {
         if (mBle != null) {
             mBle.startScan(scanCallback);
         }
@@ -144,6 +211,7 @@ public class BleUtils {
         public void onLeScan(final BleDevice device, int rssi, byte[] scanRecord) {
             if (mBle != null) {
                 synchronized (mBle.getLocker()) {
+                    EventNotifyHelper.getInstance().postNotification(UiEventEntry.NOTIFY_BLE_SCAN_SUCCESS, device);
                 }
             }
         }
@@ -151,7 +219,7 @@ public class BleUtils {
         @Override
         public void onStop() {
             super.onStop();
-            Log.e(TAG, "onStop: ");
+            EventNotifyHelper.getInstance().postNotification(UiEventEntry.NOTIFY_BLE_CONNECT_STOP);
         }
     };
 
