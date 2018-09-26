@@ -706,6 +706,7 @@ public class ConfigParams
     public static final String ReadRTUVer = "ReadRTUVer ";
     public static final String ReadNetVer = "ReadNetVer ";
     public static final String NetVer = "NetVer ";
+    public static final String ReadVer = "ReadVer ";
 
 
     //        设置IP通道6设置

@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -18,8 +19,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.VcontrolApplication;
 import com.vcontrol.vcontroliot.adapter.LeDeviceListAdapter;
 import com.vcontrol.vcontroliot.util.BleUtils;
+import com.vcontrol.vcontroliot.util.SocketUtil;
 import com.vcontrol.vcontroliot.util.SystemBarTintManager;
 import com.vcontrol.vcontroliot.util.ToastUtil;
 import com.vcontrol.vcontroliot.util.UiEventEntry;
@@ -43,6 +46,7 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
 
 
     protected SystemBarTintManager tintManager;
+    private long exitTime = 0;
 
     @BindView(R.id.device_listview)
     ListView mListView;
@@ -156,7 +160,7 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
 //            ToastUtil.showShort(getApplicationContext(), R.string.ble_not_supported);
 //            finish();
 //        }
-        if (mBle == null){
+        if (mBle == null) {
             mBle = BleUtils.getBle();
         }
         if (!mBle.isBleEnable()) {
@@ -311,6 +315,31 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
             mBle.connect(device, connectCallback);
             //此方式只是针对不进行扫描连接（如上，若通过该方式进行扫描列表的连接  列表状态不会发生改变）
 //            mBle.connect(device.getBleAddress(), connectCallback);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            exitApp();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 按下返回键退出APP
+     */
+    private void exitApp() {
+        // 判断2次点击事件时间
+        if ((System.currentTimeMillis() - exitTime) > 2000) {
+            ToastUtil.showToastLong(getString(R.string.Press_again_to_exit_the_program));
+            exitTime = System.currentTimeMillis();
+        } else {
+            VcontrolApplication.getInstance().exit();
+
+            finish();
+            System.exit(0);
         }
     }
 

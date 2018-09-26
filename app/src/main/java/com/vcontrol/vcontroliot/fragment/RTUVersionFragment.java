@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.vcontrol.vcontroliot.R;
 import com.vcontrol.vcontroliot.adapter.UpdateBinAdapter;
 import com.vcontrol.vcontroliot.log.Log;
+import com.vcontrol.vcontroliot.util.BleUtils;
 import com.vcontrol.vcontroliot.util.ConfigParams;
 import com.vcontrol.vcontroliot.util.EventNotifyHelper;
 import com.vcontrol.vcontroliot.util.ServiceUtils;
@@ -22,12 +23,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import cn.com.heaton.blelibrary.ble.BleDevice;
+
 /**
  * Created by Vcontrol on 2016/11/23.
  */
 
-public class RTUVersionFragment extends BaseFragment implements View.OnClickListener, EventNotifyHelper.NotificationCenterDelegate
-{
+public class RTUVersionFragment extends BaseFragment implements View.OnClickListener, EventNotifyHelper.NotificationCenterDelegate {
 
     private static final String TAG = RTUVersionFragment.class.getSimpleName();
     private TextView appVers;
@@ -79,16 +81,18 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
     private TextView listTextView1;
     private TextView vcm;
 
+    private boolean isBleDevice = false;
+    private BleDevice bleDevice = null;
+
+
     @Override
-    public int getLayoutView()
-    {
+    public int getLayoutView() {
         return R.layout.fragment_setting_version;
     }
 
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.READ_DATA);
         EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.DOWNLOADING);
@@ -96,12 +100,16 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
     }
 
     @Override
-    public void initComponentViews(View view)
-    {
-
+    public void initComponentViews(View view) {
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_DATA);
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.DOWNLOADING);
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.SetAllConfigInfo);
+
+        if (getArguments() != null) {
+            isBleDevice = getArguments().getBoolean("isBleDevice");
+            bleDevice = (BleDevice) getArguments().getSerializable("device");
+        }
+
         appVers = (TextView) view.findViewById(R.id.app_ver);
         rtuVers = (TextView) view.findViewById(R.id.rtu_ver);
         vcm = (TextView) view.findViewById(R.id.vcm);
@@ -123,61 +131,45 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
 
     }
 
-    private String getAppVersion()
-    {
+    private String getAppVersion() {
         String versionName = null;
 
-        try
-        {
+        try {
             versionName = getActivity().getPackageManager().getPackageInfo(
                     getActivity().getPackageName(), 0).versionName;
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
 
         }
         return versionName;
     }
 
     @Override
-    public void initData()
-    {
-        if (getArguments() != null)
-        {
+    public void initData() {
+        if (getArguments() != null) {
             currentType = getArguments().getInt(UiEventEntry.CURRENT_RTU_NAME);
-            if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100)
-            {
+            if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
                 SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSensorPara2);
-            }
-            else if (currentType == UiEventEntry.WRU_1901)
-            {
+            } else if (currentType == UiEventEntry.WRU_1901) {
                 SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadData);
-            }
-            else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.WRU_2801)
-            {
+            } else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.WRU_2801) {
                 SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadParameter);
-            }
-            else if (currentType == UiEventEntry.LRU_3000)
-            {
+            } else if (currentType == UiEventEntry.LRU_3000) {
                 SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadParameters);
                 vcm.setText(getString(R.string.Software_version));
-            }
-            else if (currentType == UiEventEntry.LRU_3200)
-            {
+            } else if (currentType == UiEventEntry.LRU_3200) {
                 SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadNetVer);
-            }
-            else if (currentType == UiEventEntry.RCM_2000)
-            {
+            } else if (currentType == UiEventEntry.RCM_2000) {
                 SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadFunctionData);
                 vcm.setText(getString(R.string.Camera_version));
+            } else if (currentType == UiEventEntry.LRU_BLE_3300) {
+                vcm.setText(getString(R.string.Software_version));
+                BleUtils.getInstance().sendData(bleDevice, ConfigParams.ReadVer.getBytes());
             }
-        }
-        else
-        {
+        } else {
             SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSensorPara2);
         }
 
-        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100)
-        {
+        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
             updatelistView.setVisibility(View.VISIBLE);
             packageLayout.setVisibility(View.VISIBLE);
             listTextView.setVisibility(View.VISIBLE);
@@ -185,9 +177,7 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
             updatelistView1.setVisibility(View.VISIBLE);
             packageLayout1.setVisibility(View.VISIBLE);
             listTextView1.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        } else {
             updatelistView.setVisibility(View.GONE);
             packageLayout.setVisibility(View.GONE);
             listTextView.setVisibility(View.GONE);
@@ -206,16 +196,13 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
     }
 
     @Override
-    public void setListener()
-    {
+    public void setListener() {
         updateButton.setOnClickListener(this);
         updateButton1.setOnClickListener(this);
 
-        updatelistView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        updatelistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 File file = (File) adapter.getItem(position);
                 Log.info(TAG, "file:" + file.getName());
 
@@ -232,11 +219,9 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
             }
         });
 
-        updatelistView1.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
+        updatelistView1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 File file = (File) adapter1.getItem(position);
                 Log.info(TAG, "file:" + file.getName());
 
@@ -246,7 +231,7 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
                 fileLength1 = fileBin1.length();
                 Log.info(TAG, "length:" + fileLength1);
                 //bin文件总包数
-                fileSum1 = ((int) fileLength1 / 1024) ;
+                fileSum1 = ((int) fileLength1 / 1024);
                 sumTextView1.setText(getString(R.string.Total_number_of_packages) + fileSum1);
                 currentP1 = 1;
                 sendBinData1();
@@ -258,8 +243,7 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
     private byte[] dataSum = null;
     private byte[] dataSum1 = null;
 
-    private void sendBinData()
-    {
+    private void sendBinData() {
         //需要进行 crc 校验
         byte[] buffer = new byte[1036];
         initBuffer(buffer);
@@ -268,8 +252,6 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
         packageSum = ServiceUtils.getIntLowHex(fileSum);
         //bin文件当前包数,首先发送第一包
         packageCurrent = ServiceUtils.getIntLowHex(currentP);
-
-
 
 
         String p = "0F00";
@@ -283,10 +265,8 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
         buffer[8] = b1[0];
         buffer[9] = b1[1];
 
-        try
-        {
-            if (binIs == null)
-            {
+        try {
+            if (binIs == null) {
                 dataSum = new byte[(int) fileLength];
                 binIs = new FileInputStream(fileBin);
                 binIs.read(dataSum);
@@ -295,26 +275,21 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
 //            Log.info(TAG,Arrays.toString(dataSum));
             byte[] data = new byte[1024];
             int temtLength = 1024 * (currentP - 1);
-            if (currentP == fileSum)
-            {//发送最后一包数据
+            if (currentP == fileSum) {//发送最后一包数据
                 int length = (int) (fileLength - temtLength);
 //                Log.info(TAG, "length:" + length);
                 System.arraycopy(dataSum, temtLength, data, 0, length);
 
                 //最后一包数据不到1024的补"0A"
-                for (int i = length; i < data.length; i++)
-                {
+                for (int i = length; i < data.length; i++) {
                     data[i] = 0x0A;
                 }
 
-            }
-            else
-            {
+            } else {
                 System.arraycopy(dataSum, temtLength, data, 0, data.length);
             }
 
-            for (int i = 0; i < 1024; i++)
-            {
+            for (int i = 0; i < 1024; i++) {
                 buffer[i + 12] = data[i];
             }
             //crc 校验值
@@ -325,15 +300,13 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
             byte[] sendData = ServiceUtils.decodeToBytes(content);
 //            Log.info(TAG, "sendData:" + Arrays.toString(sendData));
             SocketUtil.getSocketUtil().sendContent(sendData, true);
-            downloadTextView.setText(getString(R.string.Sending_the_first) +currentP + getString(R.string.Packet_data));//("正在发送第" + currentP + "包数据");
-        } catch (Exception e)
-        {
+            downloadTextView.setText(getString(R.string.Sending_the_first) + currentP + getString(R.string.Packet_data));//("正在发送第" + currentP + "包数据");
+        } catch (Exception e) {
             Log.exception(TAG, e);
         }
     }
 
-    private void sendBinData1()
-    {
+    private void sendBinData1() {
         //需要进行 crc 校验
         byte[] buffer = new byte[1024];
 
@@ -342,8 +315,6 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
         packageSum1 = ServiceUtils.getIntLowHex(fileSum1);
         //bin文件当前包数,首先发送第一包
         packageCurrent1 = ServiceUtils.getIntLowHex(currentP1);
-
-
 
 
         String p = "0F00";
@@ -358,10 +329,8 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
 //        buffer[5] = b1[1];
 
 
-        try
-        {
-            if (binIs1 == null)
-            {
+        try {
+            if (binIs1 == null) {
                 dataSum1 = new byte[(int) fileLength1];
                 binIs1 = new FileInputStream(fileBin1);
                 binIs1.read(dataSum1);
@@ -370,27 +339,22 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
 //            Log.info(TAG,Arrays.toString(dataSum));
             byte[] data = new byte[1024];
             int temtLength = 1024 * (currentP1 - 1);
-            if (currentP1 == fileSum1)
-            {//发送最后一包数据
+            if (currentP1 == fileSum1) {//发送最后一包数据
                 int length = (int) (fileLength1 - temtLength);
 //                Log.info(TAG, "length:" + length);
                 System.arraycopy(dataSum1, temtLength, data, 0, length);
 
                 //最后一包数据不到1024的补"0A"
-                for (int i = length; i < data.length; i++)
-                {
+                for (int i = length; i < data.length; i++) {
                     data[i] = 0x0A;
                 }
 
-            }
-            else
-            {
+            } else {
                 System.arraycopy(dataSum1, temtLength, data, 0, data.length);
             }
 
-            for (int i = 0; i < 1024; i++)
-            {
-                buffer[i ] = data[i];
+            for (int i = 0; i < 1024; i++) {
+                buffer[i] = data[i];
             }
             //crc 校验值
 
@@ -398,27 +362,24 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
             String end = "\r\n";
 
 
-
-
             String crcValue = ServiceUtils.getIntLowHex(ServiceUtils.calcCrc16(buffer));
 //            Log.info(TAG, "crcValue:" + Arrays.toString(buffer));
-            String content = ServiceUtils.toHexString(ConfigParams.SetAllConfigInfo)  + ServiceUtils.toHexString(string)  + ServiceUtils.byteArrayToHexStr(buffer) + crcValue ;
+            String content = ServiceUtils.toHexString(ConfigParams.SetAllConfigInfo) + ServiceUtils.toHexString(string) + ServiceUtils.byteArrayToHexStr(buffer) + crcValue;
             Log.info(TAG, "content:" + content);
-            byte[] sendData = ServiceUtils.decodeToBytes(content) ;
-            byte[] bytes = new byte[sendData.length +2];
+            byte[] sendData = ServiceUtils.decodeToBytes(content);
+            byte[] bytes = new byte[sendData.length + 2];
 
-            for (int i = 0; i < sendData.length;i++){
+            for (int i = 0; i < sendData.length; i++) {
 
                 bytes[i] = sendData[i];
             }
             bytes[sendData.length] = 0x0D;
-            bytes[sendData.length +1] = 0x0A;
+            bytes[sendData.length + 1] = 0x0A;
 
 //            Log.info(TAG, "sendData:" + Arrays.toString(sendData));
-            SocketUtil.getSocketUtil().sendContent(bytes , true);
-            downloadTextView1.setText(getString(R.string.Sending_the_first) +currentP1 + getString(R.string.Packet_data));//("正在发送第" + currentP + "包数据");
-        } catch (Exception e)
-        {
+            SocketUtil.getSocketUtil().sendContent(bytes, true);
+            downloadTextView1.setText(getString(R.string.Sending_the_first) + currentP1 + getString(R.string.Packet_data));//("正在发送第" + currentP + "包数据");
+        } catch (Exception e) {
             Log.exception(TAG, e);
         }
     }
@@ -426,38 +387,35 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
     /**
      * 第6、7字节为总包数
      * 第8、9字节为当前
-     *o
+     * o
+     *
      * @param buffer 进行CRC校验的buffer
      */
-    private void initBuffer(byte[] buffer)
-    {
-    buffer[0] = 0x55;
-    buffer[1] = 0x01;
-    buffer[2] = 0x00;
-    buffer[3] = 0x00;
-    buffer[4] = 0x00;
-    buffer[5] = 0x50;
+    private void initBuffer(byte[] buffer) {
+        buffer[0] = 0x55;
+        buffer[1] = 0x01;
+        buffer[2] = 0x00;
+        buffer[3] = 0x00;
+        buffer[4] = 0x00;
+        buffer[5] = 0x50;
 //        buffer[6] = 0x0f;
 //        buffer[7] = 0x00;
 //        buffer[8] = 0x01;
 //        buffer[9] = 0x00;
-    buffer[10] = 0x00;
-    buffer[11] = 0x04;
+        buffer[10] = 0x00;
+        buffer[11] = 0x04;
 //        buffer[12] = 0x01;
 //
 //        for (int i = 13; i < 1036; i++)
 //        {
 //            buffer[i] = 0x0A;
 //        }
-}
-
+    }
 
 
     @Override
-    public void onClick(View view)
-    {
-        switch (view.getId())
-        {
+    public void onClick(View view) {
+        switch (view.getId()) {
             case R.id.update_rtu_button:
                 ToastUtil.showToastLong(getString(R.string.update));
                 break;
@@ -467,33 +425,23 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
     }
 
     @Override
-    public void didReceivedNotification(int id, Object... args)
-    {
-        if (id == UiEventEntry.READ_DATA)
-        {
+    public void didReceivedNotification(int id, Object... args) {
+        if (id == UiEventEntry.READ_DATA) {
             String result = (String) args[0];
-            if (TextUtils.isEmpty(result))
-            {
+            if (TextUtils.isEmpty(result)) {
                 return;
             }
 
             setData(result);
-        }
-        else if (id == UiEventEntry.DOWNLOADING)
-        {
+        } else if (id == UiEventEntry.DOWNLOADING) {
             String download = (String) args[0];
-            if (TextUtils.isEmpty(download))
-            {
+            if (TextUtils.isEmpty(download)) {
                 return;
             }
             handDownLoad(download);
-        }
-
-        else if (id == UiEventEntry.SetAllConfigInfo)
-        {
+        } else if (id == UiEventEntry.SetAllConfigInfo) {
             String download = (String) args[0];
-            if (TextUtils.isEmpty(download))
-            {
+            if (TextUtils.isEmpty(download)) {
                 return;
             }
             handDownLoad1(download);
@@ -505,131 +453,99 @@ public class RTUVersionFragment extends BaseFragment implements View.OnClickList
      *
      * @param download :RTU返回的数据
      */
-    private void handDownLoad(String download)
-    {
+    private void handDownLoad(String download) {
         String data = download.replaceAll(ConfigParams.DOWNLOAD, "");
         data = data.replace(" ok", "");
         String tempP = data.replaceAll(" ", "0").trim();
         Log.info(TAG, "temp:" + tempP);
-        if (tempP.equals(packageSum))
-        {//接收包数与总包数相同，发送完成
+        if (tempP.equals(packageSum)) {//接收包数与总包数相同，发送完成
             ToastUtil.showToastLong(getString(R.string.Sent_successfully));
             //接收完毕
-            try
-            {
+            try {
                 SocketUtil.getSocketUtil().setDownload(false);
-                if (binIs!= null)
-                {
+                if (binIs != null) {
                     binIs.close();
                     binIs = null;
                 }
                 dataSum = null;
-            } catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else if (tempP.equals(packageCurrent))
-        {
+        } else if (tempP.equals(packageCurrent)) {
             currentP++;
             sendBinData();
         }
     }
 
-    private void handDownLoad1(String download)
-    {
-        String data = download.replaceAll(ConfigParams.SetAllConfigInfo , "");
+    private void handDownLoad1(String download) {
+        String data = download.replaceAll(ConfigParams.SetAllConfigInfo, "");
         data = data.replace(" OK", "");
         String tempP = data.replaceAll(" ", "0").trim();
         Log.info(TAG, "temp:" + tempP);
-        if (tempP.equals(packageSum1))
-        {//接收包数与总包数相同，发送完成
+        if (tempP.equals(packageSum1)) {//接收包数与总包数相同，发送完成
             ToastUtil.showToastLong(getString(R.string.Successfully_send_device));
             //接收完毕
-            try
-            {
+            try {
                 SocketUtil.getSocketUtil().setDownload(false);
-                if (binIs1!= null)
-                {
+                if (binIs1 != null) {
                     binIs1.close();
                     binIs1 = null;
                 }
                 dataSum1 = null;
-            } catch (IOException e)
-            {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else if (tempP.equals(packageCurrent1))
-        {
+        } else if (tempP.equals(packageCurrent1)) {
 
             currentP1++;
             sendBinData1();
 
         }
 
-        Log.info(TAG,"packageCurrent1:" + packageCurrent1);
-        Log.info(TAG,"packageSum1:" + packageSum1);
+        Log.info(TAG, "packageCurrent1:" + packageCurrent1);
+        Log.info(TAG, "packageSum1:" + packageSum1);
 //        else {
 //            ToastUtil.showToastLong(getString(R.string.Successfully_send_device));
 //        }
     }
 
-    public void setData(String data)
-    {
-        if (currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2100)
-        {
-            if (data.contains(ConfigParams.Ver))
-            {
+    public void setData(String data) {
+        if (currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2100) {
+            if (data.contains(ConfigParams.Ver)) {
                 String ver = data.replaceAll(ConfigParams.Ver, "").trim();
-                Log.debug(TAG, "Version:" + ver);
                 rtuVers.setText(ver);
             }
-        }
-        else if (currentType == UiEventEntry.WRU_1901)
-        {
-            if (data.contains(ConfigParams.GROUND_Ver))
-            {
+        } else if (currentType == UiEventEntry.WRU_1901) {
+            if (data.contains(ConfigParams.GROUND_Ver)) {
 
                 String ver = data.replaceAll(ConfigParams.GROUND_Ver, "").trim();
-                Log.debug(TAG, "Version:" + ver);
                 rtuVers.setText(ver);
             }
-        }
-        else if (currentType == UiEventEntry.LRU_3000)
-        {
-            if (data.contains(ConfigParams.Version))
-            {
+        } else if (currentType == UiEventEntry.LRU_3000) {
+            if (data.contains(ConfigParams.Version)) {
 
                 String ver = data.replaceAll(ConfigParams.Version, "").trim();
-                Log.debug(TAG, "Version:" + ver);
                 rtuVers.setText(ver);
             }
-        }
-        else if (currentType == UiEventEntry.LRU_3200)
-        {
-            if (data.contains(ConfigParams.NetVer))
-            {
+        } else if (currentType == UiEventEntry.LRU_3200) {
+            if (data.contains(ConfigParams.NetVer)) {
 
                 String ver = data.replaceAll(ConfigParams.NetVer, "").trim();
-                Log.debug(TAG, "Version:" + ver);
                 rtuVers.setText(ver);
             }
-        }
-        else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801)
-        {
-            if (data.contains(ConfigParams.SoftVer))
-            {
+        } else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801) {
+            if (data.contains(ConfigParams.SoftVer)) {
                 String ver = data.replaceAll(ConfigParams.SoftVer, "").trim();
-                Log.debug(TAG, "Version:" + ver);
                 rtuVers.setText(ver);
             }
-        }
-        else if (currentType == UiEventEntry.RCM_2000)
-        {
-            if (data.contains(ConfigParams.SoftVer))
-            {
+        } else if (currentType == UiEventEntry.RCM_2000) {
+            if (data.contains(ConfigParams.SoftVer)) {
                 String ver = data.replaceAll(ConfigParams.SoftVer, "").trim();
+                rtuVers.setText(ver);
+            }
+        } else if (currentType == UiEventEntry.LRU_BLE_3300) {
+            if (data.contains(ConfigParams.ReadVer)) {
+                String ver = data.replaceAll(ConfigParams.ReadVer, "").trim();
                 Log.debug(TAG, "Version:" + ver);
                 rtuVers.setText(ver);
             }

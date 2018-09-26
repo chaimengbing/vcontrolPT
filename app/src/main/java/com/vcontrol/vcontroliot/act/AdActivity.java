@@ -70,7 +70,6 @@ public class AdActivity extends BaseAutoLayoutActivity implements AdContract.Vie
         setContentView(R.layout.activity_ad);
         ButterKnife.bind(this);
         layoutSkip.setVisibility(View.INVISIBLE);
-        ivAdvertising.setVisibility(View.VISIBLE);
         handler.sendMessageDelayed(handler.obtainMessage(-1), 1000);
     }
 

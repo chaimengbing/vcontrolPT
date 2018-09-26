@@ -7,11 +7,14 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 
 import com.vcontrol.vcontroliot.R;
+import com.vcontrol.vcontroliot.util.BleUtils;
 import com.vcontrol.vcontroliot.util.ConfigParams;
 import com.vcontrol.vcontroliot.util.EventNotifyHelper;
 import com.vcontrol.vcontroliot.util.ServiceUtils;
 import com.vcontrol.vcontroliot.util.SocketUtil;
 import com.vcontrol.vcontroliot.util.UiEventEntry;
+
+import cn.com.heaton.blelibrary.ble.BleDevice;
 
 /**
  * 闸位计
@@ -30,6 +33,9 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
     private Button addValueButton;
     private Button rangeButton;
 
+    private boolean isBleDevice = false;
+    private BleDevice bleDevice = null;
+
     @Override
     public int getLayoutView()
     {
@@ -47,6 +53,14 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
     public void initComponentViews(View view)
     {
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_DATA);
+
+
+
+        if (getArguments() != null) {
+            isBleDevice = getArguments().getBoolean("isBleDevice");
+            bleDevice = (BleDevice) getArguments().getSerializable("device");
+        }
+
         addValueEditText = (EditText) view.findViewById(R.id.zha_add_value);
         rangeEditText = (EditText) view.findViewById(R.id.model_zha_range);
         addValueButton = (Button) view.findViewById(R.id.zha_add_value_button);
@@ -57,6 +71,16 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
 
         initView(view);
     }
+
+
+    private void sendData(String content) {
+        if (isBleDevice) {
+            BleUtils.getInstance().sendData(bleDevice, content.getBytes());
+        } else {
+            SocketUtil.getSocketUtil().sendContent(content);
+        }
+    }
+
 
     private void initView(final View view)
     {
@@ -75,15 +99,15 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
                 }
                 if (checkedId == R.id.zha_plan_type_button)
                 {
-                    SocketUtil.getSocketUtil().sendContent(content + "1");
+                    sendData(content + "1");
                 }
                 else if (checkedId == R.id.zha_plan_type_button2)
                 {
-                    SocketUtil.getSocketUtil().sendContent(content + "2");
+                    sendData(content + "2");
                 }
                 else if (checkedId == R.id.zha_plan_type_button3)
                 {
-                    SocketUtil.getSocketUtil().sendContent(content + "3");
+                    sendData(content + "3");
                 }
             }
         });
@@ -103,19 +127,19 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
                 }
                 if (checkedId == R.id.model_zha_type_button)
                 {
-                    SocketUtil.getSocketUtil().sendContent(content + "0");
+                    sendData(content + "0");
                 }
                 else if (checkedId == R.id.model_zha_type_button2)
                 {
-                    SocketUtil.getSocketUtil().sendContent(content + "1");
+                    sendData(content + "1");
                 }
                 else if (checkedId == R.id.model_zha_type_button3)
                 {
-                    SocketUtil.getSocketUtil().sendContent(content + "2");
+                    sendData(content + "2");
                 }
                 else if (checkedId == R.id.model_zha_type_button4)
                 {
-                    SocketUtil.getSocketUtil().sendContent(content + "3");
+                    sendData(content + "3");
                 }
             }
         });
@@ -135,15 +159,15 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
                 }
                 if (checkedId == R.id.zha_plan_485_button)
                 {
-                    SocketUtil.getSocketUtil().sendContent(content + "1");
+                    sendData(content + "1");
                 }
                 else if (checkedId == R.id.zha_plan_485_button2)
                 {
-                    SocketUtil.getSocketUtil().sendContent(content + "2");
+                    sendData(content + "2");
                 }
                 else if (checkedId == R.id.zha_plan_485_button3)
                 {
-                    SocketUtil.getSocketUtil().sendContent(content + "3");
+                    sendData(content + "3");
                 }
             }
         });
@@ -173,12 +197,12 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
             case R.id.zha_add_value_button:
                 zhawei = addValueEditText.getText().toString().trim();
                 content = ConfigParams.Setzhaweijiabao + ServiceUtils.getDouble2(zhawei);
-                SocketUtil.getSocketUtil().sendContent(content);
+                sendData(content);
                 break;
             case R.id.model_zha_range_button:
                 zhawei = rangeEditText.getText().toString().trim();
                 content = ConfigParams.SetAnaGatePositionRange + ServiceUtils.getDouble2(zhawei);
-                SocketUtil.getSocketUtil().sendContent(content);
+                sendData(content);
                 break;
 
             default:

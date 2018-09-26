@@ -123,18 +123,10 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
 
     @Override
     public void initData() {
-        if (isBleDevice) {
-            BleUtils.getInstance().sendData(bleDevice, ConfigParams.ReadSystemPara.getBytes());
-        } else {
-            SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSystemPara);
-        }
-
+        sendData(ConfigParams.ReadSystemPara);
         timeItems = getResources().getStringArray(R.array.time_interval);
-
         timeAdapter = new SimpleSpinnerAdapter(getActivity(), R.layout.simple_spinner_item, timeItems);
-
         timeSpinner.setAdapter(timeAdapter);
-
 
         timeFormat = new SimpleDateFormat(DEFAULT_TIME_FORMAT);
         sendTimeFormat = new SimpleDateFormat(SEND_TIME_FORMAT);
@@ -175,12 +167,7 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
                 } else if (checkedId == R.id.udp_1) {
                     content = content + "1";
                 }
-
-                if (isBleDevice) {
-                    BleUtils.getInstance().sendData(bleDevice, content.getBytes());
-                } else {
-                    SocketUtil.getSocketUtil().sendContent(content);
-                }
+                sendData(content);
             }
         });
 
@@ -195,14 +182,14 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
                 switch (i) {
                     case R.id.site_num_8:
                         String low = content + "0";
-                        SocketUtil.getSocketUtil().sendContent(low);
+                        sendData(low);
                         is8Add = true;
                         xingLinearLayout.setVisibility(View.GONE);
 
                         break;
                     case R.id.site_num_10:
                         String always = content + "1";
-                        SocketUtil.getSocketUtil().sendContent(always);
+                        sendData(always);
 
                         is8Add = false;
                         xingLinearLayout.setVisibility(View.VISIBLE);
@@ -232,6 +219,15 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
 
     }
 
+
+    private void sendData(String content) {
+        if (isBleDevice) {
+            BleUtils.getInstance().sendData(bleDevice, content.getBytes());
+        } else {
+            SocketUtil.getSocketUtil().sendContent(content);
+        }
+    }
+
     @Override
     public void onClick(View view) {
 
@@ -246,8 +242,8 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
                     ToastUtil.showToastLong(getString(R.string.APN_cannot_be_empty));
                     return;
                 }
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.SetAPN + content);
-
+                content = ConfigParams.SetAPN + content;
+                sendData(content);
                 break;
             case R.id.gprs_1_button:
                 ip = ip1.getText().toString().trim();
@@ -263,8 +259,7 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
                 }
                 // 设置状态参数
                 content = ConfigParams.SetIP + 1 + " " + ServiceUtils.getRegxIp(ip) + ConfigParams.setPort + ServiceUtils.getStr(port + "", 5);
-                SocketUtil.getSocketUtil().sendContent(content);
-
+                sendData(content);
                 break;
             case R.id.site_test_setting_button:
 
@@ -288,8 +283,7 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
                     content = ConfigParams.SetRTUidyc + ServiceUtils.getStr(number, 5);
                 }
 
-
-                SocketUtil.getSocketUtil().sendContent(content);
+                sendData(content);
                 break;
             case R.id.xingzheng_setting_button:
                 if (is8Add) {
@@ -303,21 +297,23 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
                 }
                 String co = ConfigParams.SetRTUidxz + ServiceUtils.getStr(xing, 6);
 
-                SocketUtil.getSocketUtil().sendContent(co);
+                sendData(co);
                 break;
 
             case R.id.reset_factory:
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.RESETALL);
+                sendData(ConfigParams.RESETALL);
                 break;
             case R.id.save_and_reset:
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.RESETUNIT);
+                sendData(ConfigParams.RESETUNIT);
                 break;
             case R.id.time_button:
+                String timeContent = null;
                 if (TextUtils.isEmpty(setTime)) {
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.SETTIME + sendTimeFormat.format(System.currentTimeMillis()));
+                    timeContent = ConfigParams.SETTIME + sendTimeFormat.format(System.currentTimeMillis());
                 } else {
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.SETTIME + setTime);
+                    timeContent = ConfigParams.SETTIME + setTime;
                 }
+                sendData(timeContent);
                 break;
 
             case R.id.rtu_time:
@@ -398,8 +394,7 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
                         timeAdapter.setSelectedItem(i);
 
                         String content = ConfigParams.SetPacketInterval + ServiceUtils.getTimeNum(timeItems[i]);
-                        SocketUtil.getSocketUtil().sendContent(content);
-
+                        sendData(content);
                     }
 
                     @Override

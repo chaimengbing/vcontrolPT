@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import com.vcontrol.vcontroliot.R;
 import com.vcontrol.vcontroliot.adapter.SimpleSpinnerAdapter;
 import com.vcontrol.vcontroliot.log.Log;
+import com.vcontrol.vcontroliot.util.BleUtils;
 import com.vcontrol.vcontroliot.util.ConfigParams;
 import com.vcontrol.vcontroliot.util.EventNotifyHelper;
 import com.vcontrol.vcontroliot.util.ServiceUtils;
@@ -18,14 +19,15 @@ import com.vcontrol.vcontroliot.util.SocketUtil;
 import com.vcontrol.vcontroliot.util.ToastUtil;
 import com.vcontrol.vcontroliot.util.UiEventEntry;
 
+import cn.com.heaton.blelibrary.ble.Ble;
+import cn.com.heaton.blelibrary.ble.BleDevice;
+
 /**
- *
  * 水位计
  * Created by Vcontrol on 2016/11/23.
  */
 
-public class WaterPlanFragment extends BaseFragment implements View.OnClickListener, EventNotifyHelper.NotificationCenterDelegate
-{
+public class WaterPlanFragment extends BaseFragment implements View.OnClickListener, EventNotifyHelper.NotificationCenterDelegate {
     private final String TAG = WaterPlanFragment.class.getSimpleName();
 
     private RadioGroup waterGroup;
@@ -54,22 +56,23 @@ public class WaterPlanFragment extends BaseFragment implements View.OnClickListe
     private EditText plan3EditText;
     private EditText plan4EditText;
 
+
+    private boolean isBleDevice = false;
+    private BleDevice bleDevice = null;
+
     @Override
-    public int getLayoutView()
-    {
+    public int getLayoutView() {
         return R.layout.fragment_sensor_water_plan;
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.READ_DATA);
     }
 
     @Override
-    public void initComponentViews(View view)
-    {
+    public void initComponentViews(View view) {
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_DATA);
         waterGroup = (RadioGroup) view.findViewById(R.id.watertype_group);
         waterCollectGroup = (RadioGroup) view.findViewById(R.id.water_collect_group);
@@ -93,87 +96,83 @@ public class WaterPlanFragment extends BaseFragment implements View.OnClickListe
         plan4Button = (Button) view.findViewById(R.id.plan_button_4);
         plan4EditText = (EditText) view.findViewById(R.id.plan_edittext_4);
 
+        if (getArguments() != null) {
+            isBleDevice = getArguments().getBoolean("isBleDevice");
+            bleDevice = (BleDevice) getArguments().getSerializable("device");
+        }
+
         initView(view);
     }
 
-    private void initView(final View view)
-    {
-        waterGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+
+    private void sendData(String content) {
+        if (isBleDevice) {
+            BleUtils.getInstance().sendData(bleDevice, content.getBytes());
+        } else {
+            SocketUtil.getSocketUtil().sendContent(content);
+        }
+    }
+
+
+    private void initView(final View view) {
+        waterGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
-            {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
                 View checkView = view.findViewById(checkedId);
-                if (!checkView.isPressed())
-                {
+                if (!checkView.isPressed()) {
                     return;
                 }
                 String content = ConfigParams.SetWaterType;
-                if (checkedId == R.id.watertype_button)
-                {
-                    SocketUtil.getSocketUtil().sendContent(content + "1");
+                if (checkedId == R.id.watertype_button) {
+                    content = content + "1";
+                } else if (checkedId == R.id.watertype_button2) {
+                    content = content + "2";
+                } else if (checkedId == R.id.watertype_button3) {
+                    content = content + "3";
                 }
-                else if (checkedId == R.id.watertype_button2)
-                {
-                    SocketUtil.getSocketUtil().sendContent(content + "2");
-                }
-                else if (checkedId == R.id.watertype_button3)
-                {
-                    SocketUtil.getSocketUtil().sendContent(content + "3");
-                }
+                sendData(content);
             }
         });
-        waterCollectGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        waterCollectGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
-            {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
                 View checkView = view.findViewById(checkedId);
-                if (!checkView.isPressed())
-                {
+                if (!checkView.isPressed()) {
                     return;
                 }
                 String content = ConfigParams.SetWater_caiji_Type;
-                if (checkedId == R.id.water_collect_button)
-                {
-                    SocketUtil.getSocketUtil().sendContent(content + "1");
+                if (checkedId == R.id.water_collect_button) {
+                    content = content + "1";
+                } else if (checkedId == R.id.water_collect_button2) {
+                    content = content + "2";
                 }
-                else if (checkedId == R.id.water_collect_button2)
-                {
-                    SocketUtil.getSocketUtil().sendContent(content + "2");
-                }
+                sendData(content);
             }
         });
-        singalGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        singalGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
-            {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
                 View checkView = view.findViewById(checkedId);
-                if (!checkView.isPressed())
-                {
+                if (!checkView.isPressed()) {
                     return;
                 }
                 String content = ConfigParams.SetAnaWaterSignal;
-                if (checkedId == R.id.water_singal_button)
-                {
-                    SocketUtil.getSocketUtil().sendContent(content + "1");
+                if (checkedId == R.id.water_singal_button) {
+                    content = content + "1";
+                } else if (checkedId == R.id.water_singal_button2) {
+                    content = content + "2";
                 }
-                else if (checkedId == R.id.water_singal_button2)
-                {
-                    SocketUtil.getSocketUtil().sendContent(content + "2");
-                }
+                sendData(content);
             }
         });
     }
 
 
     @Override
-    public void initData()
-    {
+    public void initData() {
         waterItems = getResources().getStringArray(R.array.water_select);
         waterAdapter = new SimpleSpinnerAdapter(getActivity(), R.layout.simple_spinner_item, waterItems);
         selwaterSpinner.setAdapter(waterAdapter);
@@ -182,12 +181,11 @@ public class WaterPlanFragment extends BaseFragment implements View.OnClickListe
         water485Adapter = new SimpleSpinnerAdapter(getActivity(), R.layout.simple_spinner_item, water485Items);
         selwater485Spinner.setAdapter(water485Adapter);
 
-        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSensorPara2);
+        sendData(ConfigParams.ReadSensorPara2);
     }
 
     @Override
-    public void setListener()
-    {
+    public void setListener() {
         modelButton.setOnClickListener(this);
         planNumButton.setOnClickListener(this);
         plan1Button.setOnClickListener(this);
@@ -199,85 +197,75 @@ public class WaterPlanFragment extends BaseFragment implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View view)
-    {
+    public void onClick(View view) {
         String water;
         String content = null;
         int value;
-        switch (view.getId())
-        {
+        switch (view.getId()) {
             case R.id.plan_num_button:
                 water = planNumEditText.getText().toString();
-                if (TextUtils.isEmpty(water))
-                {
+                if (TextUtils.isEmpty(water)) {
                     ToastUtil.showToastLong(getString(R.string.water_level_meters_empty));
                     return;
                 }
 
                 int planNum = Integer.parseInt(water);
-                if (planNum < 0 || planNum > 9)
-                {
+                if (planNum < 0 || planNum > 9) {
                     ToastUtil.showToastLong(getString(R.string.water_enter));
                     return;
                 }
                 content = ConfigParams.SetWater_Num + planNum;
-                SocketUtil.getSocketUtil().sendContent(content);
+                sendData(content);
                 break;
             case R.id.plan_button_1:
                 water = plan1EditText.getText().toString();
-                if (TextUtils.isEmpty(water))
-                {
+                if (TextUtils.isEmpty(water)) {
                     ToastUtil.showToastLong(getString(R.string.Water_level_meter_address_empty));
                     return;
                 }
 
                 content = ConfigParams.SetWater_Addr1 + water;
-                SocketUtil.getSocketUtil().sendContent(content);
+                sendData(content);
                 break;
             case R.id.plan_button_2:
                 water = plan2EditText.getText().toString();
-                if (TextUtils.isEmpty(water))
-                {
+                if (TextUtils.isEmpty(water)) {
                     ToastUtil.showToastLong(getString(R.string.Water_level_meter_address_empty));
                     return;
                 }
 
                 content = ConfigParams.SetWater_Addr2 + water;
-                SocketUtil.getSocketUtil().sendContent(content);
+                sendData(content);
                 break;
             case R.id.plan_button_3:
                 water = plan3EditText.getText().toString();
-                if (TextUtils.isEmpty(water))
-                {
+                if (TextUtils.isEmpty(water)) {
                     ToastUtil.showToastLong(getString(R.string.Water_level_meter_address_empty));
                     return;
                 }
 
                 content = ConfigParams.SetWater_Addr3 + water;
-                SocketUtil.getSocketUtil().sendContent(content);
+                sendData(content);
                 break;
             case R.id.plan_button_4:
                 water = plan4EditText.getText().toString();
-                if (TextUtils.isEmpty(water))
-                {
+                if (TextUtils.isEmpty(water)) {
                     ToastUtil.showToastLong(getString(R.string.Water_level_meter_address_empty));
                     return;
                 }
 
                 content = ConfigParams.SetWater_Addr4 + water;
-                SocketUtil.getSocketUtil().sendContent(content);
+                sendData(content);
                 break;
             case R.id.model_button:
                 water = modelEditText.getText().toString();
-                if (TextUtils.isEmpty(water))
-                {
+                if (TextUtils.isEmpty(water)) {
                     ToastUtil.showToastLong(getString(R.string.analog_filter_coefficients_null));
                     return;
                 }
 
                 double temp1 = Double.parseDouble(water);
-                if (temp1 > 1.0)
-                {
+                if (temp1 > 1.0) {
                     ToastUtil.showToastLong(getString(R.string.analog_filter_coefficients_range));
                     return;
                 }
@@ -285,24 +273,22 @@ public class WaterPlanFragment extends BaseFragment implements View.OnClickListe
 
                 water = tt.substring(0, tt.indexOf("."));
                 content = ConfigParams.SetWaterLvBo + ServiceUtils.getStr(water, 3);
-                SocketUtil.getSocketUtil().sendContent(content);
+                sendData(content);
                 break;
             case R.id.water_level_button:
                 water = waterLevelEditText.getText().toString();
-                if (TextUtils.isEmpty(water))
-                {
+                if (TextUtils.isEmpty(water)) {
                     ToastUtil.showToastLong(getString(R.string.analog_water_level_gauge_empty));
                     return;
                 }
                 double temp = Double.parseDouble(water) * 100;
                 int level = (int) temp;
-                if (level < 0 || level > 99999)
-                {
+                if (level < 0 || level > 99999) {
                     return;
                 }
 
                 content = ConfigParams.SetAnaWaterRange + ServiceUtils.getStr(level + "", 5);
-                SocketUtil.getSocketUtil().sendContent(content);
+                sendData(content);
                 break;
 
             default:
@@ -311,167 +297,117 @@ public class WaterPlanFragment extends BaseFragment implements View.OnClickListe
     }
 
     @Override
-    public void didReceivedNotification(int id, Object... args)
-    {
+    public void didReceivedNotification(int id, Object... args) {
         String result = (String) args[0];
         String content = (String) args[1];
-        if (TextUtils.isEmpty(result) || TextUtils.isEmpty(content))
-        {
+        if (TextUtils.isEmpty(result) || TextUtils.isEmpty(content)) {
             return;
         }
         setData(result);
     }
 
-    private void setData(String result)
-    {
+    private void setData(String result) {
         String data = "";
-        if (result.contains(ConfigParams.SetWaterType))
-        {
+        if (result.contains(ConfigParams.SetWaterType)) {
             data = result.replaceAll(ConfigParams.SetWaterType, "").trim();
-            if ("1".equals(data))
-            {
+            if ("1".equals(data)) {
                 waterGroup.check(R.id.watertype_button);
-            }
-            else if ("2".equals(data))
-            {
+            } else if ("2".equals(data)) {
                 waterGroup.check(R.id.watertype_button2);
-            }
-            else if ("3".equals(data))
-            {
+            } else if ("3".equals(data)) {
                 waterGroup.check(R.id.watertype_button3);
             }
-        }
-        else if (result.contains(ConfigParams.SetWater_caiji_Type))
-        {
+        } else if (result.contains(ConfigParams.SetWater_caiji_Type)) {
             data = result.replaceAll(ConfigParams.SetWater_caiji_Type, "").trim();
-            if ("1".equals(data))
-            {
-                Log.info(TAG,"SetWater_caiji_Type::data:" + data);
+            if ("1".equals(data)) {
+                Log.info(TAG, "SetWater_caiji_Type::data:" + data);
                 waterCollectGroup.check(R.id.water_collect_button);
-            }
-            else if ("2".equals(data))
-            {
+            } else if ("2".equals(data)) {
                 waterCollectGroup.check(R.id.water_collect_button2);
             }
-        }
-        else if (result.contains(ConfigParams.SetAnaWaterSignal))
-        {
+        } else if (result.contains(ConfigParams.SetAnaWaterSignal)) {
             data = result.replaceAll(ConfigParams.SetAnaWaterSignal, "").trim();
-            Log.info(TAG,"SetAnaWaterSignal::data:" + data);
-            if ("1".equals(data))
-            {
+            Log.info(TAG, "SetAnaWaterSignal::data:" + data);
+            if ("1".equals(data)) {
                 singalGroup.check(R.id.water_singal_button);
-            }
-            else if ("2".equals(data))
-            {
+            } else if ("2".equals(data)) {
                 singalGroup.check(R.id.water_singal_button2);
             }
-        }
-        else if (result.contains(ConfigParams.SetWater_Num))
-        {
+        } else if (result.contains(ConfigParams.SetWater_Num)) {
             data = result.replaceAll(ConfigParams.SetWater_Num, "").trim();
             planNumEditText.setText(data);
-        }
-        else if (result.contains(ConfigParams.SetWater_Addr1))
-        {
+        } else if (result.contains(ConfigParams.SetWater_Addr1)) {
             data = result.replaceAll(ConfigParams.SetWater_Addr1, "").trim();
             plan1EditText.setText(data);
-        }
-        else if (result.contains(ConfigParams.SetWater_Addr2))
-        {
+        } else if (result.contains(ConfigParams.SetWater_Addr2)) {
             data = result.replaceAll(ConfigParams.SetWater_Addr2, "").trim();
             plan2EditText.setText(data);
-        }
-        else if (result.contains(ConfigParams.SetWater_Addr3))
-        {
+        } else if (result.contains(ConfigParams.SetWater_Addr3)) {
             data = result.replaceAll(ConfigParams.SetWater_Addr3, "").trim();
             plan3EditText.setText(data);
-        }
-        else if (result.contains(ConfigParams.SetWater_Addr4))
-        {
+        } else if (result.contains(ConfigParams.SetWater_Addr4)) {
             data = result.replaceAll(ConfigParams.SetWater_Addr4, "").trim();
             plan4EditText.setText(data);
-        }
-        else if (result.contains(ConfigParams.SetWaterLvBo))
-        {
+        } else if (result.contains(ConfigParams.SetWaterLvBo)) {
             data = result.replaceAll(ConfigParams.SetWaterLvBo, "").trim();
             modelEditText.setText(ServiceUtils.getDouble(data));
-        }
-        else if (result.contains(ConfigParams.SetAnaWaterRange))
-        {
+        } else if (result.contains(ConfigParams.SetAnaWaterRange)) {
             data = result.replaceAll(ConfigParams.SetAnaWaterRange, "").trim();
-            if (ServiceUtils.isNumeric(data))
-            {
+            if (ServiceUtils.isNumeric(data)) {
                 double level = Double.parseDouble(data) / 100.0;
                 Log.info(TAG, "level:" + level + ",data:" + data);
                 waterLevelEditText.setText(String.valueOf(level));
             }
-        }
-        else if (result.contains(ConfigParams.SetAnaWaterType))
-        {
+        } else if (result.contains(ConfigParams.SetAnaWaterType)) {
             data = result.replaceAll(ConfigParams.SetAnaWaterType, "").trim();
-            if (ServiceUtils.isNumeric(data))
-            {
+            if (ServiceUtils.isNumeric(data)) {
                 int t = Integer.parseInt(data);
-                if (t <= 4)
-                {
+                if (t <= 4) {
                     selwaterSpinner.setSelection(t, false);
-                }
-                else
-                {
+                } else {
                     selwaterSpinner.setSelection(0, false);
                 }
-                selwaterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-                {
+                selwaterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                     @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-                    {
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         waterAdapter.setSelectedItem(position);
                         String water = waterItems[position];
-                        if ("无".equals(water))
-                        {
+                        if ("无".equals(water)) {
                             return;
                         }
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.SetAnaWaterType + position);
+                        String content = ConfigParams.SetAnaWaterType + position;
+                        sendData(content);
                     }
 
                     @Override
-                    public void onNothingSelected(AdapterView<?> parent)
-                    {
+                    public void onNothingSelected(AdapterView<?> parent) {
 
                     }
                 });
             }
-        }
-        else if (result.contains(ConfigParams.SetWater485Type))
-        {
+        } else if (result.contains(ConfigParams.SetWater485Type)) {
             data = result.replaceAll(ConfigParams.SetWater485Type, "").trim();
-            if (ServiceUtils.isNumeric(data))
-            {
+            if (ServiceUtils.isNumeric(data)) {
                 int t = Integer.parseInt(data);
-                if (t < water485Items.length)
-                {
+                if (t < water485Items.length) {
                     selwater485Spinner.setSelection(t, false);
                 }
-                selwater485Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-                {
+                selwater485Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                     @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-                    {
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         water485Adapter.setSelectedItem(position);
                         String water485 = water485Items[position];
-                        if ("无".equals(water485))
-                        {
+                        if ("无".equals(water485)) {
                             return;
                         }
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.SetWater485Type + ServiceUtils.getStr("" + position,2));
+                        String content = ConfigParams.SetWater485Type + ServiceUtils.getStr("" + position, 2);
+                        sendData(content);
                     }
 
                     @Override
-                    public void onNothingSelected(AdapterView<?> parent)
-                    {
+                    public void onNothingSelected(AdapterView<?> parent) {
 
                     }
                 });

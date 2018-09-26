@@ -1,8 +1,10 @@
 package com.vcontrol.vcontroliot.util;
 
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.vcontrol.vcontroliot.R;
 import com.vcontrol.vcontroliot.VcontrolApplication;
 
 import java.util.Arrays;
@@ -64,12 +66,12 @@ public class BleUtils {
     /**
      * 发送数据
      */
-    public void sendData(final BleDevice device, byte[] data) {
+    public void sendData(final BleDevice device, final byte[] data) {
         if (data == null) {
             ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "发送数据为空");
             return;
         }
-        if (device == null){
+        if (device == null) {
             ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "请选择设备");
             return;
         }
@@ -80,7 +82,7 @@ public class BleUtils {
                         @Override
                         public void onWriteSuccess(BluetoothGattCharacteristic characteristic) {
                             ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "发送数据成功");
-                            readData(device);
+                            readData(device, data);
                         }
                     });
         }
@@ -92,7 +94,7 @@ public class BleUtils {
     /**
      * 主动读取数据
      */
-    public void readData(BleDevice device) {
+    public void readData(BleDevice device, final byte[] sendData) {
         boolean result = false;
         if (mBle != null) {
             result = mBle.read(device, new BleReadCallback<BleDevice>() {
@@ -100,7 +102,28 @@ public class BleUtils {
                 public void onReadSuccess(BluetoothGattCharacteristic characteristic) {
                     super.onReadSuccess(characteristic);
                     byte[] data = characteristic.getValue();
-                    ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "onReadSuccess: " + Arrays.toString(data));
+
+                    if (sendData == data) {
+                        return;
+                    }
+                    String result1 = data.toString();
+                    ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "onReadSuccess: " + result1);
+                    if (TextUtils.isEmpty(result1)) {
+                        return;
+                    }
+                    String[] res = result1.split("\r\n");
+
+                    for (String result : res) {
+                        if (result != null && result.toUpperCase().contains("OK")) {
+                            EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_RESULT_OK, result, sendData.toString());
+                        } else if (result != null && result.toUpperCase().contains("ERROR")) {
+                            EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_RESULT_ERROR, result, sendData.toString());
+                        } else if (result != null && result.contains("Not Started")) {// System Not Started
+                            ToastUtil.showToastLong(VcontrolApplication.getCurrentContext().getString(R.string.Device_again_later));
+                        } else {
+                            EventNotifyHelper.getInstance().postUiNotification(UiEventEntry.READ_DATA, result, sendData.toString());
+                        }
+                    }
                 }
             });
         }

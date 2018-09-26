@@ -81,6 +81,7 @@ import com.vcontrol.vcontroliot.fragment.YPTFragment;
 import com.vcontrol.vcontroliot.fragment.YUNFragment;
 import com.vcontrol.vcontroliot.fragment.ZWFragment;
 import com.vcontrol.vcontroliot.log.Log;
+import com.vcontrol.vcontroliot.util.BleUtils;
 import com.vcontrol.vcontroliot.util.ConfigParams;
 import com.vcontrol.vcontroliot.util.EventNotifyHelper;
 import com.vcontrol.vcontroliot.util.FgManager;
@@ -94,6 +95,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.com.heaton.blelibrary.ble.BleDevice;
+import cn.com.heaton.blelibrary.ble.callback.BleConnCallback;
 
 /**
  * Created by Vcontrol on 2016/11/24.
@@ -442,6 +444,11 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
                     turnToFragmentStack(R.id.detail_layout, LNewSysPamarsFragment.class);
                     setCurrentSel(UiEventEntry.TAB_LRU_NEW_SETTING);
+                } else if (currentType == UiEventEntry.LRU_BLE_3300) {
+                    Bundle data = new Bundle();
+                    data.putBoolean("isBleDevice", true);
+                    data.putSerializable("device", bleDevice);
+                    turnToFragmentStack(R.id.detail_layout, LNewSysPamarsFragment.class, data);
                 }
                 updateRight();
                 setTitleRightVisible(View.VISIBLE);
@@ -497,7 +504,10 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
                     setCurrentSel(UiEventEntry.TAB_SEARCH_LRU_NEW);
                     titleLayout.setVisibility(View.GONE);
                 } else if (currentType == UiEventEntry.LRU_BLE_3300) {
-                    turnToFragmentStack(R.id.detail_layout, BleSearchFragment.class);
+                    Bundle data = new Bundle();
+                    data.putBoolean("isBleDevice", true);
+                    data.putSerializable("device", bleDevice);
+                    turnToFragmentStack(R.id.detail_layout, BleSearchFragment.class, data);
                     titleLayout.setVisibility(View.GONE);
                 }
 
@@ -523,7 +533,8 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
                 currentTab = UiEventEntry.TAB_VERSION;
                 currentSel = UiEventEntry.TAB_SETTING_VERSION;
-
+                bundle.putBoolean("isBleDevice", true);
+                bundle.putSerializable("device", bleDevice);
                 turnToFragmentStack(R.id.detail_layout, RTUVersionFragment.class, bundle);
 
                 setTitleRightVisible(View.GONE);
@@ -535,7 +546,15 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
             case R.id.title_right:
                 //刷新或重新连接Socket
                 Log.debug(TAG, "update::");
-                updateData();
+                if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
+                    if (currentType == UiEventEntry.LRU_BLE_3300) {
+                        BleUtils.getBle().connect(bleDevice, connectCallback);
+                    } else {
+                        SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
+                    }
+                } else {
+                    updateData();
+                }
                 break;
             case R.id.ll_setting:
                 iconImageView.setImageResource(R.mipmap.icon_sel);
@@ -569,201 +588,204 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 //        moveTaskToBack(true);
     }
 
+
+    private void sendData(String content) {
+        if (currentType == UiEventEntry.LRU_BLE_3300) {
+            BleUtils.getInstance().sendData(bleDevice, content.getBytes());
+        } else {
+            SocketUtil.getSocketUtil().sendContent(content);
+        }
+    }
+
     private void updateData() {
 
-        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
-            if (titleRight == null) {
-                return;
-            }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
-                SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
-            } else {
-                switch (currentSel) {
-                    case UiEventEntry.TAB_CHANNEL_SELECT:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadCommPara1);
-                        break;
-                    case UiEventEntry.TAB_CHANNEL_GPRS:
-                    case UiEventEntry.TAB_CHANNEL_GMS:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadCommPara2);
-                        break;
-                    case UiEventEntry.TAB_CHANNEL_BEI:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadCommPara3);
-                        break;
-                    case UiEventEntry.TAB_CHANNEL_CENTER:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadCommPara4);
-                        break;
-                    case UiEventEntry.TAB_CHANNEL_YPT:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.READYUN);
-                        break;
-                    case UiEventEntry.TAB_SETTING_SYS:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSystemPara);
-                        break;
-                    case UiEventEntry.TAB_SETTING_VALVA:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSystemPara6);
-                        break;
-                    case UiEventEntry.TAB_SETTING_COLLECT:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSystemPara);
-                        break;
-                    case UiEventEntry.TAB_SETTING_COMM:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadCommPara1);
-                        break;
-                    //温度计
-                    case UiEventEntry.TAB_SENSOR_TEMP:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadTemp_SensorPara);
-                        break;
-                    case UiEventEntry.TAB_SETTING_CHANNEL:
-                        if (channelFragment == null) {
-                            channelFragment = (ChannelFragment) FgManager.getFragment(ChannelFragment.class);
-                        }
+        if (titleRight == null) {
+            return;
+        }
 
-                        if (channelFragment != null) {
-                            channelFragment.refreshData();
-                        }
-                        break;
-                    case UiEventEntry.TAB_SENSOR_RAIN:
-                    case UiEventEntry.TAB_SENSOR_WATER_PARAMS:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSensorPara1);
-                        break;
-                    case UiEventEntry.TAB_SENSOR_Water_Quality:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadWaterQuality);
-                        break;
-                    case UiEventEntry.TAB_SENSOR_Ameeter:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadDIANBIAO_SensorPara);
-                        break;
-                    case UiEventEntry.TAB_SENSOR_Weather_Param:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadWeatherParam);
-                        break;
-                    case UiEventEntry.TAB_SENSOR_WATER_PLAN:
-                    case UiEventEntry.TAB_SENSOR_CAMERA:
-                    case UiEventEntry.TAB_SENSOR_ATHER:
-                    case UiEventEntry.TAB_SENSOR_PRESS:
-                    case UiEventEntry.TAB_SETTING_VERSION:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSensorPara2);
-                        break;
+        if (currentTab == UiEventEntry.TAB_SETTING) {
+            setingData();
+        } else if (currentTab == UiEventEntry.TAB_SEARCH) {
+            searchData();
+        } else if (currentTab == UiEventEntry.TAB_VERSION) {
 
-                    case UiEventEntry.TAB_SENSOR_SQ:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadMoisture_SensorPara);
-                        break;
-                    case UiEventEntry.TAB_SENSOR_AQ:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadAna_SensorPara);
-                        break;
-                    case UiEventEntry.TAB_SENSOR_FLOW:
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSensorPara2);
-                        break;
+        }
+    }
 
-                    case UiEventEntry.TAB_SENSOR_ZW:
-                        break;
-//                    case UiEventEntry.TAB_SEARCH_SIOL:
-//                        SocketUtil.getSocketUtil().sendContent(ConfigParams.Read_turang_data);
-//                        break;
-//                    case UiEventEntry.TAB_SEARCH_WQ:
-//                        SocketUtil.getSocketUtil().sendContent(ConfigParams.Read_SHUIZHI_data);
-//                        break;
-                    case UiEventEntry.TAB_SEARCH_BASIC:
-                        if (gprsFragment == null) {
-                            gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
-                        }
-                        if (gprsFragment != null && gprsFragment.isVisible()) {
-                            gprsFragment.setData();
-                        }
-                        break;
-                    case UiEventEntry.TAB_SEARCH_GPRS:
-                    case UiEventEntry.TAB_SEARCH_CAMERA:
-                        if (currentSel == UiEventEntry.TAB_SEARCH_CAMERA) {
-                            SocketUtil.getSocketUtil().sendContent(ConfigParams.SENDPIC);
-                            SocketUtil.getSocketUtil().sendContent(ConfigParams.SEND2PIC);
-
-                        }
-                        if (gprsFragment == null) {
-                            gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
-                        }
-                        if (gprsFragment != null && gprsFragment.isVisible()) {
-                            gprsFragment.updateData();
-                        }
-                        break;
-
-                    case UiEventEntry.TAB_SEARCH_SENSOR:
-                        if (gprsFragment == null) {
-                            gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
-                        }
-                        if (gprsFragment.isVisible()) {
-                            gprsFragment.setData();
-                        }
-                        break;
-                    case UiEventEntry.TAB_SEARCH_SIOL:
-                        if (soilSearchFragment == null) {
-                            soilSearchFragment = (SoilSearchFragment) FgManager.getFragment(SoilSearchFragment.class);
-                        }
-                        if (soilSearchFragment.isVisible()) {
-                            soilSearchFragment.setData();
-                        }
-                        break;
-                    case UiEventEntry.TAB_SEARCH_WQ:
-                        if (wQualitySearchFragment == null) {
-                            wQualitySearchFragment = (WQualitySearchFragment) FgManager.getFragment(WQualitySearchFragment.class);
-                        }
-                        if (wQualitySearchFragment.isVisible()) {
-                            wQualitySearchFragment.setData();
-                        }
-                        break;
-                    case UiEventEntry.TAB_SEARCH_Ammeter:
-                        if (ammeterSearchFragment == null) {
-                            ammeterSearchFragment = (AmmeterSearchFragment) FgManager.getFragment(WQualitySearchFragment.class);
-                        }
-                        if (ammeterSearchFragment.isVisible()) {
-                            ammeterSearchFragment.setData();
-                        }
-                        break;
-                    case UiEventEntry.TAB_SETTING_AD:
-                        if (adFragment == null) {
-                            adFragment = (ADFragment) FgManager.getFragment(ADFragment.class);
-                        }
-                        if (adFragment.isVisible()) {
-                            adFragment.setData();
-                        }
-                        break;
-                    case UiEventEntry.TAB_SEARCH_READ_IMAGE:
-                        ProgressBarUtil.showProgressDialog(HomeActivity.this, "", getString(R.string.Receiving_pictures));
-                        SocketUtil.getSocketUtil().startReceImage();
-                        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadImage + "000");
-                        break;
-                    case UiEventEntry.TAB_SEARCH_RADATA:
-                        break;
+    private void setingData() {
+        switch (currentSel) {
+            case UiEventEntry.TAB_CHANNEL_SELECT:
+                sendData(ConfigParams.ReadCommPara1);
+                break;
+            case UiEventEntry.TAB_CHANNEL_GPRS:
+            case UiEventEntry.TAB_CHANNEL_GMS:
+                sendData(ConfigParams.ReadCommPara2);
+                break;
+            case UiEventEntry.TAB_CHANNEL_BEI:
+                sendData(ConfigParams.ReadCommPara3);
+                break;
+            case UiEventEntry.TAB_CHANNEL_CENTER:
+                sendData(ConfigParams.ReadCommPara4);
+                break;
+            case UiEventEntry.TAB_CHANNEL_YPT:
+                sendData(ConfigParams.READYUN);
+                break;
+            case UiEventEntry.TAB_SETTING_SYS:
+                sendData(ConfigParams.ReadSystemPara);
+                break;
+            case UiEventEntry.TAB_SETTING_VALVA:
+                sendData(ConfigParams.ReadSystemPara6);
+                break;
+            case UiEventEntry.TAB_SETTING_COLLECT:
+                sendData(ConfigParams.ReadSystemPara);
+                break;
+            case UiEventEntry.TAB_SETTING_COMM:
+                sendData(ConfigParams.ReadCommPara1);
+                break;
+            //温度计
+            case UiEventEntry.TAB_SENSOR_TEMP:
+                sendData(ConfigParams.ReadTemp_SensorPara);
+                break;
+            case UiEventEntry.TAB_SETTING_CHANNEL:
+                if (channelFragment == null) {
+                    channelFragment = (ChannelFragment) FgManager.getFragment(ChannelFragment.class);
                 }
+
+                if (channelFragment != null) {
+                    channelFragment.refreshData();
+                }
+                break;
+            case UiEventEntry.TAB_SENSOR_RAIN:
+            case UiEventEntry.TAB_SENSOR_WATER_PARAMS:
+                sendData(ConfigParams.ReadSensorPara1);
+                break;
+            case UiEventEntry.TAB_SENSOR_Water_Quality:
+                sendData(ConfigParams.ReadWaterQuality);
+                break;
+            case UiEventEntry.TAB_SENSOR_Ameeter:
+                sendData(ConfigParams.ReadDIANBIAO_SensorPara);
+                break;
+            case UiEventEntry.TAB_SENSOR_Weather_Param:
+                sendData(ConfigParams.ReadWeatherParam);
+                break;
+            case UiEventEntry.TAB_SENSOR_WATER_PLAN:
+            case UiEventEntry.TAB_SENSOR_CAMERA:
+            case UiEventEntry.TAB_SENSOR_ATHER:
+            case UiEventEntry.TAB_SENSOR_PRESS:
+            case UiEventEntry.TAB_SETTING_VERSION:
+                sendData(ConfigParams.ReadSensorPara2);
+                break;
+
+            case UiEventEntry.TAB_SENSOR_SQ:
+                sendData(ConfigParams.ReadMoisture_SensorPara);
+                break;
+            case UiEventEntry.TAB_SENSOR_AQ:
+                sendData(ConfigParams.ReadAna_SensorPara);
+                break;
+            case UiEventEntry.TAB_SENSOR_FLOW:
+                sendData(ConfigParams.ReadSensorPara2);
+                break;
+
+            case UiEventEntry.TAB_SETTING_AD:
+                if (adFragment == null) {
+                    adFragment = (ADFragment) FgManager.getFragment(ADFragment.class);
+                }
+                if (adFragment.isVisible()) {
+                    adFragment.setData();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void searchData() {
+        if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
+            switch (currentSel) {
+                case UiEventEntry.TAB_SEARCH_BASIC:
+                    if (gprsFragment == null) {
+                        gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
+                    }
+                    if (gprsFragment != null && gprsFragment.isVisible()) {
+                        gprsFragment.setData();
+                    }
+                    break;
+                case UiEventEntry.TAB_SEARCH_GPRS:
+                case UiEventEntry.TAB_SEARCH_CAMERA:
+                    if (currentSel == UiEventEntry.TAB_SEARCH_CAMERA) {
+                        sendData(ConfigParams.SENDPIC);
+                        sendData(ConfigParams.SEND2PIC);
+
+                    }
+                    if (gprsFragment == null) {
+                        gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
+                    }
+                    if (gprsFragment != null && gprsFragment.isVisible()) {
+                        gprsFragment.updateData();
+                    }
+                    break;
+
+                case UiEventEntry.TAB_SEARCH_SENSOR:
+                    if (gprsFragment == null) {
+                        gprsFragment = (SearchFragment) FgManager.getFragment(SearchFragment.class);
+                    }
+                    if (gprsFragment.isVisible()) {
+                        gprsFragment.setData();
+                    }
+                    break;
+                case UiEventEntry.TAB_SEARCH_SIOL:
+                    if (soilSearchFragment == null) {
+                        soilSearchFragment = (SoilSearchFragment) FgManager.getFragment(SoilSearchFragment.class);
+                    }
+                    if (soilSearchFragment.isVisible()) {
+                        soilSearchFragment.setData();
+                    }
+                    break;
+                case UiEventEntry.TAB_SEARCH_WQ:
+                    if (wQualitySearchFragment == null) {
+                        wQualitySearchFragment = (WQualitySearchFragment) FgManager.getFragment(WQualitySearchFragment.class);
+                    }
+                    if (wQualitySearchFragment.isVisible()) {
+                        wQualitySearchFragment.setData();
+                    }
+                    break;
+                case UiEventEntry.TAB_SEARCH_Ammeter:
+                    if (ammeterSearchFragment == null) {
+                        ammeterSearchFragment = (AmmeterSearchFragment) FgManager.getFragment(WQualitySearchFragment.class);
+                    }
+                    if (ammeterSearchFragment.isVisible()) {
+                        ammeterSearchFragment.setData();
+                    }
+                    break;
+                case UiEventEntry.TAB_SEARCH_READ_IMAGE:
+                    ProgressBarUtil.showProgressDialog(HomeActivity.this, "", getString(R.string.Receiving_pictures));
+                    SocketUtil.getSocketUtil().startReceImage();
+                    sendData(ConfigParams.ReadImage + "000");
+                    break;
+                case UiEventEntry.TAB_SEARCH_RADATA:
+                    break;
             }
         } else if (currentType == UiEventEntry.LRU_3200) {
-            if (titleRight == null) {
-                return;
-            }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
-                SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
-            } else {
-                if (currentSel == UiEventEntry.TAB_SETTING_SYS) {//全部参数  常规设置
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadNetCfg);
-                } else if (currentSel == UiEventEntry.TAB_SEARCH_LRU_BASIC) {
+            if (currentSel == UiEventEntry.TAB_SETTING_SYS) {//全部参数  常规设置
+                sendData(ConfigParams.ReadNetCfg);
+            } else if (currentSel == UiEventEntry.TAB_SEARCH_LRU_BASIC) {
 
-                    if (lSearchFragment == null) {
-                        lSearchFragment = (LSearchFragment) FgManager.getFragment(LSearchFragment.class);
-                    }
-                    if (lSearchFragment != null && lSearchFragment.isVisible()) {
-                        lSearchFragment.setData();
-                    }
+                if (lSearchFragment == null) {
+                    lSearchFragment = (LSearchFragment) FgManager.getFragment(LSearchFragment.class);
+                }
+                if (lSearchFragment != null && lSearchFragment.isVisible()) {
+                    lSearchFragment.setData();
                 }
             }
         } else if (currentType == UiEventEntry.WRU_1901) {
-            if (titleRight == null) {
-                return;
-            }
             GroundServerFragment serverFragment = null;
             GroundWaterSearchFragment gprsFragment = null;
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
-                SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.GROUND_PORT);
-            } else if (getString(R.string.collect_ad_lv).equals(titleRight.getText().toString().trim())) {
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadBattery);
+            if (getString(R.string.collect_ad_lv).equals(titleRight.getText().toString().trim())) {
+                sendData(ConfigParams.ReadBattery);
             } else {
 
                 if (currentSel == UiEventEntry.TAB_GROUND_WATER_ALL) {//全部参数  常规设置
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadData);
+                    sendData(ConfigParams.ReadData);
                     if (gprsFragment == null) {
                         gprsFragment = (GroundWaterSearchFragment) FgManager.getFragment(GroundWaterSearchFragment.class);
                     }
@@ -771,7 +793,7 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
                         gprsFragment.setData();
                     }
                 } else if (currentSel == UiEventEntry.TAB_GROUND_WATER_BASIC) {//服务器设置
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadData);
+                    sendData(ConfigParams.ReadData);
 
                 } else if (currentSel == UiEventEntry.TAB_GROUND_WATER_SERVER) {//服务器设置
                     if (serverFragment == null) {
@@ -784,112 +806,108 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
             }
 
         } else if (currentType == UiEventEntry.RTU_2800 || currentType == UiEventEntry.RTU_2801) {
-            if (titleRight == null) {
-                return;
-            }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
-                SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
-            } else {
-                if (currentSel == UiEventEntry.TAB_COMM_SYSTEM) {//全部参数  常规设置
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadParameter);
-                } else if (currentSel == UiEventEntry.TAB_COMM_COMM) {
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadStaticIP);
+            if (currentSel == UiEventEntry.TAB_COMM_SYSTEM) {//全部参数  常规设置
+                sendData(ConfigParams.ReadParameter);
+            } else if (currentSel == UiEventEntry.TAB_COMM_COMM) {
+                sendData(ConfigParams.ReadStaticIP);
 
-                } else if (currentSel == UiEventEntry.TAB_COMM_BASIC) {
-                    if (commFragment == null) {
-                        commFragment = (CommBasicSearchFragment) FgManager.getFragment(CommBasicSearchFragment.class);
-                    }
-                    if (commFragment != null && commFragment.isVisible()) {
-                        commFragment.setData();
-                    }
+            } else if (currentSel == UiEventEntry.TAB_COMM_BASIC) {
+                if (commFragment == null) {
+                    commFragment = (CommBasicSearchFragment) FgManager.getFragment(CommBasicSearchFragment.class);
+                }
+                if (commFragment != null && commFragment.isVisible()) {
+                    commFragment.setData();
                 }
             }
         } else if (currentType == UiEventEntry.LRU_6000) {
             if (titleRight == null) {
                 return;
             }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
-                SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
-            } else {
-                if (currentSel == UiEventEntry.TAB_LRU_NEW_SETTING) {//全部参数  常规设置
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadParameter);
-                } else if (currentSel == UiEventEntry.TAB_LRU_NEW_CHANNEL_SETTING) {
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadStaticIP);
+            if (currentSel == UiEventEntry.TAB_LRU_NEW_SETTING) {//全部参数  常规设置
+                sendData(ConfigParams.ReadParameter);
+            } else if (currentSel == UiEventEntry.TAB_LRU_NEW_CHANNEL_SETTING) {
+                sendData(ConfigParams.ReadStaticIP);
 
-                } else if (currentSel == UiEventEntry.TAB_SEARCH_LRU_NEW) {
-                    if (lNewSearchFragment == null) {
-                        lNewSearchFragment = (LNewSearchFragment) FgManager.getFragment(LNewSearchFragment.class);
-                    }
-                    if (lNewSearchFragment != null && lNewSearchFragment.isVisible()) {
-                        lNewSearchFragment.setData();
-                    }
+            } else if (currentSel == UiEventEntry.TAB_SEARCH_LRU_NEW) {
+                if (lNewSearchFragment == null) {
+                    lNewSearchFragment = (LNewSearchFragment) FgManager.getFragment(LNewSearchFragment.class);
+                }
+                if (lNewSearchFragment != null && lNewSearchFragment.isVisible()) {
+                    lNewSearchFragment.setData();
                 }
             }
         } else if (currentType == UiEventEntry.LRU_3000) {
-            if (titleRight == null) {
-                return;
-            }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
-                SocketUtil.getSocketUtil().connectRTU(ConfigParams.LRU_IP, ConfigParams.LRU_PORT);
-            } else {
-                if (currentSel == UiEventEntry.TAB_LRU_SYS) {//全部参数  常规设置
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadParameters);
-                } else if (currentSel == UiEventEntry.TAB_LRU_SEARCH) {
+            if (currentSel == UiEventEntry.TAB_LRU_SYS) {//全部参数  常规设置
+                sendData(ConfigParams.ReadParameters);
+            } else if (currentSel == UiEventEntry.TAB_LRU_SEARCH) {
 
-                    if (LruSearch == null) {
-                        LruSearch = (LruSearchFragment) FgManager.getFragment(LruSearchFragment.class);
-                    }
-                    if (LruSearch != null && LruSearch.isVisible()) {
-                        LruSearch.setData();
-                    }
+                if (LruSearch == null) {
+                    LruSearch = (LruSearchFragment) FgManager.getFragment(LruSearchFragment.class);
+                }
+                if (LruSearch != null && LruSearch.isVisible()) {
+                    LruSearch.setData();
                 }
             }
         } else if (currentType == UiEventEntry.RCM_2000) {
-            if (titleRight == null) {
-                return;
-            }
-            if (getString(R.string.re_connect).equals(titleRight.getText().toString().trim())) {
-                SocketUtil.getSocketUtil().connectRTU(ConfigParams.IP, ConfigParams.PORT);
-            } else {
-                if (currentSel == UiEventEntry.TAB_RCM_SYS) {//全部参数  常规设置
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadData);
-                } else if (currentSel == UiEventEntry.TAB_RCM_SEARCH) {
+            if (currentSel == UiEventEntry.TAB_RCM_SYS) {//全部参数  常规设置
+                sendData(ConfigParams.ReadData);
+            } else if (currentSel == UiEventEntry.TAB_RCM_SEARCH) {
 
-                    if (rcmSearch == null) {
-                        rcmSearch = (RcmSearchFragment) FgManager.getFragment(RcmSearchFragment.class);
-                    }
-                    if (rcmSearch != null && rcmSearch.isVisible()) {
-                        rcmSearch.setData();
-                    }
-                } else if (currentSel == UiEventEntry.TAB_RCM_FUN_SYS) {//全部参数  常规设置
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadFunctionData);
-                } else if (currentSel == UiEventEntry.TAB_RCM_YUN) {//云台设置
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadYUNStatus);
-                } else if (currentSel == UiEventEntry.TAB_RCM_FUN_SEARCH) {
-
-                    if (rcmFunSearch == null) {
-                        rcmFunSearch = (RcmFunSearchFragment) FgManager.getFragment(RcmFunSearchFragment.class);
-                    }
-                    if (rcmFunSearch != null && rcmFunSearch.isVisible()) {
-                        rcmFunSearch.setData();
-                    }
-                } else//RCM传感器更新
-                {
-                    switch (currentSel) {
-                        case UiEventEntry.TAB_SENSOR_RAIN:
-                        case UiEventEntry.TAB_SENSOR_WATER_PARAMS:
-                            SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSensorPara1);
-                            break;
-                        case UiEventEntry.TAB_SENSOR_WATER_PLAN:
-                            SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadSensorPara2);
-                            break;
-                    }
-
+                if (rcmSearch == null) {
+                    rcmSearch = (RcmSearchFragment) FgManager.getFragment(RcmSearchFragment.class);
                 }
+                if (rcmSearch != null && rcmSearch.isVisible()) {
+                    rcmSearch.setData();
+                }
+            } else if (currentSel == UiEventEntry.TAB_RCM_FUN_SYS) {//全部参数  常规设置
+                sendData(ConfigParams.ReadFunctionData);
+            } else if (currentSel == UiEventEntry.TAB_RCM_YUN) {//云台设置
+                sendData(ConfigParams.ReadYUNStatus);
+            } else if (currentSel == UiEventEntry.TAB_RCM_FUN_SEARCH) {
+
+                if (rcmFunSearch == null) {
+                    rcmFunSearch = (RcmFunSearchFragment) FgManager.getFragment(RcmFunSearchFragment.class);
+                }
+                if (rcmFunSearch != null && rcmFunSearch.isVisible()) {
+                    rcmFunSearch.setData();
+                }
+            } else {//RCM传感器更新
+                switch (currentSel) {
+                    case UiEventEntry.TAB_SENSOR_RAIN:
+                    case UiEventEntry.TAB_SENSOR_WATER_PARAMS:
+                        sendData(ConfigParams.ReadSensorPara1);
+                        break;
+                    case UiEventEntry.TAB_SENSOR_WATER_PLAN:
+                        sendData(ConfigParams.ReadSensorPara2);
+                        break;
+                }
+
+            }
+        } else if (currentType == UiEventEntry.LRU_BLE_3300) {
+            BleSearchFragment bleSearchFragment = (BleSearchFragment) FgManager.getFragment(BleSearchFragment.class);
+            if (bleSearchFragment != null && bleSearchFragment.isVisible()) {
+                bleSearchFragment.setData();
             }
         }
-
     }
+
+    /*连接的回调*/
+    private BleConnCallback<BleDevice> connectCallback = new BleConnCallback<BleDevice>() {
+        @Override
+        public void onConnectionChanged(final BleDevice device) {
+            if (device.isConnected()) {
+                /*连接成功后，设置通知*/
+            }
+            ToastUtil.showLong(getApplicationContext(), "连接成功");
+        }
+
+        @Override
+        public void onConnectException(BleDevice device, int errorCode) {
+            super.onConnectException(device, errorCode);
+            ToastUtil.showLong(getApplicationContext(), "连接异常，异常状态码:" + errorCode);
+        }
+    };
+
 
     private void initSearchData() {
         if (currentType == UiEventEntry.WRU_2800 || currentType == UiEventEntry.WRU_2801 || currentType == UiEventEntry.WRU_2100) {
@@ -1489,7 +1507,14 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
             setTitleRight(getString(R.string.Receive_historical_data));
             setTitleRightVisible(View.GONE);
         } else {
-            if (SocketUtil.getSocketUtil().isConnected()) {
+            boolean isConnect = false;
+            if (currentType == UiEventEntry.LRU_BLE_3300) {
+                isConnect = bleDevice != null && bleDevice.isConnected() ? true : false;
+            } else {
+                isConnect = SocketUtil.getSocketUtil().isConnected();
+            }
+
+            if (isConnect) {
                 setTitleRight(getString(R.string.update));
             } else {
                 setTitleRight(getString(R.string.re_connect));

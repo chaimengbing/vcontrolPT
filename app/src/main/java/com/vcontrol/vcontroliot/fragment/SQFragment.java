@@ -10,18 +10,20 @@ import android.widget.Spinner;
 
 import com.vcontrol.vcontroliot.R;
 import com.vcontrol.vcontroliot.adapter.SimpleSpinnerAdapter;
+import com.vcontrol.vcontroliot.util.BleUtils;
 import com.vcontrol.vcontroliot.util.ConfigParams;
 import com.vcontrol.vcontroliot.util.EventNotifyHelper;
 import com.vcontrol.vcontroliot.util.SocketUtil;
 import com.vcontrol.vcontroliot.util.UiEventEntry;
+
+import cn.com.heaton.blelibrary.ble.BleDevice;
 
 /**
  * 墒情
  * Created by Vcontrol on 2016/11/23.
  */
 
-public class SQFragment extends BaseFragment implements View.OnClickListener,EventNotifyHelper.NotificationCenterDelegate
-{
+public class SQFragment extends BaseFragment implements View.OnClickListener, EventNotifyHelper.NotificationCenterDelegate {
 
     private RadioGroup soilModelGroup;
     private RadioGroup soil485Group;
@@ -58,23 +60,31 @@ public class SQFragment extends BaseFragment implements View.OnClickListener,Eve
     private boolean isFirst5 = true;
 
     private boolean isFirst6 = true;
+
+    private boolean isBleDevice = false;
+    private BleDevice bleDevice = null;
+
     @Override
-    public int getLayoutView()
-    {
+    public int getLayoutView() {
         return R.layout.fragment_sensor_sq;
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.READ_DATA);
     }
 
     @Override
-    public void initComponentViews(View view)
-    {
+    public void initComponentViews(View view) {
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_DATA);
+
+        if (getArguments() != null) {
+            isBleDevice = getArguments().getBoolean("isBleDevice");
+            bleDevice = (BleDevice) getArguments().getSerializable("device");
+        }
+
+
         soilModelGroup = (RadioGroup) view.findViewById(R.id.water_soil_model);
         soil485Group = (RadioGroup) view.findViewById(R.id.water_soil_485);
         waterSoil1EditText = (EditText) view.findViewById(R.id.water_soil_0);
@@ -99,231 +109,198 @@ public class SQFragment extends BaseFragment implements View.OnClickListener,Eve
         initView(view);
     }
 
-    private void initView(final View view)
-    {
+
+    private void sendData(String content) {
+        if (isBleDevice) {
+            BleUtils.getInstance().sendData(bleDevice, content.getBytes());
+        } else {
+            SocketUtil.getSocketUtil().sendContent(content);
+        }
+    }
+
+    private void initView(final View view) {
 
         isFirst = true;
         isFirst1 = true;
-        isFirst2= true;
-        isFirst3= true;
-        isFirst4= true;
-        isFirst5= true;
-        isFirst6= true;
-        soilModelGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        isFirst2 = true;
+        isFirst3 = true;
+        isFirst4 = true;
+        isFirst5 = true;
+        isFirst6 = true;
+        soilModelGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
-            {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
                 View checkView = view.findViewById(checkedId);
-                if (!checkView.isPressed())
-                {
+                if (!checkView.isPressed()) {
                     return;
                 }
-                if (checkedId == R.id.water_soil_model_button)
-                {
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoistureType + "1");
+                String content = null;
+                if (checkedId == R.id.water_soil_model_button) {
+                    content = ConfigParams.SetMoistureType + "1";
+                } else if (checkedId == R.id.water_soil_model_button2) {
+                    content = ConfigParams.SetMoistureType + "2";
+                } else if (checkedId == R.id.water_soil_model_button3) {
+                    content = ConfigParams.SetMoistureType + "3";
                 }
-                else if (checkedId == R.id.water_soil_model_button2)
-                {
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoistureType + "2");
-                }
-                else if (checkedId == R.id.water_soil_model_button3)
-                {
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoistureType + "3");
-                }
+                sendData(content);
             }
         });
-        soil485Group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        soil485Group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
-            {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
                 View checkView = view.findViewById(checkedId);
-                if (!checkView.isPressed())
-                {
+                if (!checkView.isPressed()) {
                     return;
                 }
-                if (checkedId == R.id.water_soil_485_button)
-                {
-                    SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoisture485Type + "1");
-
+                String content = null;
+                if (checkedId == R.id.water_soil_485_button) {
+                    content = ConfigParams.SetMoisture485Type + "1";
+                } else if (checkedId == R.id.water_soil_485_button2) {
+                    content = ConfigParams.SetMoisture485Type + "2";
+                } else if (checkedId == R.id.water_soil_485_button3) {
+                    content = ConfigParams.SetMoisture485Type + "3";
                 }
-                 else if (checkedId == R.id.water_soil_485_button2)
-                 {
-                     SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoisture485Type + "2");
-                 }
-                 else if (checkedId == R.id.water_soil_485_button3)
-                 {
-                     SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoisture485Type + "3");
-                 }
+                sendData(content);
+
             }
         });
 
-        soilType1Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        soilType1Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (isFirst)
-                {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (isFirst) {
                     isFirst = false;
                     return;
                 }
                 waterAdapter.setSelectedItem(position);
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoisture_Style1 + position);
+                String content = ConfigParams.SetMoisture_Style1 + position;
+                sendData(content);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
-        soilType2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        soilType2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (isFirst1)
-                {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (isFirst1) {
                     isFirst1 = false;
                     return;
                 }
                 waterAdapter.setSelectedItem(position);
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoisture_Style2 + position);
+                sendData(ConfigParams.SetMoisture_Style2 + position);
 
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
 
-        soilType3Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        soilType3Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (isFirst2)
-                {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (isFirst2) {
                     isFirst2 = false;
                     return;
                 }
                 waterAdapter.setSelectedItem(position);
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoisture_Style3 + position);
-
+                sendData(ConfigParams.SetMoisture_Style3 + position);
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
 
-        soilType4Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        soilType4Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (isFirst3)
-                {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (isFirst3) {
                     isFirst3 = false;
                     return;
                 }
                 waterAdapter.setSelectedItem(position);
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoisture_Style4 + position);
+                sendData(ConfigParams.SetMoisture_Style4 + position);
 
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
 
-        soilType5Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        soilType5Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (isFirst4)
-                {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (isFirst4) {
                     isFirst4 = false;
                     return;
                 }
                 waterAdapter.setSelectedItem(position);
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoisture_Style5 + position);
+                sendData(ConfigParams.SetMoisture_Style5 + position);
 
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
 
-        soilType6Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        soilType6Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (isFirst5)
-                {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (isFirst5) {
                     isFirst5 = false;
                     return;
                 }
                 waterAdapter.setSelectedItem(position);
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.SetMoisture_Style6 + position);
+                sendData(ConfigParams.SetMoisture_Style6 + position);
 
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
 
-        AnaMoistureTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        AnaMoistureTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (isFirst6)
-                {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (isFirst6) {
                     isFirst6 = false;
                     return;
                 }
                 AnaMoistureAdapter.setSelectedItem(position);
-                SocketUtil.getSocketUtil().sendContent(ConfigParams.SetAnaMoistureType + position);
+                sendData(ConfigParams.SetAnaMoistureType + position);
 
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
     }
 
     @Override
-    public void initData()
-    {
+    public void initData() {
 
         waterItems = getResources().getStringArray(R.array.water_soil_type);
         waterAdapter = new SimpleSpinnerAdapter(getActivity(), R.layout.simple_spinner_item, waterItems);
@@ -337,12 +314,11 @@ public class SQFragment extends BaseFragment implements View.OnClickListener,Eve
         AnaMoistureItems = getResources().getStringArray(R.array.water_select);
         AnaMoistureAdapter = new SimpleSpinnerAdapter(getActivity(), R.layout.simple_spinner_item, AnaMoistureItems);
         AnaMoistureTypeSpinner.setAdapter(AnaMoistureAdapter);
-        SocketUtil.getSocketUtil().sendContent(ConfigParams.ReadMoisture_SensorPara);
+        sendData(ConfigParams.ReadMoisture_SensorPara);
     }
 
     @Override
-    public void setListener()
-    {
+    public void setListener() {
         waterSoil1Button.setOnClickListener(this);
         waterSoil2Button.setOnClickListener(this);
         waterSoil3Button.setOnClickListener(this);
@@ -351,11 +327,9 @@ public class SQFragment extends BaseFragment implements View.OnClickListener,Eve
     }
 
     @Override
-    public void onClick(View view)
-    {
+    public void onClick(View view) {
         String waterSoil = "";
-        switch (view.getId())
-        {
+        switch (view.getId()) {
             case R.id.water_soil_type_button:
                 waterSoil = waterSoil1EditText.getText().toString().trim();
 //                SocketUtil.getSocketUtil().sendContent();
@@ -378,115 +352,80 @@ public class SQFragment extends BaseFragment implements View.OnClickListener,Eve
     }
 
     @Override
-    public void didReceivedNotification(int id, Object... args)
-    {
+    public void didReceivedNotification(int id, Object... args) {
         String result = (String) args[0];
         String content = (String) args[1];
-        if (TextUtils.isEmpty(result) || TextUtils.isEmpty(content))
-        {
+        if (TextUtils.isEmpty(result) || TextUtils.isEmpty(content)) {
             return;
         }
         setData(result);
     }
 
 
-    private void setData(String result)
-    {
+    private void setData(String result) {
         String data;
         int pos = 0;
         String res = "";
-        if (result.contains(ConfigParams.SetMoisture_Style1.trim()))
-        {
+        if (result.contains(ConfigParams.SetMoisture_Style1.trim())) {
             res = result.replaceAll(ConfigParams.SetMoisture_Style1, "");
             pos = Integer.parseInt(res);
-            if (pos < waterItems.length)
-            {
+            if (pos < waterItems.length) {
                 soilType1Spinner.setSelection(pos);
             }
-        }
-        else if (result.contains(ConfigParams.SetMoisture_Style2.trim()))
-        {
+        } else if (result.contains(ConfigParams.SetMoisture_Style2.trim())) {
             res = result.replaceAll(ConfigParams.SetMoisture_Style2, "");
             pos = Integer.parseInt(res);
-            if (pos < waterItems.length)
-            {
+            if (pos < waterItems.length) {
                 soilType2Spinner.setSelection(pos);
             }
-        }
-        else if (result.contains(ConfigParams.SetMoisture_Style3.trim()))
-        {
+        } else if (result.contains(ConfigParams.SetMoisture_Style3.trim())) {
             res = result.replaceAll(ConfigParams.SetMoisture_Style3, "");
             pos = Integer.parseInt(res);
-            if (pos < waterItems.length)
-            {
+            if (pos < waterItems.length) {
                 soilType3Spinner.setSelection(pos);
             }
-        }
-        else if (result.contains(ConfigParams.SetMoisture_Style4.trim()))
-        {
+        } else if (result.contains(ConfigParams.SetMoisture_Style4.trim())) {
             res = result.replaceAll(ConfigParams.SetMoisture_Style4, "");
             pos = Integer.parseInt(res);
-            if (pos < waterItems.length)
-            {
+            if (pos < waterItems.length) {
                 soilType4Spinner.setSelection(pos);
             }
-        }
-        else if (result.contains(ConfigParams.SetMoisture_Style5.trim()))
-        {
+        } else if (result.contains(ConfigParams.SetMoisture_Style5.trim())) {
             res = result.replaceAll(ConfigParams.SetMoisture_Style5, "");
             pos = Integer.parseInt(res);
-            if (pos < waterItems.length)
-            {
+            if (pos < waterItems.length) {
                 soilType5Spinner.setSelection(pos);
             }
-        }
-        else if (result.contains(ConfigParams.SetMoisture_Style6.trim()))
-        {
+        } else if (result.contains(ConfigParams.SetMoisture_Style6.trim())) {
             res = result.replaceAll(ConfigParams.SetMoisture_Style6, "");
             pos = Integer.parseInt(res);
-            if (pos < waterItems.length)
-            {
+            if (pos < waterItems.length) {
                 soilType6Spinner.setSelection(pos);
             }
-        }
-        else if (result.contains(ConfigParams.SetAnaMoistureType.trim()))
-        {
+        } else if (result.contains(ConfigParams.SetAnaMoistureType.trim())) {
             res = result.replaceAll(ConfigParams.SetAnaMoistureType, "");
             pos = Integer.parseInt(res);
-            if (pos < AnaMoistureItems.length)
-            {
+            if (pos < AnaMoistureItems.length) {
                 AnaMoistureTypeSpinner.setSelection(pos);
             }
-        }
-        else if (result.contains(ConfigParams.SetMoistureType))
-        {
+        } else if (result.contains(ConfigParams.SetMoistureType)) {
             data = result.replaceAll(ConfigParams.SetMoistureType, "").trim();
 
-            if ("1".equals(data))
-            {
+            if ("1".equals(data)) {
                 soilModelGroup.check(R.id.water_soil_model_button);
-            }
-            else if ("2".equals(data))
-            {
+            } else if ("2".equals(data)) {
                 soilModelGroup.check(R.id.water_soil_model_button2);
-            }
-            else {
+            } else {
                 soilModelGroup.check(R.id.water_soil_model_button3);
             }
-        }
-        else if (result.contains(ConfigParams.SetMoisture485Type))
-        {
+        } else if (result.contains(ConfigParams.SetMoisture485Type)) {
             data = result.replaceAll(ConfigParams.SetMoisture485Type, "").trim();
 
-            if ("1".equals(data))
-            {
+            if ("1".equals(data)) {
                 soil485Group.check(R.id.water_soil_485_button);
-            }
-            else if ("2".equals(data))
-            {
+            } else if ("2".equals(data)) {
                 soil485Group.check(R.id.water_soil_485_button2);
-            }
-            else {
+            } else {
                 soil485Group.check(R.id.water_soil_485_button3);
             }
         }
