@@ -332,8 +332,9 @@ public class BleDeviceListActivity extends BaseActivity implements AdapterView.O
      */
     private void exitApp() {
         // 判断2次点击事件时间
+        Log.e(TAG,"exitApp::time:" + exitTime);
         if ((System.currentTimeMillis() - exitTime) > 2000) {
-            ToastUtil.showToastLong(getString(R.string.Press_again_to_exit_the_program));
+            ToastUtil.showLong(getApplicationContext(),getString(R.string.Press_again_to_exit_the_program));
             exitTime = System.currentTimeMillis();
         } else {
             VcontrolApplication.getInstance().exit();

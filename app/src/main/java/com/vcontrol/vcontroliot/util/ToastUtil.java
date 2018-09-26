@@ -14,13 +14,8 @@ import com.vcontrol.vcontroliot.VcontrolApplication;
 public class ToastUtil
 {
     private static Toast mToast;
-    private static Context context;
     private static Toast shortToast = null;
 
-    public static void setCurrentContext(Context contex)
-    {
-        context = contex;
-    }
 
     private ToastUtil()
     {
@@ -74,10 +69,6 @@ public class ToastUtil
         {
             return;
         }
-        if (UiUtils.height == 0 || UiUtils.width == 0)
-        {
-            return;
-        }
         VcontrolApplication.applicationHandler.post(new Runnable()
         {
 
@@ -85,10 +76,10 @@ public class ToastUtil
             public void run()
             {
                 cancelToast();
-                LayoutInflater inflater = LayoutInflater.from(context);
+                LayoutInflater inflater = LayoutInflater.from(VcontrolApplication.getCurrentContext());
                 View layout = inflater.inflate(R.layout.toast, null);
                 ((TextView) layout.findViewById(R.id.toast_textview)).setText(content);
-                mToast = Toast.makeText(context, "", Toast.LENGTH_LONG);
+                mToast = Toast.makeText(VcontrolApplication.getCurrentContext(), "", Toast.LENGTH_LONG);
                 //Toast的Y坐标是屏幕高度的1/3，不会出现不适配的问题
                 mToast.setGravity(Gravity.TOP, 0, UiUtils.height / 2);
                 mToast.setView(layout);
@@ -105,7 +96,7 @@ public class ToastUtil
             return;
         }
         cancelToast();
-        mToast = Toast.makeText(context, content, Toast.LENGTH_SHORT);
+        mToast = Toast.makeText(VcontrolApplication.getCurrentContext(), content, Toast.LENGTH_SHORT);
         mToast.show();
     }
 

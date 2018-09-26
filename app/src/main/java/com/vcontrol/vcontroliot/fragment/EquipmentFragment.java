@@ -65,8 +65,6 @@ public class EquipmentFragment extends Fragment implements View.OnClickListener,
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.CONNCT_OK);
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.CONNCT_FAIL);
 
-        ToastUtil.setCurrentContext(getActivity());
-
         if (data != null) {
             data = new ArrayList<>();
         }

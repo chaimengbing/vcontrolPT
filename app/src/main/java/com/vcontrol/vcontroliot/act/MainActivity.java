@@ -217,7 +217,6 @@ public class MainActivity extends BaseActivity implements EventNotifyHelper.Noti
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.CONNCT_OK);
         EventNotifyHelper.getInstance().addObserver(this,UiEventEntry.CONNCT_FAIL);
         VcontrolApplication.getInstance().addActivity(this);
-        ToastUtil.setCurrentContext(getApplication());
         UiUtils.height  = DensityUtil.getDisplayHeightPixels(this);
         UiUtils.width = DensityUtil.getDisplayWidthPixels(this);
 

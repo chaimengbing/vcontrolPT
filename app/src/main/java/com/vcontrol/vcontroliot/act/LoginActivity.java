@@ -348,7 +348,6 @@ public class LoginActivity extends BaseActivity implements EventNotifyHelper.Not
     {
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.CONNCT_OK);
         EventNotifyHelper.getInstance().addObserver(this,UiEventEntry.CONNCT_FAIL);
-        ToastUtil.setCurrentContext(getApplication());
         initViews();
     }
 

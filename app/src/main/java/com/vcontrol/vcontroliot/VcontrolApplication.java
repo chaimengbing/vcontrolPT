@@ -90,10 +90,9 @@ public class VcontrolApplication extends Application {
         super.onCreate();
         Log.startLogService(CommConfig.LOG_FILEPATH, CommConfig.LOG_NAME, CommConfig.LOG_MAXSIZE);
         Log.info(TAG, "init VcontrolApplication");
-        Logger.d(TAG, "[ExampleApplication] onCreate");
         Locale _UserLocale= LocaleUtils.getUserLocale(this);
         LocaleUtils.updateLocale(this, _UserLocale);
-        context = getApplicationContext();
+        context = this;
 
         applicationHandler = new Handler(this.getMainLooper());
         instance = this;

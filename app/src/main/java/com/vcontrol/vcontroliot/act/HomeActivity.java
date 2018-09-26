@@ -340,7 +340,6 @@ public class HomeActivity extends BaseActivity implements PopupWindow.OnDismissL
 
         VcontrolApplication.getInstance().addActivity(this);
 
-        ToastUtil.setCurrentContext(getApplication());
         rtuSetting = (TextView) findViewById(R.id.rtu_setting);
         rtuSearch = (TextView) findViewById(R.id.rtu_search);
         rtuVersion = (TextView) findViewById(R.id.rtu_version);
