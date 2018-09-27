@@ -18,12 +18,11 @@ import cn.com.heaton.blelibrary.ble.BleDevice;
 
 /**
  * 闸位计
- *
+ * <p>
  * Created by Vcontrol on 2016/11/23.
  */
 
-public class ZWFragment extends BaseFragment implements View.OnClickListener,EventNotifyHelper.NotificationCenterDelegate
-{
+public class ZWFragment extends BaseFragment implements View.OnClickListener, EventNotifyHelper.NotificationCenterDelegate {
 
     private RadioGroup planTypeGroup;
     private RadioGroup modelTypeGroup;
@@ -37,23 +36,19 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
     private BleDevice bleDevice = null;
 
     @Override
-    public int getLayoutView()
-    {
+    public int getLayoutView() {
         return R.layout.fragment_sensor_zw;
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         EventNotifyHelper.getInstance().removeObserver(this, UiEventEntry.READ_DATA);
     }
 
     @Override
-    public void initComponentViews(View view)
-    {
+    public void initComponentViews(View view) {
         EventNotifyHelper.getInstance().addObserver(this, UiEventEntry.READ_DATA);
-
 
 
         if (getArguments() != null) {
@@ -82,91 +77,64 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
     }
 
 
-    private void initView(final View view)
-    {
+    private void initView(final View view) {
         // 闸位计类型
-        planTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        planTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
-            {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
                 View checkView = view.findViewById(checkedId);
-                String content = ConfigParams.SetGatePosition_Type ;
-                if (!checkView.isPressed())
-                {
+                String content = ConfigParams.SetGatePosition_Type;
+                if (!checkView.isPressed()) {
                     return;
                 }
-                if (checkedId == R.id.zha_plan_type_button)
-                {
+                if (checkedId == R.id.zha_plan_type_button) {
                     sendData(content + "1");
-                }
-                else if (checkedId == R.id.zha_plan_type_button2)
-                {
+                } else if (checkedId == R.id.zha_plan_type_button2) {
                     sendData(content + "2");
-                }
-                else if (checkedId == R.id.zha_plan_type_button3)
-                {
+                } else if (checkedId == R.id.zha_plan_type_button3) {
                     sendData(content + "3");
                 }
             }
         });
 
         // 模拟量闸位计类型
-        modelTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        modelTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
-            {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
                 View checkView = view.findViewById(checkedId);
-                String content = ConfigParams.SetAnaGatePositionType ;
-                if (!checkView.isPressed())
-                {
+                String content = ConfigParams.SetAnaGatePositionType;
+                if (!checkView.isPressed()) {
                     return;
                 }
-                if (checkedId == R.id.model_zha_type_button)
-                {
+                if (checkedId == R.id.model_zha_type_button) {
                     sendData(content + "0");
-                }
-                else if (checkedId == R.id.model_zha_type_button2)
-                {
+                } else if (checkedId == R.id.model_zha_type_button2) {
                     sendData(content + "1");
-                }
-                else if (checkedId == R.id.model_zha_type_button3)
-                {
+                } else if (checkedId == R.id.model_zha_type_button3) {
                     sendData(content + "2");
-                }
-                else if (checkedId == R.id.model_zha_type_button4)
-                {
+                } else if (checkedId == R.id.model_zha_type_button4) {
                     sendData(content + "3");
                 }
             }
         });
 
         // 485闸位计
-        plan485Group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
+        plan485Group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
 
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId)
-            {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
                 View checkView = view.findViewById(checkedId);
-                String content = ConfigParams.SetGatePosition485Type ;
-                if (!checkView.isPressed())
-                {
+                String content = ConfigParams.SetGatePosition485Type;
+                if (!checkView.isPressed()) {
                     return;
                 }
-                if (checkedId == R.id.zha_plan_485_button)
-                {
+                if (checkedId == R.id.zha_plan_485_button) {
                     sendData(content + "1");
-                }
-                else if (checkedId == R.id.zha_plan_485_button2)
-                {
+                } else if (checkedId == R.id.zha_plan_485_button2) {
                     sendData(content + "2");
-                }
-                else if (checkedId == R.id.zha_plan_485_button3)
-                {
+                } else if (checkedId == R.id.zha_plan_485_button3) {
                     sendData(content + "3");
                 }
             }
@@ -174,26 +142,22 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
     }
 
     @Override
-    public void initData()
-    {
+    public void initData() {
 
     }
 
     @Override
-    public void setListener()
-    {
+    public void setListener() {
         addValueButton.setOnClickListener(this);
         rangeButton.setOnClickListener(this);
     }
 
     @Override
-    public void onClick(View view)
-    {
+    public void onClick(View view) {
 
         String zhawei = "";
         String content = "";
-        switch (view.getId())
-        {
+        switch (view.getId()) {
             case R.id.zha_add_value_button:
                 zhawei = addValueEditText.getText().toString().trim();
                 content = ConfigParams.Setzhaweijiabao + ServiceUtils.getDouble2(zhawei);
@@ -211,81 +175,49 @@ public class ZWFragment extends BaseFragment implements View.OnClickListener,Eve
     }
 
     @Override
-    public void didReceivedNotification(int id, Object... args)
-    {
+    public void didReceivedNotification(int id, Object... args) {
         String result = (String) args[0];
-        String content = (String) args[1];
-        if (TextUtils.isEmpty(result) || TextUtils.isEmpty(content))
-        {
+        if (TextUtils.isEmpty(result)) {
             return;
         }
         setData(result);
     }
 
-    private void setData(String result)
-    {
+    private void setData(String result) {
         String data = "";
-        if (result.contains(ConfigParams.SetGatePosition_Type))
-        {
+        if (result.contains(ConfigParams.SetGatePosition_Type)) {
             data = result.replaceAll(ConfigParams.SetGatePosition_Type, "").trim();
-            if ("1".equals(data))
-            {
+            if ("1".equals(data)) {
                 planTypeGroup.check(R.id.zha_plan_type_button);
-            }
-            else if ("2".equals(data))
-            {
+            } else if ("2".equals(data)) {
                 planTypeGroup.check(R.id.zha_plan_type_button2);
-            }
-            else if ("3".equals(data))
-            {
+            } else if ("3".equals(data)) {
                 planTypeGroup.check(R.id.zha_plan_type_button3);
             }
-        }
-        else if (result.contains(ConfigParams.SetAnaGatePositionType))
-        {
+        } else if (result.contains(ConfigParams.SetAnaGatePositionType)) {
             data = result.replaceAll(ConfigParams.SetAnaGatePositionType, "").trim();
-            if ("0".equals(data))
-            {
+            if ("0".equals(data)) {
                 modelTypeGroup.check(R.id.model_zha_type_button);
-            }
-            else if ("1".equals(data))
-            {
+            } else if ("1".equals(data)) {
                 modelTypeGroup.check(R.id.model_zha_type_button2);
-            }
-            else if ("2".equals(data))
-            {
+            } else if ("2".equals(data)) {
                 modelTypeGroup.check(R.id.model_zha_type_button3);
-            }
-            else if ("3".equals(data))
-            {
+            } else if ("3".equals(data)) {
                 modelTypeGroup.check(R.id.model_zha_type_button4);
             }
-        }
-        else if (result.contains(ConfigParams.SetGatePosition485Type))
-        {
+        } else if (result.contains(ConfigParams.SetGatePosition485Type)) {
             data = result.replaceAll(ConfigParams.SetGatePosition485Type, "").trim();
-            if ("1".equals(data))
-            {
+            if ("1".equals(data)) {
                 plan485Group.check(R.id.zha_plan_485_button);
-            }
-
-            else if ("2".equals(data))
-            {
+            } else if ("2".equals(data)) {
                 plan485Group.check(R.id.zha_plan_485_button2);
-            }
-            else if ("3".equals(data))
-            {
+            } else if ("3".equals(data)) {
                 plan485Group.check(R.id.zha_plan_485_button3);
             }
-        }
-
-        else if (result.contains(ConfigParams.Setzhaweijiabao))
-        {
+        } else if (result.contains(ConfigParams.Setzhaweijiabao)) {
             data = result.replaceAll(ConfigParams.Setzhaweijiabao, "").trim();
             addValueEditText.setText(data);
-        }
-        else if (result.contains(ConfigParams.SetAnaGatePositionRange))
-        {
+        } else if (result.contains(ConfigParams.SetAnaGatePositionRange)) {
             data = result.replaceAll(ConfigParams.SetAnaGatePositionRange, "").trim();
             rangeEditText.setText(data);
         }

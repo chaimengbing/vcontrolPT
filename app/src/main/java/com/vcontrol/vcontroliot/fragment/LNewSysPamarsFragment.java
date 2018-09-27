@@ -340,8 +340,7 @@ public class LNewSysPamarsFragment extends BaseFragment implements View.OnClickL
     public void didReceivedNotification(int id, Object... args) {
         if (id == UiEventEntry.READ_DATA) {
             String result = (String) args[0];
-            String content = (String) args[1];
-            if (TextUtils.isEmpty(result) || TextUtils.isEmpty(content)) {
+            if (TextUtils.isEmpty(result)) {
                 return;
             }
             setData(result);

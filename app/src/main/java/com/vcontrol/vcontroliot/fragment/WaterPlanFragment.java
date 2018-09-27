@@ -299,8 +299,7 @@ public class WaterPlanFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void didReceivedNotification(int id, Object... args) {
         String result = (String) args[0];
-        String content = (String) args[1];
-        if (TextUtils.isEmpty(result) || TextUtils.isEmpty(content)) {
+        if (TextUtils.isEmpty(result)) {
             return;
         }
         setData(result);
