@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.vcontrol.vcontroliot.R;
 import com.vcontrol.vcontroliot.VcontrolApplication;
 import com.vcontrol.vcontroliot.adapter.LeDeviceListAdapter;
 import com.vcontrol.vcontroliot.util.BleUtils;
@@ -25,6 +24,7 @@ import com.vcontrol.vcontroliot.util.EventNotifyHelper;
 import com.vcontrol.vcontroliot.util.SystemBarTintManager;
 import com.vcontrol.vcontroliot.util.ToastUtil;
 import com.vcontrol.vcontroliot.util.UiEventEntry;
+import com.vcontrol.vcontroliot.R;
 
 import java.util.List;
 

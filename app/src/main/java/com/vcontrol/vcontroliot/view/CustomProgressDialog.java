@@ -6,8 +6,8 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.widget.TextView;
 
-import com.vcontrol.vcontroliot.R;
 import com.vcontrol.vcontroliot.log.Log;
+import com.vcontrol.vcontroliot.R;
 
 /**
  * 说明：

@@ -8,6 +8,7 @@ import com.vcontrol.vcontroliot.R;
 import com.vcontrol.vcontroliot.VcontrolApplication;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import cn.com.heaton.blelibrary.ble.Ble;
@@ -138,16 +139,29 @@ public class BleUtils {
             ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "请选择设备");
             return;
         }
-        boolean result = false;
+
         if (mBle != null) {
-            result = mBle.write(device, data,
-                    new BleWriteCallback<BleDevice>() {
-                        @Override
-                        public void onWriteSuccess(BluetoothGattCharacteristic characteristic) {
-                            ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "发送数据成功");
-                        }
-                    });
+            synchronized (mBle.getLocker()) {
+                List<BleDevice> list = mBle.getConnetedDevices();
+                if (list != null) {
+                    for (BleDevice device1 : list) {
+                        writeData(device1, data);
+                    }
+                }
+            }
+
         }
+
+    }
+
+    private void writeData(final BleDevice device, final byte[] data) {
+        boolean result = mBle.write(device, data,
+                new BleWriteCallback<BleDevice>() {
+                    @Override
+                    public void onWriteSuccess(BluetoothGattCharacteristic characteristic) {
+                        ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "发送数据成功");
+                    }
+                });
         if (!result) {
             ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "发送数据失败!");
         }
@@ -158,23 +172,34 @@ public class BleUtils {
      * 主动读取数据
      */
     public void readData(BleDevice device) {
-        boolean result = false;
         if (mBle != null) {
-            result = mBle.read(device, new BleReadCallback<BleDevice>() {
-                @Override
-                public void onReadSuccess(BluetoothGattCharacteristic characteristic) {
-                    super.onReadSuccess(characteristic);
-                    byte[] data = characteristic.getValue();
-                    String result1 = new String(data);
-                    ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "onReadSuccess: " + result1);
-                    if (TextUtils.isEmpty(result1)) {
-                        return;
+            synchronized (mBle.getLocker()) {
+                List<BleDevice> list = mBle.getConnetedDevices();
+                if (list != null) {
+                    for (BleDevice device1 : list) {
+                        redData(device1);
                     }
-                    notifyData(result1);
-
                 }
-            });
+            }
         }
+
+    }
+
+    private void redData(BleDevice device) {
+        boolean result = mBle.read(device, new BleReadCallback<BleDevice>() {
+            @Override
+            public void onReadSuccess(BluetoothGattCharacteristic characteristic) {
+                super.onReadSuccess(characteristic);
+                byte[] data = characteristic.getValue();
+                String result1 = new String(data);
+                ToastUtil.showLong(VcontrolApplication.getCurrentContext(), "onReadSuccess: " + result1);
+                if (TextUtils.isEmpty(result1)) {
+                    return;
+                }
+                notifyData(result1);
+
+            }
+        });
         if (!result) {
             Log.d(TAG, "读取数据失败!");
         }
